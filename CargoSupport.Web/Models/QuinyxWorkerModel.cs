@@ -8,13 +8,24 @@ namespace CargoSupport.Models
 {
     public class QuinyxWorkerModel
     {
+        public QuinyxWorkerModel()
+        {
+            CurrentDate = DateTime.Now;
+        }
+
         [BsonId]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+
+        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+        public DateTime CurrentDate { get; set; }
+
+        public TimeSpan StartShiftTime { get; set; }
+
+        public TimeSpan EndShiftTime { get; set; }
+
         public int TotalWeightThisWeek { get; set; }
     }
 }

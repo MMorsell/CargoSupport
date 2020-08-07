@@ -7,8 +7,8 @@ namespace CargoSupport.Constants
 {
     public class MongoDb
     {
-        public string DatabaseName => "ICDB";
-        public string OutputScreenTableName => "ICOutputScreen";
-        public string QuinyxWorkerTableName => "ICWorkerLog";
+        public static string DatabaseName => "ICDB";
+        public static string OutputScreenTableName => "ICOutputScreen";
+        public static string QuinyxWorkerTableName => "ICWorkerLog";
     }
 }

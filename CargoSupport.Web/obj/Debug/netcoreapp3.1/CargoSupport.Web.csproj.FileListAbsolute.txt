@@ -33,3 +33,14 @@ C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.
 C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\CargoSupport.Web.pdb
 C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\CargoSupport.Web.genruntimeconfig.cache
 C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\CargoSupport.Web.csproj.CopyComplete
+C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\bin\Debug\netcoreapp3.1\DnsClient.dll
+C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\bin\Debug\netcoreapp3.1\MongoDB.Bson.dll
+C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\bin\Debug\netcoreapp3.1\MongoDB.Driver.dll
+C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\bin\Debug\netcoreapp3.1\MongoDB.Driver.Core.dll
+C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\bin\Debug\netcoreapp3.1\MongoDB.Libmongocrypt.dll
+C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\bin\Debug\netcoreapp3.1\SharpCompress.dll
+C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\bin\Debug\netcoreapp3.1\runtimes\win\native\libzstd.dll
+C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\bin\Debug\netcoreapp3.1\runtimes\win\native\snappy32.dll
+C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\bin\Debug\netcoreapp3.1\runtimes\win\native\snappy64.dll
+C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\CargoSupport.Web.csproj.CoreCompileInputs.cache
+C:\Users\Eraza\source\repos\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\CargoSupport.Web.MvcApplicationPartsAssemblyInfo.cache

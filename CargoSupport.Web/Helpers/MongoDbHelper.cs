@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using CargoSupport.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -28,10 +29,23 @@ namespace CargoSupport.Helpers
             await collection.InsertManyAsync(records);
         }
 
-        public async Task<List<T>> GetMultipleRecords<T>(string tableName)
+        public async Task<List<T>> GetAllRecords<T>(string tableName)
         {
             var collection = _database.GetCollection<T>(tableName);
             var result = await collection.FindAsync(new BsonDocument());
+            return result.ToList();
+        }
+
+        public async Task<List<QuinyxWorkerModel>> GetAllDriversForToday(string tableName)
+        {
+            var collection = _database.GetCollection<QuinyxWorkerModel>(tableName);
+
+            var today = DateTime.Today; //2017-03-31 00:00:00.000
+
+            var filterBuilder = Builders<QuinyxWorkerModel>.Filter;
+            var filter = filterBuilder.Gte(x => x.CurrentDate, today);
+            var result = await collection.FindAsync(filter);
+
             return result.ToList();
         }
 

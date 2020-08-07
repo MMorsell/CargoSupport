@@ -20,24 +20,24 @@ namespace CargoSupport.Helpers
             {
                 FirstName = "Jack",
                 LastName = "Hes",
-                StartDate = new DateTime(),
-                EndDate = new DateTime().AddHours(4),
+                StartShiftTime = DateTime.Now.TimeOfDay,
+                EndShiftTime = DateTime.Now.AddHours(4).TimeOfDay,
                 TotalWeightThisWeek = 200
             },
               new QuinyxWorkerModel
             {
                 FirstName = "Angel",
                 LastName = "ff",
-                StartDate = new DateTime(),
-                EndDate = new DateTime().AddHours(4),
+                StartShiftTime = DateTime.Now.TimeOfDay,
+                EndShiftTime = DateTime.Now.AddHours(4).TimeOfDay,
                 TotalWeightThisWeek = 55
             },
               new QuinyxWorkerModel
             {
                 FirstName = "Jonas",
                 LastName = "Borg",
-                StartDate = new DateTime(),
-                EndDate = new DateTime().AddHours(4),
+                StartShiftTime = DateTime.Now.TimeOfDay,
+                EndShiftTime = DateTime.Now.AddHours(4).TimeOfDay,
                 TotalWeightThisWeek = 600
             },
             };
@@ -45,14 +45,19 @@ namespace CargoSupport.Helpers
             dbHelper.InsertMultipleRecords(Constants.MongoDb.QuinyxWorkerTableName, _currentWorkers).Wait();
         }
 
-        public List<QuinyxWorkerModel> GetAllWorkers()
+        public async Task<List<QuinyxWorkerModel>> GetAllWorkersWorkingToday()
         {
-            return _currentWorkers;
+            return await dbHelper.GetAllRecords<QuinyxWorkerModel>(Constants.MongoDb.QuinyxWorkerTableName);
         }
 
-        public void ManuallyAddWorker(QuinyxWorkerModel workerModel)
+        public async Task<List<QuinyxWorkerModel>> GetAllWorkers()
         {
-            _currentWorkers.Add(workerModel);
+            return await dbHelper.GetAllRecords<QuinyxWorkerModel>(Constants.MongoDb.QuinyxWorkerTableName);
+        }
+
+        public async Task ManuallyAddWorker(QuinyxWorkerModel workerModel)
+        {
+            await dbHelper.InsertRecord(Constants.MongoDb.QuinyxWorkerTableName, workerModel);
         }
     }
 }

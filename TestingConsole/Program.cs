@@ -1,11 +1,13 @@
-﻿using System;
+﻿using CargoSupport.Helpers;
+using System;
 
 namespace TestingConsole
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
+            var h = new QuinyxHelper();
             Console.WriteLine("Hello World!");
         }
     }
