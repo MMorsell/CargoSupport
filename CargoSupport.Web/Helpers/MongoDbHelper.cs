@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CargoSupport.Web.Helpers
+namespace CargoSupport.Helpers
 {
     public class MongoDbHelper
     {
@@ -20,6 +20,12 @@ namespace CargoSupport.Web.Helpers
         {
             var collection = _database.GetCollection<T>(tableName);
             await collection.InsertOneAsync(record);
+        }
+
+        public async Task InsertMultipleRecords<T>(string tableName, List<T> records)
+        {
+            var collection = _database.GetCollection<T>(tableName);
+            await collection.InsertManyAsync(records);
         }
 
         public async Task<List<T>> GetMultipleRecords<T>(string tableName)
