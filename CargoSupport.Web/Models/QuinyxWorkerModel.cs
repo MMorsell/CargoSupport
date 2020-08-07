@@ -26,6 +26,7 @@ namespace CargoSupport.Models
 
         public TimeSpan EndShiftTime { get; set; }
 
+        public int CurrentRouteWeight { get; set; }
         public int TotalWeightThisWeek { get; set; }
     }
 }

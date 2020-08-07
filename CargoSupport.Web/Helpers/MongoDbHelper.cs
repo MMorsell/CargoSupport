@@ -14,7 +14,7 @@ namespace CargoSupport.Helpers
 
         public MongoDbHelper(string databaseName)
         {
-            _database = new MongoClient().GetDatabase(databaseName);
+            _database = new MongoClient("mongodb://localhost:27017").GetDatabase(databaseName);
         }
 
         public async Task InsertRecord<T>(string tableName, T record)
@@ -32,11 +32,11 @@ namespace CargoSupport.Helpers
         public async Task<List<T>> GetAllRecords<T>(string tableName)
         {
             var collection = _database.GetCollection<T>(tableName);
-            var result = await collection.FindAsync(new BsonDocument());
+            var result = await collection.FindAsync(Builders<T>.Filter.Empty).Result.ToListAsync();
             return result.ToList();
         }
 
-        public async Task<List<QuinyxWorkerModel>> GetAllDriversForToday(string tableName)
+        public async Task<List<QuinyxWorkerModel>> GetAllDriversForTodaySorted(string tableName)
         {
             var collection = _database.GetCollection<QuinyxWorkerModel>(tableName);
 
@@ -44,9 +44,11 @@ namespace CargoSupport.Helpers
 
             var filterBuilder = Builders<QuinyxWorkerModel>.Filter;
             var filter = filterBuilder.Gte(x => x.CurrentDate, today);
-            var result = await collection.FindAsync(filter);
+            var result = await collection.FindAsync(filter).Result.ToListAsync();
 
-            return result.ToList();
+            result = result.OrderBy(e => e.StartShiftTime).ThenBy(e => e.EndShiftTime).ToList();
+
+            return result;
         }
 
         public async Task<T> GetRecordById<T>(string tableName, Guid guid)

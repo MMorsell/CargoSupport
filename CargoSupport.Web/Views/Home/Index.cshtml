@@ -1,8 +1,54 @@
-﻿@{
+﻿@model List<CargoSupport.Models.PinRouteModel>;
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
+
+    <table class="table">
+        <thead>
+            @*<tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.RouteName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.EstimatedRouteStart)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.EstimatedRouteEnd)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NumberOfColdBoxes)
+                    </th>
+                    <th></th>
+                </tr>*@
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RouteName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EstimatedRouteStart)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EstimatedRouteEnd)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumberOfColdBoxes)
+                    </td>
+                    @*<td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>*@
+                </tr>
+            }
+        </tbody>
+    </table>
+
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>

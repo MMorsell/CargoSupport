@@ -6,21 +6,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CargoSupport.Web.Models;
+using CargoSupport.Models;
+using CargoSupport.Helpers;
 
 namespace CargoSupport.Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly MongoDbHelper _dbHelper;
 
         public HomeController(ILogger<HomeController> logger)
         {
+            _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            List<PinRouteModel> todaysRoutes = await _dbHelper.GetAllRecords<PinRouteModel>(Constants.MongoDb.OutputScreenTableName);
+            return View(todaysRoutes);
         }
 
         public IActionResult Privacy()

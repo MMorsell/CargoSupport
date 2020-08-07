@@ -29,3 +29,4 @@ C:\Users\Eraza\source\repos\CargoSupport\TestingConsole\bin\Debug\netcoreapp3.1\
 C:\Users\Eraza\source\repos\CargoSupport\TestingConsole\bin\Debug\netcoreapp3.1\CargoSupport.Web.dll
 C:\Users\Eraza\source\repos\CargoSupport\TestingConsole\bin\Debug\netcoreapp3.1\CargoSupport.Web.pdb
 C:\Users\Eraza\source\repos\CargoSupport\TestingConsole\obj\Debug\netcoreapp3.1\TestingConsole.csproj.CopyComplete
+C:\Users\Eraza\source\repos\CargoSupport\TestingConsole\bin\Debug\netcoreapp3.1\web.config
