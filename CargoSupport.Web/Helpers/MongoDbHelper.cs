@@ -14,7 +14,7 @@ namespace CargoSupport.Helpers
 
         public MongoDbHelper(string databaseName)
         {
-            _database = new MongoClient("mongodb://localhost:27017").GetDatabase(databaseName);
+            _database = new MongoClient("mongodb://root:example@localhost:27017").GetDatabase(databaseName);
         }
 
         public async Task InsertRecord<T>(string tableName, T record)

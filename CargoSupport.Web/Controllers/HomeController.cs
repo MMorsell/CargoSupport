@@ -24,6 +24,9 @@ namespace CargoSupport.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var qh = new QuinyxHelper();
+            var ph = new PinHelper();
+            ph.RetrieveRoutesForToday();
             List<PinRouteModel> todaysRoutes = await _dbHelper.GetAllRecords<PinRouteModel>(Constants.MongoDb.OutputScreenTableName);
             return View(todaysRoutes);
         }
