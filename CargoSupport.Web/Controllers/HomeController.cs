@@ -9,6 +9,7 @@ using CargoSupport.Web.Models;
 using CargoSupport.Models;
 using CargoSupport.Helpers;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CargoSupport.Web.Controllers
 {
@@ -25,9 +26,6 @@ namespace CargoSupport.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var qh = new QuinyxHelper();
-            var ph = new PinHelper();
-            ph.RetrieveRoutesForToday();
             List<PinRouteModel> todaysRoutes = await _dbHelper.GetAllRecords<PinRouteModel>(Constants.MongoDb.OutputScreenTableName);
             ViewBag.DataTable = JsonSerializer.Serialize(todaysRoutes);
             return View(todaysRoutes);

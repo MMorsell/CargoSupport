@@ -16,6 +16,7 @@ namespace CargoSupport.Models
         [BsonId]
         public Guid Id { get; set; }
 
+        public int QuinyxId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
 

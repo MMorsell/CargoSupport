@@ -4,7 +4,9 @@
 }
 
 <div class="text-center">
-    <div id="myGrid" style="height: 100vw; width: 100vw;" class="ag-theme-alpine"></div>
+    <div id="grid-wrapper" style="width:100%; height: 100%">
+        <div id="myGrid" style="height: 100vw; width: 100vw;" class="ag-theme-alpine"></div>
+    </div>
 </div>
 
 @section Scripts
@@ -19,7 +21,16 @@
             { headerName: "Driver", field: "Driver", sortable: true, filter: true },
             { headerName: "EstimatedRouteStart", field: "EstimatedRouteStart", sortable: true, filter: true },
             { headerName: "EstimatedRouteEnd", field: "EstimatedRouteEnd", sortable: true, filter: true },
-            { headerName: "LoadingIsDone", field: "LoadingIsDone", sortable: true, filter: true },
+            {
+                headerName: "LoadingIsDone",
+                field: "LoadingIsDone",
+                sortable: true,
+                filter: true,
+                cellClassRules: {
+                    'rag-green': function (params) { return params.value === true },
+                    'rag-red': function (params) { return params.value === false },
+                },
+            },
             { headerName: "NumberOfColdBoxes", field: "NumberOfColdBoxes", sortable: true, filter: true },
             { headerName: "NumberOfFrozenBoxes", field: "NumberOfFrozenBoxes", sortable: true, filter: true },
             { headerName: "PreRideAnnotation", field: "PreRideAnnotation", sortable: true, filter: true },

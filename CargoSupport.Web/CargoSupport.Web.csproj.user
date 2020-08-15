@@ -3,5 +3,7 @@
   <PropertyGroup>
     <ActiveDebugProfile>Docker</ActiveDebugProfile>
     <ShowAllFiles>true</ShowAllFiles>
+    <Controller_SelectedScaffolderID>MvcControllerWithActionsScaffolder</Controller_SelectedScaffolderID>
+    <Controller_SelectedScaffolderCategoryPath>root/Controller</Controller_SelectedScaffolderCategoryPath>
   </PropertyGroup>
 </Project>

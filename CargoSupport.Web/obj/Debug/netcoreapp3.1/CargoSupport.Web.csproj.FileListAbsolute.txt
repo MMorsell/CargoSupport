@@ -97,3 +97,6 @@ C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\net
 C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\CargoSupport.Web.dll
 C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\CargoSupport.Web.pdb
 C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\CargoSupport.Web.genruntimeconfig.cache
+C:\Users\Eraza\Source\Repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Views\Analyze\AllData.cshtml.g.cs
+C:\Users\Eraza\Source\Repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Views\Analyze\DriversUnderMe.cshtml.g.cs
+C:\Users\Eraza\Source\Repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Views\Analyze\Index.cshtml.g.cs
