@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Z85os1PLpwsPoHpIMoEiq2KFXH1Yl1g3i+6rvQCu0/mO7JvKNGtVPMM9vC8hukh0hS4I/XZWoyz80eY5pTUW3A==",
+  "dgSpecHash": "rE0ogyEYOayO7YVSirFkdlUTvxuIOFuaeJR9+NTOZPX5+Hgy55mWHa2KAYtRYZy+MeWpXG1kVeHcA7SHBTdQyA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Eraza\\source\\repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj",
+  "projectFilePath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Eraza\\.nuget\\packages\\dnsclient\\1.3.1\\dnsclient.1.3.1.nupkg.sha512",
     "C:\\Users\\Eraza\\.nuget\\packages\\microsoft.netcore.platforms\\2.1.2\\microsoft.netcore.platforms.2.1.2.nupkg.sha512",

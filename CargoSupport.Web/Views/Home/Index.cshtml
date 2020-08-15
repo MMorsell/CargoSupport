@@ -4,51 +4,38 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-
-    <table class="table">
-        <thead>
-            @*<tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.RouteName)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.EstimatedRouteStart)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.EstimatedRouteEnd)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.NumberOfColdBoxes)
-                    </th>
-                    <th></th>
-                </tr>*@
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.RouteName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EstimatedRouteStart)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EstimatedRouteEnd)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.NumberOfColdBoxes)
-                    </td>
-                    @*<td>
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                        </td>*@
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <div id="myGrid" style="height: 100vw; width: 100vw;" class="ag-theme-alpine"></div>
 </div>
+
+@section Scripts
+{
+    <script type="text/javascript" charset="utf-8">
+
+        var allData = @Html.Raw(ViewBag.DataTable)
+        // specify the columns
+        let columnDefs = [
+            { headerName: "Id", field: "Id", sortable: true, filter: true, checkboxSelection: true },
+            { headerName: "RouteName", field: "RouteName", sortable: true, filter: true },
+            { headerName: "Driver", field: "Driver", sortable: true, filter: true },
+            { headerName: "EstimatedRouteStart", field: "EstimatedRouteStart", sortable: true, filter: true },
+            { headerName: "EstimatedRouteEnd", field: "EstimatedRouteEnd", sortable: true, filter: true },
+            { headerName: "LoadingIsDone", field: "LoadingIsDone", sortable: true, filter: true },
+            { headerName: "NumberOfColdBoxes", field: "NumberOfColdBoxes", sortable: true, filter: true },
+            { headerName: "NumberOfFrozenBoxes", field: "NumberOfFrozenBoxes", sortable: true, filter: true },
+            { headerName: "PreRideAnnotation", field: "PreRideAnnotation", sortable: true, filter: true },
+            { headerName: "PostRideAnnotation", field: "PostRideAnnotation", sortable: true, filter: true },
+        ];
+
+        // let the grid know which columns and what data to use
+        let gridOptions = {
+            columnDefs: columnDefs,
+            rowData: allData
+        };
+
+        // lookup the container we want the Grid to use
+        var eGridDiv = document.querySelector('#myGrid');
+
+        // create the grid passing in the div to use together with the columns & data we want to use
+        new agGrid.Grid(eGridDiv, gridOptions);
+    </script>
+}

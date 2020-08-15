@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Eraza\\source\\repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj": {}
+    "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Eraza\\source\\repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj": {
+    "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Eraza\\source\\repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj",
+        "projectUniqueName": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj",
         "projectName": "CargoSupport.Web",
-        "projectPath": "C:\\Users\\Eraza\\source\\repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj",
+        "projectPath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj",
         "packagesPath": "C:\\Users\\Eraza\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Eraza\\source\\repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\obj\\",
+        "outputPath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"

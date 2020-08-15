@@ -81,13 +81,6 @@ C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\net
 C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\CargoSupport.Web.TagHelpers.input.cache
 C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\CargoSupport.Web.TagHelpers.output.cache
 C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\CargoSupport.Web.RazorCoreGenerate.cache
-C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Pages\Error.cshtml.g.cs
-C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Pages\Index.cshtml.g.cs
-C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Pages\Privacy.cshtml.g.cs
-C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Pages\Shared\_Layout.cshtml.g.cs
-C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Pages\Shared\_ValidationScriptsPartial.cshtml.g.cs
-C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Pages\_ViewImports.cshtml.g.cs
-C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Pages\_ViewStart.cshtml.g.cs
 C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Views\Home\Index.cshtml.g.cs
 C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Views\Home\Privacy.cshtml.g.cs
 C:\Users\Eraza\source\repos\MMorsell\CargoSupport\CargoSupport.Web\obj\Debug\netcoreapp3.1\Razor\Views\Shared\Error.cshtml.g.cs

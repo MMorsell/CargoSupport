@@ -4887,11 +4887,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Eraza\\source\\repos\\MMorsell\\CargoSupport\\TestingConsole\\TestingConsole.csproj",
+      "projectUniqueName": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\TestingConsole\\TestingConsole.csproj",
       "projectName": "TestingConsole",
-      "projectPath": "C:\\Users\\Eraza\\source\\repos\\MMorsell\\CargoSupport\\TestingConsole\\TestingConsole.csproj",
+      "projectPath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\TestingConsole\\TestingConsole.csproj",
       "packagesPath": "C:\\Users\\Eraza\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Eraza\\source\\repos\\MMorsell\\CargoSupport\\TestingConsole\\obj\\",
+      "outputPath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\TestingConsole\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Microsoft\\Xamarin\\NuGet\\"
@@ -4911,8 +4911,8 @@
       "frameworks": {
         "netcoreapp3.1": {
           "projectReferences": {
-            "C:\\Users\\Eraza\\source\\repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj": {
-              "projectPath": "C:\\Users\\Eraza\\source\\repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj"
+            "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj": {
+              "projectPath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj"
             }
           }
         }

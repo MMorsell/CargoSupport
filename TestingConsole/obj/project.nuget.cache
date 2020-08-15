@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "dLNyzS5AWMJ/EXFvil3Wo3qBBnYFGBOuO0GYoPPKo9L8wWSp6LaMYvqPEePJKv+2f8uHsYICFh99CuMUW1L9GQ==",
+  "dgSpecHash": "et7sLvHgmiL4wdN9OAqsYrPnB5xY1I+enMkcgBl/WBTSaXAtb7tqc8+y36v0/QN022lUPaJ13ziCncLXqCjMjw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Eraza\\source\\repos\\MMorsell\\CargoSupport\\TestingConsole\\TestingConsole.csproj",
+  "projectFilePath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\TestingConsole\\TestingConsole.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Eraza\\.nuget\\packages\\dnsclient\\1.3.1\\dnsclient.1.3.1.nupkg.sha512",
     "C:\\Users\\Eraza\\.nuget\\packages\\microsoft.netcore.platforms\\2.1.2\\microsoft.netcore.platforms.2.1.2.nupkg.sha512",
