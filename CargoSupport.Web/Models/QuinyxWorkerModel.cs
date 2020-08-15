@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using CargoSupport.Web.Interfaces;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CargoSupport.Models
 {
-    public class QuinyxWorkerModel
+    public class QuinyxWorkerModel : IDateTime
     {
         public QuinyxWorkerModel()
         {

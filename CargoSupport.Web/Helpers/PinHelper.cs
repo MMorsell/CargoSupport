@@ -9,13 +9,15 @@ namespace CargoSupport.Helpers
     public class PinHelper
     {
         private MongoDbHelper _dbHelper;
-        private List<PinRouteModel> _currentRoutes;
 
-        public void RetrieveRoutesForToday()
+        public PinHelper()
         {
             _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
+        }
 
-            _currentRoutes = new List<PinRouteModel>
+        public async Task RetrieveRoutesForToday()
+        {
+            var currentRoutes = new List<PinRouteModel>
             {
                 new PinRouteModel
                 {
@@ -51,11 +53,26 @@ namespace CargoSupport.Helpers
                 }
             };
 
-            _dbHelper.InsertMultipleRecords(Constants.MongoDb.OutputScreenTableName, _currentRoutes).Wait();
+            await PopulateAllRoutesWithDrivers(currentRoutes);
         }
 
-        public void PopulateAllRoutesWithDrivers()
+        public async Task PopulateAllRoutesWithDrivers(List<PinRouteModel> allRoutesForToday)
         {
+            var allDriversForToday = await _dbHelper.GetAllDriversForTodaySorted(Constants.MongoDb.QuinyxWorkerTableName);
+
+            for (int i = 0; i < allRoutesForToday.Count; i++)
+            {
+                if (i < allDriversForToday.Count)
+                {
+                    allRoutesForToday[i].Driver = allDriversForToday[i];
+                }
+                else
+                {
+                    allRoutesForToday[i].Driver = allDriversForToday[0];
+                }
+            }
+
+            await _dbHelper.InsertMultipleRecords(Constants.MongoDb.OutputScreenTableName, allRoutesForToday);
         }
     }
 }

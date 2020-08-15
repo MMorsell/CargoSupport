@@ -11,15 +11,16 @@ namespace TestingConsole
         private static void Main(string[] args)
         {
             var _dbhelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
-            var qh = new QuinyxHelper();
+
+            _dbhelper.BackupData<PinRouteModel>(CargoSupport.Constants.MongoDb.OutputScreenTableName, CargoSupport.Constants.MongoDb.BackupCollectionName).Wait();
             var ph = new PinHelper();
-            ph.RetrieveRoutesForToday();
+            var _qnHelper = new QuinyxHelper();
+            ph.RetrieveRoutesForToday().Wait();
             List<PinRouteModel> todaysRoutes = _dbhelper.GetAllRecords<PinRouteModel>(CargoSupport.Constants.MongoDb.OutputScreenTableName).Result;
 
             //var h = new PinHelper();
             //h.RetrieveRoutesForToday();
 
-            //var _qnHelper = new QuinyxHelper();
             //var res = _qnHelper.GetAllWorkersWorkingTodaySorted().Result;
 
             //foreach (var re in res)

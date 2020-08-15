@@ -1,10 +1,11 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using CargoSupport.Web.Interfaces;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.ComponentModel;
 
 namespace CargoSupport.Models
 {
-    public class PinRouteModel
+    public class PinRouteModel : IDateTime
     {
         public PinRouteModel()
         {

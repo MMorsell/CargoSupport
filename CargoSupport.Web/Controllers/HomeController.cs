@@ -10,6 +10,7 @@ using CargoSupport.Models;
 using CargoSupport.Helpers;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
+using Quartz;
 
 namespace CargoSupport.Web.Controllers
 {
@@ -17,9 +18,13 @@ namespace CargoSupport.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly MongoDbHelper _dbHelper;
+        private readonly IScheduler _scheduler;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IScheduler factory)
         {
+            var th = new CargoSupport.Web.Helpers.TaskHelper(_scheduler);
+            th.CheckAvailability().Wait();
+
             _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
             _logger = logger;
         }

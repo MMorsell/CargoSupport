@@ -36,6 +36,17 @@ namespace CargoSupport.Helpers
             return result.ToList();
         }
 
+        public async Task<List<PinRouteModel>> GetAllRoutesToday(string tableName)
+        {
+            var collection = _database.GetCollection<PinRouteModel>(tableName);
+
+            var today = DateTime.Today; //2017-03-31 00:00:00.000
+
+            var filterBuilder = Builders<PinRouteModel>.Filter;
+            var filter = filterBuilder.Gte(x => x.CurrentDate, today);
+            return await collection.FindAsync(filter).Result.ToListAsync();
+        }
+
         public async Task<List<QuinyxWorkerModel>> GetAllDriversForTodaySorted(string tableName)
         {
             var collection = _database.GetCollection<QuinyxWorkerModel>(tableName);
@@ -73,11 +84,37 @@ namespace CargoSupport.Helpers
                 });
         }
 
+        public async Task UpsertMultiplePinRouteModelRecords(string tableName, List<PinRouteModel> pinRouteModels)
+        {
+            var collection = _database.GetCollection<PinRouteModel>(tableName);
+
+            for (int i = 0; i < pinRouteModels.Count; i++)
+            {
+                await collection.ReplaceOneAsync(
+                new BsonDocument("Id", pinRouteModels[i].Id),
+                pinRouteModels[i],
+                new ReplaceOptions
+                {
+                    IsUpsert = true,
+                });
+            }
+        }
+
         public async Task DeleteRecord<T>(string tableName, Guid guid)
         {
             var collection = _database.GetCollection<T>(tableName);
             var filter = Builders<T>.Filter.Eq("Id", guid);
             await collection.DeleteOneAsync(filter);
+        }
+
+        public async Task BackupData<T>(string collectionName, string backupCollectionName)
+        {
+            IMongoCollection<T> collection = _database.GetCollection<T>(collectionName);
+            var result = await collection.FindAsync(Builders<T>.Filter.Empty).Result.ToListAsync();
+            await _database.CreateCollectionAsync(backupCollectionName);
+
+            IMongoCollection<T> backupCollection = _database.GetCollection<T>(backupCollectionName);
+            await backupCollection.InsertManyAsync(result);
         }
     }
 }

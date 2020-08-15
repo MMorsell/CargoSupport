@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -10,6 +11,8 @@ using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quartz;
+using Quartz.Impl;
 
 namespace CargoSupport.Web
 {
@@ -32,6 +35,8 @@ namespace CargoSupport.Web
             //    });
 
             services.AddControllersWithViews();
+
+            services.AddSingleton(provider => GetScheduler().Result);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,6 +67,26 @@ namespace CargoSupport.Web
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private async Task<IScheduler> GetScheduler()
+        {
+            var properties = new NameValueCollection
+            {
+                { "quartz.scheduler.instanceName", "BackgroundTasks.Web" },
+                { "quartz.scheduler.instanceId", "BackgroundTasks.Web" },
+                { "quartz.jobStore.type", "Quartz.Impl.AdoJobStore.JobStoreTX, Quartz" },
+                { "quartz.jobStore.useProperties", "true" },
+                { "quartz.threadPool.threadCount", "1" },
+                { "quartz.serializer.type", "json" },
+            };
+            var schedulerFactory = new StdSchedulerFactory(properties);
+            var scheduler = await schedulerFactory.GetScheduler();
+
+            var th = new CargoSupport.Web.Helpers.TaskHelper(scheduler);
+            await th.CheckAvailability();
+            //await scheduler.Start();
+            return scheduler;
         }
     }
 }
