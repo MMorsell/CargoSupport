@@ -14,13 +14,14 @@
     <script type="text/javascript" charset="utf-8">
 
         var allData = @Html.Raw(ViewBag.DataTable)
+            console.log(allData);
         // specify the columns
         let columnDefs = [
             { headerName: "Id", field: "Id", sortable: true, filter: true, checkboxSelection: true },
             { headerName: "RouteName", field: "RouteName", sortable: true, filter: true },
-            { headerName: "Driver", field: "Driver", sortable: true, filter: true },
-            { headerName: "EstimatedRouteStart", field: "EstimatedRouteStart", sortable: true, filter: true },
-            { headerName: "EstimatedRouteEnd", field: "EstimatedRouteEnd", sortable: true, filter: true },
+            { headerName: "Driver", field: "Driver.FullName", sortable: true, filter: true },
+            { headerName: "EstimatedRouteStart", field: "EstimatedRouteStartString", sortable: true, filter: true },
+            { headerName: "EstimatedRouteEnd", field: "EstimatedRouteEndString", sortable: true, filter: true },
             {
                 headerName: "LoadingIsDone",
                 field: "LoadingIsDone",

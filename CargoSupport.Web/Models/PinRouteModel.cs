@@ -12,15 +12,20 @@ namespace CargoSupport.Models
             CurrentDate = DateTime.Now;
         }
 
+        public PinRouteModel(DateTime newDateTime)
+        {
+            CurrentDate = newDateTime;
+        }
+
         [BsonId]
         public Guid Id { get; set; }
 
-        [DisplayName("aaa")]
         public string RouteName { get; set; }
-
         public QuinyxWorkerModel Driver { get; set; }
         public TimeSpan EstimatedRouteStart { get; set; }
         public TimeSpan EstimatedRouteEnd { get; set; }
+        public string EstimatedRouteStartString { get { return EstimatedRouteStart.ToString(@"hh\:mm\:ss"); } }
+        public string EstimatedRouteEndString { get { return EstimatedRouteEnd.ToString(@"hh\:mm\:ss"); } }
 
         [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime CurrentDate { get; set; }

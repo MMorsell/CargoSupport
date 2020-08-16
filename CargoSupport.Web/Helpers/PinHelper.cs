@@ -35,7 +35,7 @@ namespace CargoSupport.Helpers
                     NumberOfColdBoxes = 5,
                     NumberOfFrozenBoxes = 50,
                 },
-                new PinRouteModel
+                new PinRouteModel(DateTime.Now.AddDays(-2))
                 {
                     RouteName = "T03",
                     EstimatedRouteStart = DateTime.Now.TimeOfDay,
@@ -43,9 +43,41 @@ namespace CargoSupport.Helpers
                     NumberOfColdBoxes = 5,
                     NumberOfFrozenBoxes = 50,
                 },
-                new PinRouteModel
+                new PinRouteModel(DateTime.Now.AddDays(-2))
                 {
                     RouteName = "T04",
+                    EstimatedRouteStart = DateTime.Now.TimeOfDay,
+                    EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
+                    NumberOfColdBoxes = 5,
+                    NumberOfFrozenBoxes = 50,
+                },
+                new PinRouteModel(DateTime.Now.AddDays(-1))
+                {
+                    RouteName = "T05",
+                    EstimatedRouteStart = DateTime.Now.TimeOfDay,
+                    EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
+                    NumberOfColdBoxes = 5,
+                    NumberOfFrozenBoxes = 50,
+                },
+                new PinRouteModel(DateTime.Now.AddDays(-7))
+                {
+                    RouteName = "T06",
+                    EstimatedRouteStart = DateTime.Now.TimeOfDay,
+                    EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
+                    NumberOfColdBoxes = 5,
+                    NumberOfFrozenBoxes = 50,
+                },
+                new PinRouteModel(DateTime.Now.AddDays(-9))
+                {
+                    RouteName = "T07",
+                    EstimatedRouteStart = DateTime.Now.TimeOfDay,
+                    EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
+                    NumberOfColdBoxes = 5,
+                    NumberOfFrozenBoxes = 50,
+                },
+                new PinRouteModel(DateTime.Now.AddDays(-11))
+                {
+                    RouteName = "T08",
                     EstimatedRouteStart = DateTime.Now.TimeOfDay,
                     EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
                     NumberOfColdBoxes = 5,

@@ -18,52 +18,49 @@ namespace CargoSupport.Helpers
             _currentWorkers = new List<QuinyxWorkerModel> {
                 new QuinyxWorkerModel
             {
-                FirstName = "Jack",
-                LastName = "Hes",
+                FirstName = "Fredrik",
+                LastName = "Lööf",
+                QuinyxId = 1,
                 StartShiftTime = nowDateTime,
                 EndShiftTime = DateTime.Now.AddHours(2).TimeOfDay,
                 TotalWeightThisWeek = 200
             },
               new QuinyxWorkerModel
             {
-                FirstName = "Angel",
-                LastName = "ff",
+                FirstName = "Anna",
+                LastName = "Book",
+                QuinyxId = 2,
                 StartShiftTime = nowDateTime,
                 EndShiftTime = DateTime.Now.AddHours(3).TimeOfDay,
                 TotalWeightThisWeek = 55
             },
-              new QuinyxWorkerModel
-            {
-                FirstName = "Jonas",
-                LastName = "Borg",
-                StartShiftTime = DateTime.Now.AddHours(2).TimeOfDay,
-                EndShiftTime = DateTime.Now.AddHours(4).TimeOfDay,
-                TotalWeightThisWeek = 600
-            },
-              new QuinyxWorkerModel
-            {
-                FirstName = "Roger",
-                LastName = "Hes",
-                StartShiftTime = DateTime.Now.AddHours(1).TimeOfDay,
-                EndShiftTime = DateTime.Now.AddHours(3).TimeOfDay,
-                TotalWeightThisWeek = 200
-            },
-              new QuinyxWorkerModel
-            {
-                FirstName = "Marr",
-                LastName = "ff",
-                StartShiftTime = DateTime.Now.AddHours(7).TimeOfDay,
-                EndShiftTime = DateTime.Now.AddHours(7).TimeOfDay,
-                TotalWeightThisWeek = 55
-            },
-              new QuinyxWorkerModel
-            {
-                FirstName = "Wussa",
-                LastName = "Borg",
-                StartShiftTime = DateTime.Now.AddHours(1).TimeOfDay,
-                EndShiftTime = DateTime.Now.AddHours(1).TimeOfDay,
-                TotalWeightThisWeek = 600
-            },
+            //  new QuinyxWorkerModel
+            //{
+            //    FirstName = "Stefan",
+            //    LastName = "Löfven",
+            //    QuinyxId = 3,
+            //    StartShiftTime = DateTime.Now.AddHours(2).TimeOfDay,
+            //    EndShiftTime = DateTime.Now.AddHours(4).TimeOfDay,
+            //    TotalWeightThisWeek = 600
+            //},
+            //  new QuinyxWorkerModel
+            //{
+            //    FirstName = "Annie",
+            //    LastName = "Lööf",
+            //    QuinyxId = 4,
+            //    StartShiftTime = DateTime.Now.AddHours(1).TimeOfDay,
+            //    EndShiftTime = DateTime.Now.AddHours(3).TimeOfDay,
+            //    TotalWeightThisWeek = 200
+            //},
+            //  new QuinyxWorkerModel
+            //{
+            //    FirstName = "Ulf",
+            //    LastName = "Kristersson",
+            //    QuinyxId = 5,
+            //    StartShiftTime = DateTime.Now.AddHours(7).TimeOfDay,
+            //    EndShiftTime = DateTime.Now.AddHours(7).TimeOfDay,
+            //    TotalWeightThisWeek = 55
+            //},
             };
 
             _dbHelper.InsertMultipleRecords(Constants.MongoDb.QuinyxWorkerTableName, _currentWorkers).Wait();

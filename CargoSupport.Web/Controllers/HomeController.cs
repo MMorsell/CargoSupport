@@ -20,10 +20,10 @@ namespace CargoSupport.Web.Controllers
         private readonly MongoDbHelper _dbHelper;
         private readonly IScheduler _scheduler;
 
-        public HomeController(ILogger<HomeController> logger, IScheduler factory)
+        public HomeController(ILogger<HomeController> logger/*, IScheduler factory*/)
         {
-            var th = new CargoSupport.Web.Helpers.TaskHelper(_scheduler);
-            th.CheckAvailability().Wait();
+            //var th = new CargoSupport.Web.Helpers.TaskHelper(_scheduler);
+            //th.CheckAvailability().Wait();
 
             _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
             _logger = logger;

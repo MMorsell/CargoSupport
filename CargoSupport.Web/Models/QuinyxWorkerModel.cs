@@ -18,6 +18,7 @@ namespace CargoSupport.Models
         public Guid Id { get; set; }
 
         public int QuinyxId { get; set; }
+        public string FullName { get { return $"{FirstName} {LastName}"; } }
         public string FirstName { get; set; }
         public string LastName { get; set; }
 

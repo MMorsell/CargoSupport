@@ -12,11 +12,20 @@ namespace TestingConsole
         {
             var _dbhelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
 
-            _dbhelper.BackupData<PinRouteModel>(CargoSupport.Constants.MongoDb.OutputScreenTableName, CargoSupport.Constants.MongoDb.BackupCollectionName).Wait();
-            var ph = new PinHelper();
-            var _qnHelper = new QuinyxHelper();
-            ph.RetrieveRoutesForToday().Wait();
-            List<PinRouteModel> todaysRoutes = _dbhelper.GetAllRecords<PinRouteModel>(CargoSupport.Constants.MongoDb.OutputScreenTableName).Result;
+            for (int i = 0; i < 30; i++)
+            {
+                var random = new Random();
+                var val1 = random.Next(1, 30);
+                var random2 = new Random();
+                var val2 = random2.Next(1, 100);
+                Console.WriteLine(@$"{{ x: ""2020-08-{val1}"", y: {val2} }},");
+            }
+
+            ////_dbhelper.BackupData<PinRouteModel>(CargoSupport.Constants.MongoDb.OutputScreenTableName, CargoSupport.Constants.MongoDb.BackupCollectionName).Wait();
+            //var ph = new PinHelper();
+            //var _qnHelper = new QuinyxHelper();
+            //ph.RetrieveRoutesForToday().Wait();
+            //List<PinRouteModel> todaysRoutes = _dbhelper.GetAllRecords<PinRouteModel>(CargoSupport.Constants.MongoDb.OutputScreenTableName).Result;
 
             //var h = new PinHelper();
             //h.RetrieveRoutesForToday();

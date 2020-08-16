@@ -36,7 +36,7 @@ namespace CargoSupport.Web
 
             services.AddControllersWithViews();
 
-            services.AddSingleton(provider => GetScheduler().Result);
+            //services.AddSingleton(provider => GetScheduler().Result);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
