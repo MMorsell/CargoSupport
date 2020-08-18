@@ -8,6 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["CargoSupport.Web/CargoSupport.Web.csproj", "CargoSupport.Web/"]
+
 RUN dotnet restore "CargoSupport.Web/CargoSupport.Web.csproj"
 COPY . .
 WORKDIR "/src/CargoSupport.Web"

@@ -5,5 +5,6 @@
     <ShowAllFiles>true</ShowAllFiles>
     <Controller_SelectedScaffolderID>MvcControllerWithActionsScaffolder</Controller_SelectedScaffolderID>
     <Controller_SelectedScaffolderCategoryPath>root/Controller</Controller_SelectedScaffolderCategoryPath>
+    <NameOfLastUsedPublishProfile>registry.hub.docker.com_erazap</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

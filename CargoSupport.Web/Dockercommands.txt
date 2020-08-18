@@ -1,0 +1,39 @@
+﻿Git clone, then
+
+#webapp
+
+docker build -f "CargoSupport.Web/Dockerfile" -t cargosupport:1.2 .
+
+docker run -p 80:80 cargosupport:1.2
+
+
+
+Mongo:
+
+export PATH=$PATH:/snap/bin
+
+docker-compose up -d
+
+
+links
+
+
+https://tobiasahlin.com/blog/chartjs-charts-to-get-you-started/#9-mixed-chart
+
+
+
+	
+https://dev.to/sonyarianto/how-to-spin-mongodb-server-with-docker-and-docker-compose-2lef
+
+Algoritm "Är den lägre än ovanför"
+
+{ x: "2020-08-2", y: 53 },
+            { x: "2020-08-6", y: 68 },
+            { x: "2020-08-8", y: 90 },
+            { x: "2020-08-16", y: 59 },
+            { x: "2020-08-18", y: 54 },
+            { x: "2020-08-25", y: 31 },
+            { x: "2020-08-12", y: 15 },
+            { x: "2020-08-20", y: 73 },
+            { x: "2020-08-14", y: 7 },
+            { x: "2020-08-5", y: 53 },
