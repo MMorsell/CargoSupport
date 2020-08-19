@@ -22,6 +22,14 @@
         <option value="2">Two</option>
         <option value="3">Three</option>
     </select>
+
+    <div>
+        <p id="TotalAvrWeight"></p>
+    </div>
+    <div>
+        <p id="TotalAvrDistance"></p>
+    </div>
+
     <div style="height:200px">
         <div class="chart-container" style="position: relative; height:40vh; width:80vw">
             <canvas id="MainCanvas"></canvas>
@@ -39,7 +47,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/sv.js"></script>
-
     <script>
         flatpickr('#calendar-from', {
             "locale": "sv",
@@ -60,66 +67,105 @@
             }
         });
     </script>
-
     <script>
+        function calculateAvr(arrayWithData, divisionWith) {
+            return Math.round(getYSum(arrayWithData) / divisionWith);
+        }
+        function getNumberOfRoutesThisWeek(arrayWithData) {
+
+        }
+
+        function getYSum(arrayWithData) {
+            var sum = 0;
+            for (var i = 0; i < arrayWithData.length; i++) {
+                sum += parseInt(arrayWithData[i].y);
+            }
+            return sum;
+        }
 
         let xCustomerData = [
-            { x: "2020-08-29", y: 48 },
-            { x: "2020-08-05", y: 30 },
-            { x: "2020-08-12", y: 39 },
-            { x: "2020-08-10", y: 82 },
-            { x: "2020-08-14", y: 03 },
-            { x: "2020-08-03", y: 16 },
-            { x: "2020-08-19", y: 17 },
-            { x: "2020-08-24", y: 99 },
-            { x: "2020-08-21", y: 80 },
-            { x: "2020-08-15", y: 56 },
-            { x: "2020-08-11", y: 63 },
-            { x: "2020-08-08", y: 91 },
-            { x: "2020-08-28", y: 83 },
-            { x: "2020-08-22", y: 75 },
-            { x: "2020-08-09", y: 19 },
             { x: "2020-08-01", y: 5 },
+            { x: "2020-08-03", y: 16 },
+            { x: "2020-08-05", y: 30 },
+            { x: "2020-08-08", y: 91 },
+            { x: "2020-08-09", y: 19 },
+            { x: "2020-08-10", y: 82 },
+            { x: "2020-08-11", y: 63 },
+            { x: "2020-08-12", y: 39 },
+            { x: "2020-08-14", y: 03 },
+            { x: "2020-08-15", y: 56 },
+            { x: "2020-08-19", y: 17 },
+            { x: "2020-08-21", y: 80 },
+            { x: "2020-08-22", y: 75 },
             { x: "2020-08-23", y: 50 },
+            { x: "2020-08-24", y: 99 },
+            { x: "2020-08-28", y: 83 },
+            { x: "2020-08-29", y: 48 },
         ]
         let xKiloData = [
             { x: "2020-08-2", y: 53 },
-            { x: "2020-08-25", y: 31 },
-            { x: "2020-08-18", y: 54 },
-            { x: "2020-08-16", y: 59 },
-            { x: "2020-08-8", y: 90 },
-            { x: "2020-08-6", y: 68 },
-            { x: "2020-08-12", y: 15 },
-            { x: "2020-08-20", y: 73 },
-            { x: "2020-08-14", y: 7 },
             { x: "2020-08-5", y: 53 },
+            { x: "2020-08-6", y: 68 },
+            { x: "2020-08-8", y: 90 },
+            { x: "2020-08-12", y: 15 },
+            { x: "2020-08-14", y: 7 },
+            { x: "2020-08-15", y: 11 },
+            { x: "2020-08-16", y: 59 },
+            { x: "2020-08-18", y: 54 },
             { x: "2020-08-19", y: 56 },
+            { x: "2020-08-20", y: 73 },
+            { x: "2020-08-25", y: 31 },
             { x: "2020-08-26", y: 47 },
             { x: "2020-08-28", y: 44 },
-            { x: "2020-08-15", y: 11 }]
+        ]
+
+        let xDrivingData = [
+            { x: "2020-08-2", y: 5 },
+            { x: "2020-08-5", y: 58 },
+            { x: "2020-08-6", y: 62 },
+            { x: "2020-08-8", y: 60 },
+            { x: "2020-08-12", y: 15 },
+            { x: "2020-08-14", y: 7 },
+            { x: "2020-08-15", y: 11 },
+            { x: "2020-08-16", y: 49 },
+            { x: "2020-08-18", y: 52 },
+            { x: "2020-08-19", y: 56 },
+            { x: "2020-08-20", y: 76 },
+            { x: "2020-08-25", y: 32 },
+            { x: "2020-08-26", y: 48 },
+            { x: "2020-08-28", y: 45 },
+        ]
+
+        document.getElementById('TotalAvrWeight').innerText = "Total data vikt/tur: " + calculateAvr(xKiloData, xKiloData.length) + " kg"
+
         var timeFormat = 'YYYY-MM-DD';
+        let headerText = "Detaljerad rapport förare: Kalle Kula";
         var config = {
-            type: 'bar',
+            type: 'line',
             data: {
                 datasets: [
                     {
-                        label: "Antal kunder",
+                        label: calculateAvr(xCustomerData, 1),
+                        /*label: "Antal kunder",*/
                         data: xCustomerData,
+                        borderColor: "#3e95cd",
                         fill: false,
-                        backgroundColor: 'red'
+                        cubicInterpolationMode: 'monotone'
                     },
                     {
                         label: "Antal kilo",
                         data: xKiloData,
+                        borderColor: "#8e5ea2",
                         fill: false,
-                        backgroundColor: 'blue'
+                        cubicInterpolationMode: 'monotone'
                     },
                     {
-                        /*type: 'line',*/
+                        type: 'line',
                         label: "Kördistans",
-                        data: xKiloData,
+                        data: xDrivingData,
+                        borderColor: "#3cba9f",
                         fill: false,
-                        backgroundColor: 'green'
+                        cubicInterpolationMode: 'monotone'
                     },
                 ]
             },
@@ -128,7 +174,7 @@
                 responsive: true,
                 title: {
                     display: true,
-                    text: "Antal kunder, körsträcka och kilo"
+                    text: headerText
                 },
                 scales: {
                     bounds: 'data',

@@ -14,6 +14,10 @@ namespace CargoSupport.Helpers
         public QuinyxHelper()
         {
             _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
+        }
+
+        public async Task PopulateWithWorkersToday()
+        {
             var nowDateTime = DateTime.Now.TimeOfDay;
             _currentWorkers = new List<QuinyxWorkerModel> {
                 new QuinyxWorkerModel
@@ -34,36 +38,36 @@ namespace CargoSupport.Helpers
                 EndShiftTime = DateTime.Now.AddHours(3).TimeOfDay,
                 TotalWeightThisWeek = 55
             },
-            //  new QuinyxWorkerModel
-            //{
-            //    FirstName = "Stefan",
-            //    LastName = "Löfven",
-            //    QuinyxId = 3,
-            //    StartShiftTime = DateTime.Now.AddHours(2).TimeOfDay,
-            //    EndShiftTime = DateTime.Now.AddHours(4).TimeOfDay,
-            //    TotalWeightThisWeek = 600
-            //},
-            //  new QuinyxWorkerModel
-            //{
-            //    FirstName = "Annie",
-            //    LastName = "Lööf",
-            //    QuinyxId = 4,
-            //    StartShiftTime = DateTime.Now.AddHours(1).TimeOfDay,
-            //    EndShiftTime = DateTime.Now.AddHours(3).TimeOfDay,
-            //    TotalWeightThisWeek = 200
-            //},
-            //  new QuinyxWorkerModel
-            //{
-            //    FirstName = "Ulf",
-            //    LastName = "Kristersson",
-            //    QuinyxId = 5,
-            //    StartShiftTime = DateTime.Now.AddHours(7).TimeOfDay,
-            //    EndShiftTime = DateTime.Now.AddHours(7).TimeOfDay,
-            //    TotalWeightThisWeek = 55
-            //},
+              new QuinyxWorkerModel
+            {
+                FirstName = "Stefan",
+                LastName = "Löfven",
+                QuinyxId = 3,
+                StartShiftTime = DateTime.Now.AddHours(2).TimeOfDay,
+                EndShiftTime = DateTime.Now.AddHours(4).TimeOfDay,
+                TotalWeightThisWeek = 600
+            },
+              new QuinyxWorkerModel
+            {
+                FirstName = "Annie",
+                LastName = "Lööf",
+                QuinyxId = 4,
+                StartShiftTime = DateTime.Now.AddHours(1).TimeOfDay,
+                EndShiftTime = DateTime.Now.AddHours(3).TimeOfDay,
+                TotalWeightThisWeek = 200
+            },
+              new QuinyxWorkerModel
+            {
+                FirstName = "Ulf",
+                LastName = "Kristersson",
+                QuinyxId = 5,
+                StartShiftTime = DateTime.Now.AddHours(7).TimeOfDay,
+                EndShiftTime = DateTime.Now.AddHours(7).TimeOfDay,
+                TotalWeightThisWeek = 55
+            },
             };
 
-            _dbHelper.InsertMultipleRecords(Constants.MongoDb.QuinyxWorkerTableName, _currentWorkers).Wait();
+            await _dbHelper.InsertMultipleRecords(Constants.MongoDb.QuinyxWorkerTableName, _currentWorkers);
         }
 
         public async Task<List<QuinyxWorkerModel>> GetAllWorkersWorkingTodaySorted()

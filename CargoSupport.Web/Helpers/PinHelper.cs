@@ -92,6 +92,13 @@ namespace CargoSupport.Helpers
         {
             var allDriversForToday = await _dbHelper.GetAllDriversForTodaySorted(Constants.MongoDb.QuinyxWorkerTableName);
 
+            if (allDriversForToday.Count == 0)
+            {
+                var qh = new QuinyxHelper();
+                await qh.PopulateWithWorkersToday();
+                allDriversForToday = await _dbHelper.GetAllDriversForTodaySorted(Constants.MongoDb.QuinyxWorkerTableName);
+            }
+
             for (int i = 0; i < allRoutesForToday.Count; i++)
             {
                 if (i < allDriversForToday.Count)

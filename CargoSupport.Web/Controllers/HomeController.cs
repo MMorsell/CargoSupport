@@ -31,9 +31,14 @@ namespace CargoSupport.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<PinRouteModel> todaysRoutes = await _dbHelper.GetAllRecords<PinRouteModel>(Constants.MongoDb.OutputScreenTableName);
-            ViewBag.DataTable = JsonSerializer.Serialize(todaysRoutes);
-            return View(todaysRoutes);
+            List<PinRouteModel> allRoutes = await _dbHelper.GetAllRecords<PinRouteModel>(Constants.MongoDb.OutputScreenTableName);
+            if (allRoutes.Count == 0)
+            {
+                var ph = new PinHelper();
+                ph.RetrieveRoutesForToday();
+            }
+            ViewBag.DataTable = JsonSerializer.Serialize(allRoutes);
+            return View(allRoutes);
         }
 
         public IActionResult Privacy()
