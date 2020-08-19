@@ -26,6 +26,9 @@ namespace CargoSupport.Helpers
                     EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
                     NumberOfColdBoxes = 5,
                     NumberOfFrozenBoxes = 50,
+                    NumberOfCustomers = 33,
+                    Weight = 66,
+                    Distance = 256
                 },
                 new PinRouteModel
                 {
@@ -34,6 +37,9 @@ namespace CargoSupport.Helpers
                     EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
                     NumberOfColdBoxes = 5,
                     NumberOfFrozenBoxes = 50,
+                    NumberOfCustomers = 15,
+                    Weight = 67,
+                    Distance = 221
                 },
                 new PinRouteModel(DateTime.Now.AddDays(-2))
                 {
@@ -42,6 +48,9 @@ namespace CargoSupport.Helpers
                     EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
                     NumberOfColdBoxes = 5,
                     NumberOfFrozenBoxes = 50,
+                    NumberOfCustomers = 55,
+                    Weight = 15,
+                    Distance = 778
                 },
                 new PinRouteModel(DateTime.Now.AddDays(-2))
                 {
@@ -50,6 +59,9 @@ namespace CargoSupport.Helpers
                     EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
                     NumberOfColdBoxes = 5,
                     NumberOfFrozenBoxes = 50,
+                    NumberOfCustomers = 25,
+                    Weight = 678,
+                    Distance = 100
                 },
                 new PinRouteModel(DateTime.Now.AddDays(-1))
                 {
@@ -58,6 +70,9 @@ namespace CargoSupport.Helpers
                     EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
                     NumberOfColdBoxes = 5,
                     NumberOfFrozenBoxes = 50,
+                    NumberOfCustomers = 21,
+                    Weight = 54,
+                    Distance = 200
                 },
                 new PinRouteModel(DateTime.Now.AddDays(-7))
                 {
@@ -66,6 +81,9 @@ namespace CargoSupport.Helpers
                     EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
                     NumberOfColdBoxes = 5,
                     NumberOfFrozenBoxes = 50,
+                    NumberOfCustomers = 45,
+                    Weight = 552,
+                    Distance = 420
                 },
                 new PinRouteModel(DateTime.Now.AddDays(-9))
                 {
@@ -74,6 +92,9 @@ namespace CargoSupport.Helpers
                     EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
                     NumberOfColdBoxes = 5,
                     NumberOfFrozenBoxes = 50,
+                    NumberOfCustomers = 15,
+                    Weight = 226,
+                    Distance = 300
                 },
                 new PinRouteModel(DateTime.Now.AddDays(-11))
                 {
@@ -82,6 +103,9 @@ namespace CargoSupport.Helpers
                     EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
                     NumberOfColdBoxes = 5,
                     NumberOfFrozenBoxes = 50,
+                    NumberOfCustomers = 32,
+                    Weight = 223,
+                    Distance = 100
                 }
             };
 

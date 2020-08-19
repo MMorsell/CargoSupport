@@ -15,15 +15,20 @@ namespace CargoSupport.Web.Controllers
     {
         private readonly ILogger<AnalyzeController> _logger;
         private readonly MongoDbHelper _dbHelper;
+        private readonly QuinyxHelper _qh;
 
         public AnalyzeController(ILogger<AnalyzeController> logger)
         {
             _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
+            _qh = new QuinyxHelper();
             _logger = logger;
         }
 
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
+            List<PinRouteModel> allRoutes = await _dbHelper.GetAllRecords<PinRouteModel>(Constants.MongoDb.OutputScreenTableName);
+            var analyzeModels = Helpers.DataConversionHelper.ConvertPinRouteModelToAnalyzeModel(allRoutes);
+            ViewBag.DataTable = JsonSerializer.Serialize(analyzeModels);
             return View();
         }
 

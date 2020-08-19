@@ -32,6 +32,9 @@ namespace CargoSupport.Models
 
         public int NumberOfColdBoxes { get; set; }
         public int NumberOfFrozenBoxes { get; set; }
+        public double Weight { get; set; }
+        public double Distance { get; set; }
+        public double NumberOfCustomers { get; set; }
         public bool LoadingIsDone { get; set; } = false;
         public string PreRideAnnotation { get; set; }
         public string PostRideAnnotation { get; set; }
