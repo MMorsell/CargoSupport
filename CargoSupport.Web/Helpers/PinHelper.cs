@@ -8,7 +8,7 @@ namespace CargoSupport.Helpers
 {
     public class PinHelper
     {
-        private MongoDbHelper _dbHelper;
+        private readonly MongoDbHelper _dbHelper;
 
         public PinHelper()
         {

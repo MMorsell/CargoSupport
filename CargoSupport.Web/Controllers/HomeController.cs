@@ -35,7 +35,7 @@ namespace CargoSupport.Web.Controllers
             if (allRoutes.Count == 0)
             {
                 var ph = new PinHelper();
-                ph.RetrieveRoutesForToday();
+                await ph.RetrieveRoutesForToday();
             }
             ViewBag.DataTable = JsonSerializer.Serialize(allRoutes);
             return View(allRoutes);

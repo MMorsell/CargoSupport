@@ -3,51 +3,135 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <div id="grid-wrapper" style="width:100%; height: 100%">
-        <div id="myGrid" style="height: 100vw; width: 100vw;" class="ag-theme-alpine"></div>
+<div id="bodyCont">
+
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            <h2>Rutter</h2>
+
+            <div ng-app="myApp" ng-controller="dataController">
+
+                <button id="updateButton" ng-click="refreshData()">Uppdatera manuellt</button>
+                <hr />
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center">Rutt</th>
+                            <th style="text-align:center">Starttid</th>
+                            <th style="text-align:center">Sluttid</th>
+                            <th style="text-align:center">Distans</th>
+                            <th style="text-align:center">Antal kunder</th>
+                            <th style="text-align:center">Chaufför</th>
+                            <th style="text-align:center">Bil lastad</th>
+                            <th style="text-align:center">Antal kolli</th>
+                        </tr>
+                    </thead>
+                    <tr ng-repeat="x in names">
+                        <td style="text-align:center"><a href="Routes/Maps/{{x.id}}">{{ x.routeName }}</a></td>
+                        <td style="text-align:center">{{ x.startTime }}</td>
+                        <td style="text-align:center">{{ x.stopTime }}</td>
+                        <td style="text-align:center">{{ x.distance }}</td>
+                        <td style="text-align:center">{{ x.numberOfCustomers }}</td>
+                        <td style="text-align:center">{{ x.driver.name }}</td>
+                        <td style="text-align:center"><input type="checkbox" ng-change="updateBooleans({{x.id}}, this.x)" ng-model="x.truckLoaded"></td>
+                        <td style="text-align:center"><input type="number" ng-change="updateBooleans({{x.id}}, this.x)" ng-model="x.numberOfParcels" min="0" max="1000"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
+@*<div class="container">
+        <div class="row">&nbsp;</div>
+        <div class="row">
+            <div class="col-6">&nbsp;</div>
+            <div class="col-6">
+                User..........<input type="text" id="userInput" />
+                <br />
+                Message...<input type="text" id="messageInput" />
+                <input type="button" id="sendButton" value="Send Message" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">&nbsp;</div>
+            <div class="col-6">
+                <ul id="messagesList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <div id="grid-wrapper" style="width:100%; height: 100%">
+            <div id="myGrid" style="height: 100vw; width: 100vw;" class="ag-theme-alpine"></div>
+        </div>
+    </div>*@
+
 @section Scripts
 {
-    <script type="text/javascript" charset="utf-8">
+    <script src="~/lib/aspnet/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/SignalR.js"></script>
+    <script>
 
-        var allData = @Html.Raw(ViewBag.DataTable)
-            console.log(allData);
-        // specify the columns
-        let columnDefs = [
-            { headerName: "Id", field: "Id", sortable: true, filter: true, checkboxSelection: true },
-            { headerName: "RouteName", field: "RouteName", sortable: true, filter: true },
-            { headerName: "Driver", field: "Driver.FullName", sortable: true, filter: true },
-            { headerName: "EstimatedRouteStart", field: "EstimatedRouteStartString", sortable: true, filter: true },
-            { headerName: "EstimatedRouteEnd", field: "EstimatedRouteEndString", sortable: true, filter: true },
-            {
-                headerName: "LoadingIsDone",
-                field: "LoadingIsDone",
-                sortable: true,
-                filter: true,
-                cellClassRules: {
-                    'rag-green': function (params) { return params.value === true },
-                    'rag-red': function (params) { return params.value === false },
-                },
-            },
-            { headerName: "NumberOfColdBoxes", field: "NumberOfColdBoxes", sortable: true, filter: true },
-            { headerName: "NumberOfFrozenBoxes", field: "NumberOfFrozenBoxes", sortable: true, filter: true },
-            { headerName: "PreRideAnnotation", field: "PreRideAnnotation", sortable: true, filter: true },
-            { headerName: "PostRideAnnotation", field: "PostRideAnnotation", sortable: true, filter: true },
-        ];
+        @*async function updateDriver(id) {
+            let DriverName = document.getElementById('DriverName_' + id).value;
 
-        // let the grid know which columns and what data to use
-        let gridOptions = {
-            columnDefs: columnDefs,
-            rowData: allData
-        };
+            let response = await fetch('@{CargoSupport.Constants.MongoDb.Host}' + ':/Routes/EditDriver/' + id + "?Name=" + DriverName, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
 
-        // lookup the container we want the Grid to use
-        var eGridDiv = document.querySelector('#myGrid');
-
-        // create the grid passing in the div to use together with the columns & data we want to use
-        new agGrid.Grid(eGridDiv, gridOptions);
+            console.log(response);
+        }*@
     </script>
+
+    @*<script src="~/lib/aspnet/signalr/dist/browser/signalr.js"></script>
+        <script src="~/js/chat.js"></script>
+
+        <script type="text/javascript" charset="utf-8">
+
+            var allData = @Html.Raw(ViewBag.DataTable)
+                console.log(allData);
+            // specify the columns
+            let columnDefs = [
+                { headerName: "Id", field: "Id", sortable: true, filter: true, checkboxSelection: true },
+                { headerName: "RouteName", field: "RouteName", sortable: true, filter: true },
+                { headerName: "Driver", field: "Driver.FullName", sortable: true, filter: true },
+                { headerName: "EstimatedRouteStart", field: "EstimatedRouteStartString", sortable: true, filter: true },
+                { headerName: "EstimatedRouteEnd", field: "EstimatedRouteEndString", sortable: true, filter: true },
+                {
+                    headerName: "LoadingIsDone",
+                    field: "LoadingIsDone",
+                    sortable: true,
+                    filter: true,
+                    cellClassRules: {
+                        'rag-green': function (params) { return params.value === true },
+                        'rag-red': function (params) { return params.value === false },
+                    },
+                },
+                { headerName: "NumberOfColdBoxes", field: "NumberOfColdBoxes", sortable: true, filter: true },
+                { headerName: "NumberOfFrozenBoxes", field: "NumberOfFrozenBoxes", sortable: true, filter: true },
+                { headerName: "PreRideAnnotation", field: "PreRideAnnotation", sortable: true, filter: true },
+                { headerName: "PostRideAnnotation", field: "PostRideAnnotation", sortable: true, filter: true },
+            ];
+
+            // let the grid know which columns and what data to use
+            let gridOptions = {
+                columnDefs: columnDefs,
+                rowData: allData
+            };
+
+            // lookup the container we want the Grid to use
+            var eGridDiv = document.querySelector('#myGrid');
+
+            // create the grid passing in the div to use together with the columns & data we want to use
+            new agGrid.Grid(eGridDiv, gridOptions);
+        </script>*@
 }

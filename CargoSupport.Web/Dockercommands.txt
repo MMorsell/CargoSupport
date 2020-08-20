@@ -2,9 +2,9 @@
 
 #webapp
 
-docker build -f "CargoSupport.Web/Dockerfile" -t cargosupport:1.2 .
+docker build -f "CargoSupport.Web/Dockerfile" -t cargosupport:1.4 .
 
-docker run -p 80:80 cargosupport:1.2
+docker run -p 80:80 -d cargosupport:1.4
 
 
 

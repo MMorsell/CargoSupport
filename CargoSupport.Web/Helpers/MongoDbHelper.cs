@@ -10,7 +10,7 @@ namespace CargoSupport.Helpers
 {
     public class MongoDbHelper
     {
-        private IMongoDatabase _database { get; set; }
+        private readonly IMongoDatabase _database;
 
         public MongoDbHelper(string databaseName)
         {
