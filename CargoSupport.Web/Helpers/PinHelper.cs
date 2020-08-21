@@ -1,6 +1,12 @@
-﻿using CargoSupport.Models;
+﻿using CargoSupport.Web.Helpers;
+using CargoSupport.Web.Models.DatabaseModels;
+using CargoSupport.Web.Models.PinModels;
+using CargoSupport.Web.Models.QuinyxModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,119 +15,55 @@ namespace CargoSupport.Helpers
     public class PinHelper
     {
         private readonly MongoDbHelper _dbHelper;
+        private readonly ApiRequestHelper _apiRequestHelper;
+        private readonly QuinyxHelper _quinyxHelper;
 
         public PinHelper()
         {
             _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
+            _apiRequestHelper = new ApiRequestHelper();
+            _quinyxHelper = new QuinyxHelper();
         }
 
-        public async Task RetrieveRoutesForToday()
+        /// <summary>
+        /// Returns all PinRouteModels for the orderId specified
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public async Task<List<PinRouteModel>> RetrieveRoutesFromActualPin(int orderId)
         {
-            var currentRoutes = new List<PinRouteModel>
-            {
-                new PinRouteModel
-                {
-                    RouteName = "T01",
-                    EstimatedRouteStart = DateTime.Now.TimeOfDay,
-                    EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
-                    NumberOfColdBoxes = 5,
-                    NumberOfFrozenBoxes = 50,
-                    NumberOfCustomers = 33,
-                    Weight = 66,
-                    Distance = 256
-                },
-                new PinRouteModel
-                {
-                    RouteName = "T02",
-                    EstimatedRouteStart = DateTime.Now.TimeOfDay,
-                    EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
-                    NumberOfColdBoxes = 5,
-                    NumberOfFrozenBoxes = 50,
-                    NumberOfCustomers = 15,
-                    Weight = 67,
-                    Distance = 221
-                },
-                new PinRouteModel(DateTime.Now.AddDays(-2))
-                {
-                    RouteName = "T03",
-                    EstimatedRouteStart = DateTime.Now.TimeOfDay,
-                    EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
-                    NumberOfColdBoxes = 5,
-                    NumberOfFrozenBoxes = 50,
-                    NumberOfCustomers = 55,
-                    Weight = 15,
-                    Distance = 778
-                },
-                new PinRouteModel(DateTime.Now.AddDays(-2))
-                {
-                    RouteName = "T04",
-                    EstimatedRouteStart = DateTime.Now.TimeOfDay,
-                    EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
-                    NumberOfColdBoxes = 5,
-                    NumberOfFrozenBoxes = 50,
-                    NumberOfCustomers = 25,
-                    Weight = 678,
-                    Distance = 100
-                },
-                new PinRouteModel(DateTime.Now.AddDays(-1))
-                {
-                    RouteName = "T05",
-                    EstimatedRouteStart = DateTime.Now.TimeOfDay,
-                    EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
-                    NumberOfColdBoxes = 5,
-                    NumberOfFrozenBoxes = 50,
-                    NumberOfCustomers = 21,
-                    Weight = 54,
-                    Distance = 200
-                },
-                new PinRouteModel(DateTime.Now.AddDays(-7))
-                {
-                    RouteName = "T06",
-                    EstimatedRouteStart = DateTime.Now.TimeOfDay,
-                    EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
-                    NumberOfColdBoxes = 5,
-                    NumberOfFrozenBoxes = 50,
-                    NumberOfCustomers = 45,
-                    Weight = 552,
-                    Distance = 420
-                },
-                new PinRouteModel(DateTime.Now.AddDays(-9))
-                {
-                    RouteName = "T07",
-                    EstimatedRouteStart = DateTime.Now.TimeOfDay,
-                    EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
-                    NumberOfColdBoxes = 5,
-                    NumberOfFrozenBoxes = 50,
-                    NumberOfCustomers = 15,
-                    Weight = 226,
-                    Distance = 300
-                },
-                new PinRouteModel(DateTime.Now.AddDays(-11))
-                {
-                    RouteName = "T08",
-                    EstimatedRouteStart = DateTime.Now.TimeOfDay,
-                    EstimatedRouteEnd = DateTime.Now.AddHours(5).TimeOfDay,
-                    NumberOfColdBoxes = 5,
-                    NumberOfFrozenBoxes = 50,
-                    NumberOfCustomers = 32,
-                    Weight = 223,
-                    Distance = 100
-                }
-            };
+            var orderRecord = await _apiRequestHelper.GetSingleResult<OrderRecord>(Constants.PinApi.GetOrder(orderId));
 
-            await PopulateAllRoutesWithDrivers(currentRoutes);
+            var routeResult = await _apiRequestHelper.GetRoutesBatchParalellAsync(orderRecord.routes.Select(r => r.RouteId).ToList());
+
+            Parallel.ForEach(routeResult, (route) =>
+            {
+                route.CalculateProperties();
+            });
+
+            return routeResult;
         }
 
-        public async Task PopulateAllRoutesWithDrivers(List<PinRouteModel> allRoutesForToday)
+        public async Task PopulateRoutesWithDriversAndSaveResultToDatabase(List<PinRouteModel> pinRouteModels)
         {
-            var allDriversForToday = await _dbHelper.GetAllDriversForTodaySorted(Constants.MongoDb.QuinyxWorkerTableName);
-
-            if (allDriversForToday.Count == 0)
+            var dbModelCollection = new List<DataModel>();
+            for (int i = 0; i < pinRouteModels.Count; i++)
             {
-                var qh = new QuinyxHelper();
-                await qh.PopulateWithWorkersToday();
-                allDriversForToday = await _dbHelper.GetAllDriversForTodaySorted(Constants.MongoDb.QuinyxWorkerTableName);
+                dbModelCollection.Add(new DataModel
+                {
+                    PinRouteModel = pinRouteModels[i],
+                    DateOfRoute = pinRouteModels[i].ScheduledRouteStart
+                });
             }
+            await PopulateAllRoutesWithDriversAndSave(dbModelCollection);
+        }
+
+        private async Task PopulateAllRoutesWithDriversAndSave(List<DataModel> allRoutesForToday)
+        {
+            allRoutesForToday = allRoutesForToday.OrderBy(r => r.PinRouteModel.ScheduledRouteStart).ToList();
+            List<QuinyxModel> allDriversForToday = _quinyxHelper.GetAllDriversSorted(DateTime.Now);
+
+            allDriversForToday = _quinyxHelper.GetExtraInformationForDrivers(allDriversForToday);
 
             for (int i = 0; i < allRoutesForToday.Count; i++)
             {
@@ -136,6 +78,11 @@ namespace CargoSupport.Helpers
             }
 
             await _dbHelper.InsertMultipleRecords(Constants.MongoDb.OutputScreenTableName, allRoutesForToday);
+
+            foreach (var route in allRoutesForToday)
+            {
+                Console.WriteLine($"{route.PinRouteModel.RouteName} {route.PinRouteModel.ScheduledRouteStart} - {route.Driver.begTime}/{route.Driver.endTime}");
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CargoSupport.Web.Models.Public
+namespace CargoSupport.Web.Models.PublicModels
 {
     public class Public_Transport
     {

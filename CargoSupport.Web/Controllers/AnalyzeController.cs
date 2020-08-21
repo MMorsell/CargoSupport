@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CargoSupport.Helpers;
-using CargoSupport.Models;
+using CargoSupport.Web.Models.DatabaseModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -26,16 +26,16 @@ namespace CargoSupport.Web.Controllers
 
         public async Task<ActionResult> Index()
         {
-            List<PinRouteModel> allRoutes = await _dbHelper.GetAllRecords<PinRouteModel>(Constants.MongoDb.OutputScreenTableName);
-            var analyzeModels = Helpers.DataConversionHelper.ConvertPinRouteModelToAnalyzeModel(allRoutes);
+            List<DataModel> allRoutes = await _dbHelper.GetAllRecords<DataModel>(Constants.MongoDb.OutputScreenTableName);
+            var analyzeModels = CargoSupport.Helpers.DataConversionHelper.ConvertPinRouteModelToAnalyzeModel(allRoutes);
             ViewBag.DataTable = JsonSerializer.Serialize(analyzeModels);
             return View();
         }
 
         public async Task<IActionResult> AllData()
         {
-            List<PinRouteModel> allRoutes = await _dbHelper.GetAllRecords<PinRouteModel>(Constants.MongoDb.OutputScreenTableName);
-            var analyzeModels = Helpers.DataConversionHelper.ConvertPinRouteModelToAnalyzeModel(allRoutes);
+            List<DataModel> allRoutes = await _dbHelper.GetAllRecords<DataModel>(Constants.MongoDb.OutputScreenTableName);
+            var analyzeModels = CargoSupport.Helpers.DataConversionHelper.ConvertPinRouteModelToAnalyzeModel(allRoutes);
             ViewBag.DataTable = JsonSerializer.Serialize(allRoutes);
             return View(allRoutes);
         }

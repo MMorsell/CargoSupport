@@ -1,4 +1,5 @@
-﻿using CargoSupport.Models;
+﻿using CargoSupport.Web.Models.DatabaseModels;
+using CargoSupport.Web.Models.QuinyxModels;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -36,30 +37,15 @@ namespace CargoSupport.Helpers
             return result.ToList();
         }
 
-        public async Task<List<PinRouteModel>> GetAllRoutesToday(string tableName)
+        public async Task<List<DataModel>> GetAllRoutesToday(string tableName)
         {
-            var collection = _database.GetCollection<PinRouteModel>(tableName);
+            var collection = _database.GetCollection<DataModel>(tableName);
 
             var today = DateTime.Today; //2017-03-31 00:00:00.000
 
-            var filterBuilder = Builders<PinRouteModel>.Filter;
-            var filter = filterBuilder.Gte(x => x.CurrentDate, today);
+            var filterBuilder = Builders<DataModel>.Filter;
+            var filter = filterBuilder.Gte(x => x.DateOfRoute, today);
             return await collection.FindAsync(filter).Result.ToListAsync();
-        }
-
-        public async Task<List<QuinyxWorkerModel>> GetAllDriversForTodaySorted(string tableName)
-        {
-            var collection = _database.GetCollection<QuinyxWorkerModel>(tableName);
-
-            var today = DateTime.Today; //2017-03-31 00:00:00.000
-
-            var filterBuilder = Builders<QuinyxWorkerModel>.Filter;
-            var filter = filterBuilder.Gte(x => x.CurrentDate, today);
-            var result = await collection.FindAsync(filter).Result.ToListAsync();
-
-            result = result.OrderBy(e => e.StartShiftTime).ThenBy(e => e.EndShiftTime).ToList();
-
-            return result;
         }
 
         public async Task<T> GetRecordById<T>(string tableName, Guid guid)
@@ -84,9 +70,9 @@ namespace CargoSupport.Helpers
                 });
         }
 
-        public async Task UpsertMultiplePinRouteModelRecords(string tableName, List<PinRouteModel> pinRouteModels)
+        public async Task UpsertMultiplePinRouteModelRecords(string tableName, List<DataModel> pinRouteModels)
         {
-            var collection = _database.GetCollection<PinRouteModel>(tableName);
+            var collection = _database.GetCollection<DataModel>(tableName);
 
             for (int i = 0; i < pinRouteModels.Count; i++)
             {

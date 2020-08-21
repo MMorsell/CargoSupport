@@ -1,5 +1,5 @@
 ﻿using CargoSupport.Helpers;
-using CargoSupport.Models;
+using CargoSupport.Web.Models.DatabaseModels;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace CargoSupport.Web.IJobs
         {
             try
             {
-                await new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName).BackupData<PinRouteModel>(CargoSupport.Constants.MongoDb.OutputScreenTableName, CargoSupport.Constants.MongoDb.BackupCollectionName);
+                await new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName).BackupData<DataModel>(CargoSupport.Constants.MongoDb.OutputScreenTableName, CargoSupport.Constants.MongoDb.BackupCollectionName);
             }
             catch (Exception ex)
             {

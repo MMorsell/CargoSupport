@@ -1,22 +1,24 @@
-﻿using CargoSupport.Models;
+﻿using CargoSupport.Enums;
+using CargoSupport.Models;
+using CargoSupport.Web.Models.DatabaseModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CargoSupport.Web.Helpers
+namespace CargoSupport.Helpers
 {
     public static class DataConversionHelper
     {
-        public static List<AnalyzeModel> ConvertPinRouteModelToAnalyzeModel(List<PinRouteModel> pinRouteModels)
+        public static List<AnalyzeModel> ConvertPinRouteModelToAnalyzeModel(List<DataModel> dataModel)
         {
             var analyzeModels = new List<AnalyzeModel>();
 
-            foreach (var pinRouteModel in pinRouteModels)
+            foreach (var pinRouteModel in dataModel)
             {
                 if (pinRouteModel.Driver != null)
                 {
-                    var existingRecordToGroupWith = analyzeModels.FirstOrDefault(prm => prm.Driver.QuinyxId.Equals(pinRouteModel.Driver.QuinyxId));
+                    var existingRecordToGroupWith = analyzeModels.FirstOrDefault(prm => prm.Driver.BadgeNo.Equals(pinRouteModel.Driver.BadgeNo));
 
                     if (existingRecordToGroupWith == null)
                     {
@@ -35,49 +37,27 @@ namespace CargoSupport.Web.Helpers
             }
             return analyzeModels;
         }
-    }
 
-    public class AnalyzeModel
-    {
-        public AnalyzeModel(PinRouteModel pinRouteModel)
+        public static QuinyxRole GetQuinyxEnum(string input)
         {
-            _routesForThisDriver = new List<PinRouteModel>()
+            if (input.Trim().Equals("OFO", StringComparison.CurrentCultureIgnoreCase))
             {
-                pinRouteModel
-            };
-            Driver = pinRouteModel.Driver;
-        }
-
-        private List<PinRouteModel> _routesForThisDriver { get; set; }
-        public QuinyxWorkerModel Driver { get; set; }
-
-        public string FullName { get; set; }
-        public double WeekAvrWeight { get; set; }
-        public double WeekAvrCustomers { get; set; }
-        public double WeekAvrDistance { get; set; }
-
-        public void AddPinRouteModelIfItHasNotBeenAdded(PinRouteModel pinRouteModel)
-        {
-            if (_routesForThisDriver.FirstOrDefault(a => a.Id.Equals(pinRouteModel.Id)) == null)
-            {
-                _routesForThisDriver.Add(pinRouteModel);
+                return QuinyxRole.OFO;
             }
-        }
+            if (input.Trim().Equals("Transportledare", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return QuinyxRole.Transportledare;
+            }
+            if (input.Trim().Equals("AM Eftermiddag", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return QuinyxRole.AM_Eftermiddag;
+            }
+            if (input.Trim().Equals("AM Förmiddag", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return QuinyxRole.AM_Förmiddag;
+            }
 
-        public void PupulatePublicProperties()
-        {
-            var from = DateTime.Now.AddDays(-8);
-            var to = DateTime.Now.AddDays(1);
-            List<PinRouteModel> matchingRoutes = _routesForThisDriver
-                .Select(route => route)
-                .Where(r => r.CurrentDate > DateTime.Now.AddDays(-8) &&
-                r.CurrentDate < DateTime.Now.AddDays(1)).ToList();
-
-            FullName = Driver.FullName;
-            WeekAvrWeight = matchingRoutes.Average(r => r.Weight);
-            WeekAvrCustomers = matchingRoutes.Average(r => r.NumberOfCustomers);
-            WeekAvrDistance = matchingRoutes.Average(r => r.Distance);
-            Driver = null;
+            return QuinyxRole.Driver;
         }
     }
 }

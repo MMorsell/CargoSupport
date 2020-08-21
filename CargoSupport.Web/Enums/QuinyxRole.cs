@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 
 namespace CargoSupport.Enums
 {
-    public enum DeliveryGroup
+    public enum QuinyxRole
     {
-        Hämtas,
-        EHL
+        OFO,
+        Transportledare,
+        AM_Eftermiddag,
+        AM_Förmiddag,
+        Driver
     }
 }

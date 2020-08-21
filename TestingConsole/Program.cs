@@ -1,8 +1,10 @@
 ﻿using CargoSupport.Helpers;
 using CargoSupport.Constants;
 using System;
-using CargoSupport.Models;
 using System.Collections.Generic;
+using CargoSupport.Web.Models.PinModels;
+using CargoSupport.Web.Helpers;
+using System.Diagnostics;
 
 namespace TestingConsole
 {
@@ -11,19 +13,23 @@ namespace TestingConsole
         private static void Main(string[] args)
         {
             var _dbhelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
+            var ph = new PinHelper();
+            var _qnHelper = new QuinyxHelper();
 
-            for (int i = 0; i < 30; i++)
-            {
-                var random = new Random();
-                var val1 = random.Next(1, 30);
-                var random2 = new Random();
-                var val2 = random2.Next(1, 100);
-                Console.WriteLine(@$"{{ x: ""2020-08-{val1}"", y: {val2} }},");
-            }
+            //var sw = new Stopwatch();
+            //sw.Start();
+            //var drivers = _qnHelper.GetExtraInformationForDrivers(_qnHelper.GetDrivers(DateTime.Now.AddDays(-1), DateTime.Now));
+            //sw.Stop();
+            //Console.WriteLine(sw.Elapsed);
+            //foreach (var driver in drivers)
+            //{
+            //    Console.WriteLine($"{driver.ExtendedInformationModel.GivenName} {driver.ExtendedInformationModel.FamilyName} - {driver.ExtendedInformationModel.StaffCat} - {driver.ExtendedInformationModel.StaffCatName} - {driver.ExtendedInformationModel.Section} - {driver.ExtendedInformationModel.CostCentre} - {driver.ExtendedInformationModel.ReportingTo}");
+            //}
+
+            List<PinRouteModel> routes = ph.RetrieveRoutesFromActualPin(15637).Result;
+            ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes).Wait();
 
             ////_dbhelper.BackupData<PinRouteModel>(CargoSupport.Constants.MongoDb.OutputScreenTableName, CargoSupport.Constants.MongoDb.BackupCollectionName).Wait();
-            //var ph = new PinHelper();
-            //var _qnHelper = new QuinyxHelper();
             //ph.RetrieveRoutesForToday().Wait();
             //List<PinRouteModel> todaysRoutes = _dbhelper.GetAllRecords<PinRouteModel>(CargoSupport.Constants.MongoDb.OutputScreenTableName).Result;
 
