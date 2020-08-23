@@ -55,15 +55,13 @@ namespace CargoSupport.Helpers
                     DateOfRoute = pinRouteModels[i].ScheduledRouteStart
                 });
             }
-            await PopulateAllRoutesWithDriversAndSave(dbModelCollection);
+            await PopulateAllRoutesWithDriversAndSaveToDatabase(dbModelCollection, DateTime.Now.AddDays(1));
         }
 
-        private async Task PopulateAllRoutesWithDriversAndSave(List<DataModel> allRoutesForToday)
+        private async Task PopulateAllRoutesWithDriversAndSaveToDatabase(List<DataModel> allRoutesForToday, DateTime dateToGetDriversFrom)
         {
             allRoutesForToday = allRoutesForToday.OrderBy(r => r.PinRouteModel.ScheduledRouteStart).ToList();
-            List<QuinyxModel> allDriversForToday = _quinyxHelper.GetAllDriversSorted(DateTime.Now);
-
-            allDriversForToday = _quinyxHelper.GetExtraInformationForDrivers(allDriversForToday);
+            List<QuinyxModel> allDriversForToday = _quinyxHelper.GetAllDriversSorted(dateToGetDriversFrom);
 
             for (int i = 0; i < allRoutesForToday.Count; i++)
             {

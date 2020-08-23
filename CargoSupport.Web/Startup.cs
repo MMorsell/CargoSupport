@@ -14,6 +14,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
 using Quartz.Impl;
+using Microsoft.AspNetCore.Authentication.Negotiate;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CargoSupport.Web
 {
@@ -26,9 +29,13 @@ namespace CargoSupport.Web
 
         public IConfiguration Configuration { get; }
 
+        private readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+   .AddNegotiate();
             //TODO: Fix implementation of cookie auth
             //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             //    .AddCookie(options =>
@@ -38,7 +45,26 @@ namespace CargoSupport.Web
             services.AddControllersWithViews();
             services.AddSignalR();
 
+            services.AddHttpContextAccessor();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("https://localhost:32770",
+                                                          "http://127.0.0.1:5500");
+                                  });
+            });
+
             //services.AddSingleton(provider => GetScheduler().Result);
+
+            //services.AddAuthentication()
+            //    .AddCookie(options => {
+            //        options.LoginPath = "/Identity/Account/Login";
+            //        options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            //    })
+            //    .AddIdentityServerJwt();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,8 +86,10 @@ namespace CargoSupport.Web
 
             app.UseRouting();
 
-            //app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseEndpoints(endpoints =>
             {

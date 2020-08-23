@@ -1,33 +1,29 @@
-﻿using CargoSupport.Helpers;
-using CargoSupport.Constants;
-using System;
-using System.Collections.Generic;
-using CargoSupport.Web.Models.PinModels;
-using CargoSupport.Web.Helpers;
-using System.Diagnostics;
-
-namespace TestingConsole
+﻿namespace TestingConsole
 {
     internal class Program
     {
         private static void Main(string[] args)
         {
-            var _dbhelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
-            var ph = new PinHelper();
-            var _qnHelper = new QuinyxHelper();
+            //var _dbhelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
+            //var ph = new PinHelper();
+            //var _qnHelper = new QuinyxHelper();
 
             //var sw = new Stopwatch();
             //sw.Start();
-            //var drivers = _qnHelper.GetExtraInformationForDrivers(_qnHelper.GetDrivers(DateTime.Now.AddDays(-1), DateTime.Now));
+            ////List<QuinyxModel> allDriversForToday = _qnHelper.GetAllDriversSorted(DateTime.Now.AddDays(-2), false);
+
+            //List<PinRouteModel> routes = ph.RetrieveRoutesFromActualPin(15668).Result;
+            //ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes).Wait();
+            ////allDriversForToday = _qnHelper.GetExtraInformationForDrivers(allDriversForToday);
             //sw.Stop();
             //Console.WriteLine(sw.Elapsed);
+
+            //var drivers = _qnHelper.GetExtraInformationForDrivers(_qnHelper.GetDrivers(DateTime.Now.AddDays(-1), DateTime.Now));
+
             //foreach (var driver in drivers)
             //{
             //    Console.WriteLine($"{driver.ExtendedInformationModel.GivenName} {driver.ExtendedInformationModel.FamilyName} - {driver.ExtendedInformationModel.StaffCat} - {driver.ExtendedInformationModel.StaffCatName} - {driver.ExtendedInformationModel.Section} - {driver.ExtendedInformationModel.CostCentre} - {driver.ExtendedInformationModel.ReportingTo}");
             //}
-
-            List<PinRouteModel> routes = ph.RetrieveRoutesFromActualPin(15637).Result;
-            ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes).Wait();
 
             ////_dbhelper.BackupData<PinRouteModel>(CargoSupport.Constants.MongoDb.OutputScreenTableName, CargoSupport.Constants.MongoDb.BackupCollectionName).Wait();
             //ph.RetrieveRoutesForToday().Wait();

@@ -27,9 +27,13 @@ namespace CargoSupport.Web.Models.PinModels
         [JsonProperty("route_info")]
         public PinRouteInfoModel RouteInfoModel { get; set; }
 
+        [JsonProperty("order")]
+        public PinOrderInfoModel PinOrderInfoModel { get; set; }
+
         /*
          * Intergers
          */
+
         public double NumberOfCustomers { get; private set; }
 
         public double Weight { get; private set; }
@@ -53,7 +57,7 @@ namespace CargoSupport.Web.Models.PinModels
         public DateTime ScheduledRouteStart { get; set; }
 
         [JsonProperty("actual_start_time")]
-        public DateTime ActualRouteStart { get; set; }
+        public object ActualRouteStart { get; set; }
 
         public void CalculateProperties()
         {
@@ -62,6 +66,14 @@ namespace CargoSupport.Web.Models.PinModels
             int.TryParse(RouteInfoModel.DistanceInMeters, out int result);
             DistanceInMeters = result;
         }
+    }
+
+    public class PinOrderInfoModel
+    {
+        public string id { get; set; }
+        public string name { get; set; }
+        public string scheduled_date { get; set; }
+        public string delivery_group { get; set; }
     }
 
     public class PinRouteInfoModel
@@ -82,8 +94,9 @@ namespace CargoSupport.Web.Models.PinModels
         [JsonProperty("position_in_route")]
         public int PositionInRoute { get; set; }
 
+        public string tracking_number { get; set; }
+        public string vehicle_tags { get; set; }
         public string position_lng { get; set; }
-
         public string position_lat { get; set; }
 
         [JsonProperty("delivery_info")]
@@ -97,5 +110,8 @@ namespace CargoSupport.Web.Models.PinModels
         public string time_estimated { get; set; }
         public string time_handled { get; set; }
         public int weight { get; set; }
+        public int stop_time { get; set; }
+        public object actual_stop_time { get; set; }
+        public object age_verification { get; set; }
     }
 }

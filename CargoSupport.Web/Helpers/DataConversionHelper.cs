@@ -38,26 +38,22 @@ namespace CargoSupport.Helpers
             return analyzeModels;
         }
 
-        public static QuinyxRole GetQuinyxEnum(string input)
+        public static QuinyxRole GetQuinyxEnum(int categoryId)
         {
-            if (input.Trim().Equals("OFO", StringComparison.CurrentCultureIgnoreCase))
-            {
-                return QuinyxRole.OFO;
-            }
-            if (input.Trim().Equals("Transportledare", StringComparison.CurrentCultureIgnoreCase))
-            {
-                return QuinyxRole.Transportledare;
-            }
-            if (input.Trim().Equals("AM Eftermiddag", StringComparison.CurrentCultureIgnoreCase))
-            {
-                return QuinyxRole.AM_Eftermiddag;
-            }
-            if (input.Trim().Equals("AM Förmiddag", StringComparison.CurrentCultureIgnoreCase))
-            {
-                return QuinyxRole.AM_Förmiddag;
-            }
+            /*
+             * 226245 .Eftermiddag
+             * 226233 - .Förmiddag
+             */
 
-            return QuinyxRole.Driver;
+            if (categoryId.Equals(226245) ||
+                categoryId.Equals(226233))
+            {
+                return QuinyxRole.Driver;
+            }
+            else
+            {
+                return QuinyxRole.Other;
+            }
         }
     }
 }

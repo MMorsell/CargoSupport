@@ -8,7 +8,7 @@ namespace CargoSupport.Web.Models.QuinyxModels
 {
     public class QuinyxModel
     {
-        public int PersonId { get; set; }
+        public int Id { get; set; }
 
         public string BadgeNo { get; set; }
 
@@ -20,17 +20,31 @@ namespace CargoSupport.Web.Models.QuinyxModels
 
         public TimeSpan endTime { get; set; }
 
-        public string categoryName { get; set; }
+        public int CategoryId { get; set; }
+
+        public int Section { get; set; }
+
+        public string SectionName { get; set; }
 
         public decimal hours { get; set; }
 
-        public int costCentre { get; set; }
+        public int CostCentre { get; set; }
+
+        public int ManagerId { get; set; }
 
         public string GetDriverName()
         {
-            return "";
+            if (ExtendedInformationModel != null)
+            {
+                return $"{ExtendedInformationModel.GivenName} {ExtendedInformationModel.FamilyName}";
+            }
+            else
+            {
+                return "";
+            }
         }
 
         public ExtendedInformationModel ExtendedInformationModel { get; set; }
+        public string CategoryName { get; internal set; }
     }
 }
