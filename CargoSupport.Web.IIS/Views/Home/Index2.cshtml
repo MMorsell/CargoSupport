@@ -55,7 +55,7 @@
             console.log('Submitting form...');
             $.ajax({
                 type: 'POST',
-                url: 'https://localhost:44374/api/public/UpdateRecord',
+                url: 'http://81.235.179.124/api/public/UpdateRecord',
                 dataType: 'json',
                 contentType: dataType,
                 data: data,
@@ -88,7 +88,7 @@
             table = $('#example').DataTable({
                 pageLength: 100,
                 "ajax": {
-                    "url": "https://localhost:44374/api/public/GetStorage",
+                    "url": "http://81.235.179.124/api/public/GetStorage",
                     "dataSrc": function (response) {
                         dataR = response;
                     },

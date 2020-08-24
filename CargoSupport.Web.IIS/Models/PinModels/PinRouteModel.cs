@@ -56,6 +56,8 @@ namespace CargoSupport.Models.PinModels
         [JsonProperty("scheduled_start_time")]
         public DateTime ScheduledRouteStart { get; set; }
 
+        public DateTime ScheduledRouteEnd { get; set; }
+
         [JsonProperty("actual_start_time")]
         public object ActualRouteStart { get; set; }
 
@@ -65,6 +67,7 @@ namespace CargoSupport.Models.PinModels
             NumberOfCustomers = Customers.Count;
             int.TryParse(RouteInfoModel.DistanceInMeters, out int result);
             DistanceInMeters = result;
+            ScheduledRouteEnd = ScheduledRouteStart.AddSeconds(double.Parse(RouteInfoModel.duration));
         }
     }
 

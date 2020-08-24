@@ -11,23 +11,23 @@ using CargoSupport.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 namespace CargoSupport.Web.IIS.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
         private readonly MongoDbHelper _dbHelper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        //private readonly IHttpContextAccessor _httpContextAccessor;
 
         //private readonly IScheduler _scheduler;
 
-        public HomeController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor/*, IScheduler factory*/)
+        public HomeController(ILogger<HomeController> logger /*, IHttpContextAccessor httpContextAccessor*//*, IScheduler factory*/)
         {
             //var th = new CargoSupport.Web.Helpers.TaskHelper(_scheduler);
             //th.CheckAvailability().Wait();
-            _httpContextAccessor = httpContextAccessor;
+            //_httpContextAccessor = httpContextAccessor;
 
             _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
             _logger = logger;
@@ -39,7 +39,8 @@ namespace CargoSupport.Web.IIS.Controllers
             {
                 return Unauthorized();
             }
-
+            var qh = new QuinyxHelper();
+            ViewBag.Alldrivers = JsonSerializer.Serialize(qh.GetAllActiveDriversWithSchedual(DateTime.Now));
             //var a2 = Environment.UserName;
             //string email = a.FindFirstValue(ClaimTypes.Email); // Always null. Not returning logged in user's Email
             //string userName = a.FindFirstValue(ClaimTypes.Name); // Returning logged in user's UserName

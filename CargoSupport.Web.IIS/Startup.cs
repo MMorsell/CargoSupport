@@ -26,14 +26,14 @@ namespace CargoSupport.Web.IIS
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-                .AddNegotiate();
+            //services
+            //    .AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+            //    .AddNegotiate();
 
             services.AddControllersWithViews();
             services.AddSignalR();
 
-            services.AddHttpContextAccessor();
+            //services.AddHttpContextAccessor();
 
             services.AddCors(options =>
             {
@@ -67,8 +67,8 @@ namespace CargoSupport.Web.IIS
 
             app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseAuthentication();
+            //app.UseAuthorization();
             app.UseCors(MyAllowSpecificOrigins);
 
             app.UseEndpoints(endpoints =>

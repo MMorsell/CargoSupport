@@ -7,9 +7,13 @@ namespace CargoSupport.Constants
 {
     public class MongoDb
     {
-        public static string ConnectionString => "mongodb://localhost:27017";
+#if DEBUG
+        public static string ConnectionString => "mongodb://root:example@localhost:27017";
+#else
 
-        //public static string ConnectionString => "mongodb://root:example@localhost:27017";
+        public static string ConnectionString => "mongodb://localhost:27017";
+#endif
+
         public static string Host => "https://localhost:27017";
 
         public static string DatabaseName => "ICDB";

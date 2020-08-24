@@ -16,16 +16,15 @@ namespace CargoSupport.Web.Controllers.API
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
     public class PublicController : ControllerBase
     {
         private readonly MongoDbHelper _dbHelper;
         private readonly QuinyxHelper _qnHelper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        //private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PublicController(IHttpContextAccessor httpContextAccessor)
+        public PublicController(/*IHttpContextAccessor httpContextAccessor*/)
         {
-            _httpContextAccessor = httpContextAccessor;
+            //_httpContextAccessor = httpContextAccessor;
             _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
             _qnHelper = new QuinyxHelper();
         }
@@ -54,23 +53,37 @@ namespace CargoSupport.Web.Controllers.API
             return Ok(res.ToArray());
         }
 
+        //[HttpGet]
+        //public async Task<ActionResult> GetAllDrivers(string date)
+        //{
+        //    if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+        //    {
+        //        return Unauthorized();
+        //    }
+
+        //    _qnHelper.GetAllDriversSorted(DateTime.Now, false);
+
+        //    var res = ConvertToStorage(await _dbHelper.GetAllRecords<DataModel>(Constants.MongoDb.OutputScreenTableName));
+        //    return Ok(res.ToArray());
+        //}
+
         private List<StorageViewModel> ConvertToStorage(List<DataModel> allRoutes)
         {
             allRoutes = _qnHelper.AddNamesToData(allRoutes);
             var returnModels = new List<StorageViewModel>();
             for (int i = 0; i < allRoutes.Count; i++)
             {
-                returnModels.Add(new StorageViewModel(
-                    allRoutes[i].Id,
-                    allRoutes[i].PinRouteModel.RouteName,
-                    allRoutes[i].PinRouteModel.ScheduledRouteStart.TimeOfDay,
-                    allRoutes[i].NumberOfColdBoxes,
-                    allRoutes[i].NumberOfFrozenBoxes,
-                    allRoutes[i].PinRouteModel.NumberOfCustomers,
-                    DateTime.Now.TimeOfDay,
-                    "restplock",
-                    DateTime.Now.TimeOfDay
-                    ));
+                //returnModels.Add(new StorageViewModel(
+                //    allRoutes[i].Id,
+                //    allRoutes[i].PinRouteModel.RouteName,
+                //    allRoutes[i].PinRouteModel.ScheduledRouteStart.TimeOfDay,
+                //    allRoutes[i].NumberOfColdBoxes,
+                //    allRoutes[i].NumberOfFrozenBoxes,
+                //    allRoutes[i].PinRouteModel.NumberOfCustomers,
+                //    DateTime.Now.TimeOfDay,
+                //    "restplock",
+                //    DateTime.Now.TimeOfDay
+                //    ));
             }
             return returnModels;
         }
@@ -85,17 +98,18 @@ namespace CargoSupport.Web.Controllers.API
                     allRoutes[i].Id,
                     allRoutes[i].PinRouteModel.RouteName,
                     allRoutes[i].Driver.GetDriverName(),
-                    allRoutes[i].PinRouteModel.ScheduledRouteStart.TimeOfDay,
-                    allRoutes[i].PinRouteModel.RouteHasStarted,
-                    allRoutes[i].NumberOfColdBoxes,
-                    allRoutes[i].NumberOfFrozenBoxes,
+                    allRoutes[i].CarModel.GetValue(),
+                    allRoutes[i].PortNumber,
+                    allRoutes[i].LoadingIsDone,
                     allRoutes[i].PreRideAnnotation,
-                    0,
-                    0,
+                    allRoutes[i].PostRideAnnotation,
                     allRoutes[i].PinRouteModel.NumberOfCustomers,
-                    DateTime.Now.TimeOfDay,
-                    "restplock",
-                    DateTime.Now.TimeOfDay
+                    allRoutes[i].PinRouteModel.ScheduledRouteStart.TimeOfDay,
+                    allRoutes[i].PinRouteModel.ScheduledRouteEnd.TimeOfDay,
+                    allRoutes[i].NumberOfColdBoxes,
+                    allRoutes[i].RestPicking,
+                    allRoutes[i].NumberOfFrozenBoxes,
+                    allRoutes[i].NumberOfBreadBoxes
                     ));
             }
             return returnModels;

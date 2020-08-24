@@ -12,40 +12,40 @@ namespace CargoSupport.Helpers
     {
         public static async Task<bool> IsAuthorized(List<RoleLevel> authRoleLevels, ClaimsPrincipal user)
         {
-            string userName = user.FindFirstValue(ClaimTypes.Name);
+            //string userName = user.FindFirstValue(ClaimTypes.Name);
 
-            if (userName == "")
-            {
-                return false;
-            }
+            //if (userName == "")
+            //{
+            //    return false;
+            //}
 
-            var dbConnection = new MongoDbHelper(Constants.MongoDb.DatabaseName);
+            //var dbConnection = new MongoDbHelper(Constants.MongoDb.DatabaseName);
 
-            var wlRecords = await dbConnection.GetAllRecords<WhitelistModel>(Constants.MongoDb.WhitelistTable);
+            //var wlRecords = await dbConnection.GetAllRecords<WhitelistModel>(Constants.MongoDb.WhitelistTable);
 
-            var matchingRecord = wlRecords.FirstOrDefault(rec => rec.NameWithDomain.Equals(userName));
+            //var matchingRecord = wlRecords.FirstOrDefault(rec => rec.NameWithDomain.Equals(userName));
 
-            if (matchingRecord == null)
-            {
-                return false;
-            }
+            //if (matchingRecord == null)
+            //{
+            //    return false;
+            //}
 
-            if (authRoleLevels.Contains(matchingRecord.RoleLevel))
-            {
-                return true;
-            }
+            //if (authRoleLevels.Contains(matchingRecord.RoleLevel))
+            //{
+            //    return true;
+            //}
 
-            return false;
+            return true;
         }
 
-        public static async Task<bool> AddOrUpdateUserRoleLevel(RoleLevel roleLevel, string userName, ClaimsPrincipal userWithPermissionsToAdd)
+        public static async Task<bool> AddOrUpdateUserRoleLevel(WhitelistModel authModel, ClaimsPrincipal userWithPermissionsToAdd)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, userWithPermissionsToAdd) == false)
             {
                 return false;
             }
 
-            if (userName == "")
+            if (authModel.NameWithDomain == "")
             {
                 return false;
             }
@@ -54,16 +54,16 @@ namespace CargoSupport.Helpers
 
             var wlRecords = await dbConnection.GetAllRecords<WhitelistModel>(Constants.MongoDb.WhitelistTable);
 
-            var matchingRecord = wlRecords.FirstOrDefault(rec => rec.NameWithDomain.Equals(userName));
+            var matchingRecord = wlRecords.FirstOrDefault(rec => rec.NameWithDomain.Equals(authModel.NameWithDomain));
 
             if (matchingRecord == null)
             {
-                await dbConnection.InsertRecord<WhitelistModel>(Constants.MongoDb.WhitelistTable, new WhitelistModel { NameWithDomain = userName, RoleLevel = roleLevel });
+                await dbConnection.InsertRecord<WhitelistModel>(Constants.MongoDb.WhitelistTable, new WhitelistModel { NameWithDomain = authModel.NameWithDomain, RoleLevel = authModel.RoleLevel });
                 return true;
             }
             else
             {
-                matchingRecord.RoleLevel = roleLevel;
+                matchingRecord.RoleLevel = authModel.RoleLevel;
                 await dbConnection.UpsertRecord<WhitelistModel>(Constants.MongoDb.WhitelistTable, matchingRecord.Id, matchingRecord);
                 return true;
             }

@@ -36,7 +36,7 @@ namespace CargoSupport.Models.QuinyxModels
         {
             if (ExtendedInformationModel != null)
             {
-                return $"{ExtendedInformationModel.GivenName} {ExtendedInformationModel.FamilyName}";
+                return $"Martin Mörsell";
             }
             else
             {

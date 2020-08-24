@@ -14,7 +14,6 @@ using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers
 {
-    [Authorize]
     public class AnalyzeController : Controller
     {
         private readonly ILogger<AnalyzeController> _logger;

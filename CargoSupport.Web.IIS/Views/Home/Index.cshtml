@@ -50,6 +50,7 @@
             src="https://cdn.datatables.net/rowreorder/1.2.7/js/dataTables.rowReorder.min.js"></script>
 
     <script>
+        //let Alldrivers = @ViewBag.Alldrivers;
         let table;
 
         function updateRow(thisRef) {
@@ -86,7 +87,7 @@
             console.log('Submitting form...');
             $.ajax({
                 type: 'POST',
-                url: 'https://localhost:44374/api/public/UpdateRecord',
+                url: 'http://81.235.179.124/api/public/UpdateRecord',
                 dataType: 'json',
                 contentType: dataType,
                 data: data,
@@ -115,11 +116,33 @@
                 data + '"  />';
         }
 
+        const port_selectBox = function (data, type, full, meta) {
+            if ([24, 26, 27, 29, 31].includes(data)) {
+                $('#port_selectBox').val(data);
+            }
+            return '<select onChange=updateRow(this) class="form-control" id="port_selectBox"><option value="24">24</option><option value = "26" >26</option><option value = "27" >27</option ><option value = "29" > 29</option ><option value = "31" > 31</option ></select >';
+        }
+
+        const carNumber_selectBox = function (data, type, full, meta) {
+            console.log(data);
+            if ([101, 102, 103, 104, 105, "Egen"].includes(data)) {
+                $('#carNumber_selectBox').val(data);
+            }
+            return '<select onChange=updateRow(this) class="form-control" id="carNumber_selectBox"><option value="Egen">Egen</option><option value="101">101</option><option value = "102" >102</option><option value = "103" >103</option ><option value = "104" >104</option ><option value = "105" >105</option ></select >';
+        }
+
+        const driver_selectBox = function (data, type, full, meta) {
+            console.log(data);
+            if ([101, 102, 103, 104, 105, "Egen"].includes(data)) {
+                $('#driver_selectBox').val(data);
+            }
+            return '<select onChange=updateRow(this) class="form-control" id="driver_selectBox"><option value = "105" >105</option ></select >';
+        }
         $(document).ready(function () {
             table = $('#example').DataTable({
                 pageLength: 100,
                 "ajax": {
-                    "url": "https://localhost:44374/api/public/GetTransport",
+                    "url": "http://81.235.179.124/api/public/GetTransport",
                     "dataSrc": function (response) {
                         dataR = response;
                     },
@@ -130,21 +153,19 @@
                         data: 'id', title: 'ID', "visible": false,
                         "searchable": false
                     },
-                    { data: 'routeName', title: 'Tur' },
-                    { data: 'driverFullName', title: 'Lev. Ansvarig', render: simple_textInput },
+                    { data: 'routeName', title: 'Turnamn' },
+                    /*Turstart och slut pin*/
+                    { data: 'driverFullName', title: 'Lev. Ansvarig'/*, render: advance_selectbox + arbetstid*/ },
+                    { data: 'carNumber', title: 'Bilnr', render: carNumber_selectBox },
+                    { data: 'portNumber', title: 'Port', render: port_selectBox },
+                    { data: 'loadingIsDone', title: 'Lastning klar', render: simple_checkbox },
                     { data: 'preRideAnnotation', title: 'Kommentar', render: simple_textInput },
-                    { data: 'portNumber', title: 'Port', render: simple_intInput },
-                    { data: 'carNumber', title: 'Bil', render: simple_intInput },
-                    {
-                        data: 'routeHasStarted', title: 'Rutt har startat', render: simple_checkbox
-                    },
+                    { data: 'postRideAnnotation', title: 'Dold Kommentar', render: simple_textInput },
                     { data: 'numberOfCustomers', title: 'Kunder' },
                     { data: 'numberOfColdBoxes', title: 'Lådor' },
                     { data: 'restPlock', title: 'Restplock' },
-                    { data: 'tidFrys', title: 'Tid Frys' },
                     { data: 'numberOfFrozenBoxes', title: 'Frys' },
-                    { data: 'tid', title: 'Tid' },
-                    { data: 'estimatedRouteStart', title: 'pinstart' },
+                    { data: 'numberOfBreadBoxes', title: 'Bröd' },
                 ],
                 "order": [[0, "asc"]],
 

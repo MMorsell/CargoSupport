@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using CargoSupport.Enums;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Extensions;
+using CargoSupport.ViewModels;
 
 namespace CargoSupport.Helpers
 {
@@ -17,6 +18,42 @@ namespace CargoSupport.Helpers
         public List<QuinyxModel> GetAllDriversSorted(DateTime date, bool clearNames = true)
         {
             return GetDrivers(date, date, clearNames).OrderBy(e => e.begTime).ThenBy(e => e.endTime).ToList();
+        }
+
+        public List<DriverViewModel> GetAllActiveDriversWithSchedual(DateTime date)
+        {
+            List<DriverViewModel> schedualed = ConvertQuinyxModelToDriverViewModel(GetAllDriversSorted(date, false));
+            List<DriverViewModel> allActiveDrivers = GetAllDrivers();
+
+            List<DriverViewModel> result = new List<DriverViewModel>();
+
+            foreach (var activeDriver in allActiveDrivers)
+            {
+                if (schedualed.FirstOrDefault(dr => dr.Id.Equals(activeDriver.Id)) != null)
+                {
+                    result.Add(activeDriver);
+                }
+            }
+            result.AddRange(schedualed);
+            result = result.OrderBy(e => e.BegTime).ThenBy(e => e.EndTime).ToList();
+
+            return result;
+        }
+
+        private List<DriverViewModel> ConvertQuinyxModelToDriverViewModel(List<QuinyxModel> modelList)
+        {
+            var returnList = new List<DriverViewModel>();
+            for (int i = 0; i < modelList.Count; i++)
+            {
+                returnList.Add(new DriverViewModel
+                {
+                    Active = 1,
+                    FullName = modelList[i].GetDriverName(),
+                    BegTime = modelList[i].begTime,
+                    EndTime = modelList[i].endTime
+                });
+            }
+            return returnList;
         }
 
         public List<QuinyxModel> GetDrivers(DateTime from, DateTime to, bool clearNames = true)
@@ -172,7 +209,40 @@ namespace CargoSupport.Helpers
                     driver.ExtendedInformationModel = extendedInfo;
                 }
             }
+
             return Drivers;
+        }
+
+        public List<DriverViewModel> GetAllDrivers()
+        {
+            XmlDocument soapEnvelopeXml = CreateSoapGetAllDriversEnvelope();
+            HttpWebRequest webRequest = CreateWebRequest(CargoSupport.Constants.SoapApi.Connection);
+            InsertSoapEnvelopeIntoWebRequest(soapEnvelopeXml, webRequest);
+
+            // begin async call to web request.
+            IAsyncResult asyncResult = webRequest.BeginGetResponse(null, null);
+
+            // suspend this thread until call is complete. You might want to
+            // do something usefull here like update your UI.
+            asyncResult.AsyncWaitHandle.WaitOne();
+
+            // get the response from the completed web request.
+            var driverViewModel = new List<DriverViewModel>();
+            using (WebResponse webResponse = webRequest.EndGetResponse(asyncResult))
+            {
+                using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
+                {
+                    XDocument doc = XDocument.Load(rd);
+                    driverViewModel = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new DriverViewModel
+                    {
+                        Id = (int)y.Elements().Where(z => z.Name.LocalName == "id").FirstOrDefault(),
+                        FullName = $"{(string)y.Elements().Where(z => z.Name.LocalName == "givenName").FirstOrDefault()} {(string)y.Elements().Where(z => z.Name.LocalName == "familyName").FirstOrDefault()}",
+                        Active = (int)y.Elements().Where(z => z.Name.LocalName == "active").FirstOrDefault(),
+                    }).ToList();
+                }
+            }
+
+            return driverViewModel.Select(dr => dr).Where(dr => dr.Active == 1).ToList();
         }
 
         private static HttpWebRequest CreateWebRequest(string url)
