@@ -29,7 +29,7 @@ function createCommonjsModule(fn, module) {
 Copyright (c) Microsoft Corporation. All rights reserved.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the
-License at http://www.apache.org/licenses/LICENSE-2.0
+License at https://www.apache.org/licenses/LICENSE-2.0
 
 THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
@@ -3131,7 +3131,7 @@ var HttpConnection = /** @class */ (function () {
     };
     HttpConnection.prototype.resolveUrl = function (url) {
         // startsWith is not supported in IE
-        if (url.lastIndexOf("https://", 0) === 0 || url.lastIndexOf("http://", 0) === 0) {
+        if (url.lastIndexOf("https://", 0) === 0 || url.lastIndexOf("https://", 0) === 0) {
             return url;
         }
         if (typeof window === "undefined" || !window || !window.document) {
@@ -3139,9 +3139,9 @@ var HttpConnection = /** @class */ (function () {
         }
         // Setting the url to the href propery of an anchor tag handles normalization
         // for us. There are 3 main cases.
-        // 1. Relative  path normalization e.g "b" -> "http://localhost:5000/a/b"
-        // 2. Absolute path normalization e.g "/a/b" -> "http://localhost:5000/a/b"
-        // 3. Networkpath reference normalization e.g "//localhost:5000/a/b" -> "http://localhost:5000/a/b"
+        // 1. Relative  path normalization e.g "b" -> "https://localhost:5000/a/b"
+        // 2. Absolute path normalization e.g "/a/b" -> "https://localhost:5000/a/b"
+        // 3. Networkpath reference normalization e.g "//localhost:5000/a/b" -> "https://localhost:5000/a/b"
         var aTag = window.document.createElement("a");
         aTag.href = url;
         this.logger.log(ILogger.LogLevel.Information, "Normalizing '" + url + "' to '" + aTag.href + "'.");

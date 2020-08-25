@@ -12,6 +12,18 @@ namespace CargoSupport.Models
             _timestamp = DateTime.Now;
         }
 
+        public PickingVerifyModel(int input)
+        {
+            Value = input;
+            _timestamp = DateTime.Now;
+        }
+
+        public PickingVerifyModel(bool input)
+        {
+            Value = input;
+            _timestamp = DateTime.Now;
+        }
+
         private DateTime _timestamp;
         public object Value { get; set; }
         public string Signature { get; set; }

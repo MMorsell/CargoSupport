@@ -42,6 +42,18 @@ namespace CargoSupport.Web.Controllers.API
         }
 
         [HttpGet]
+        public async Task<ActionResult> GetPublic(string date)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            var res = ConvertToPublic(await _dbHelper.GetAllRecords<DataModel>(Constants.MongoDb.OutputScreenTableName));
+            return Ok(res.ToArray());
+        }
+
+        [HttpGet]
         public async Task<ActionResult> GetStorage(string date)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
@@ -73,17 +85,19 @@ namespace CargoSupport.Web.Controllers.API
             var returnModels = new List<StorageViewModel>();
             for (int i = 0; i < allRoutes.Count; i++)
             {
-                //returnModels.Add(new StorageViewModel(
-                //    allRoutes[i].Id,
-                //    allRoutes[i].PinRouteModel.RouteName,
-                //    allRoutes[i].PinRouteModel.ScheduledRouteStart.TimeOfDay,
-                //    allRoutes[i].NumberOfColdBoxes,
-                //    allRoutes[i].NumberOfFrozenBoxes,
-                //    allRoutes[i].PinRouteModel.NumberOfCustomers,
-                //    DateTime.Now.TimeOfDay,
-                //    "restplock",
-                //    DateTime.Now.TimeOfDay
-                //    ));
+                returnModels.Add(new StorageViewModel(
+                    allRoutes[i].Id,
+                    allRoutes[i].PinRouteModel.RouteName,
+                    allRoutes[i].CarModel.GetValue(),
+                    allRoutes[i].PortNumber,
+                    allRoutes[i].LoadingIsDone,
+                    allRoutes[i].PinRouteModel.NumberOfCustomers,
+                    allRoutes[i].ControlIsDone,
+                    allRoutes[i].NumberOfColdBoxes,
+                    allRoutes[i].RestPicking,
+                    allRoutes[i].NumberOfFrozenBoxes,
+                    allRoutes[i].NumberOfBreadBoxes
+                    ));
             }
             return returnModels;
         }
@@ -97,7 +111,7 @@ namespace CargoSupport.Web.Controllers.API
                 returnModels.Add(new TransportViewModel(
                     allRoutes[i].Id,
                     allRoutes[i].PinRouteModel.RouteName,
-                    allRoutes[i].Driver.GetDriverName(),
+                    allRoutes[i].Driver.ConvertToDriverViewModel(),
                     allRoutes[i].CarModel.GetValue(),
                     allRoutes[i].PortNumber,
                     allRoutes[i].LoadingIsDone,
@@ -106,6 +120,29 @@ namespace CargoSupport.Web.Controllers.API
                     allRoutes[i].PinRouteModel.NumberOfCustomers,
                     allRoutes[i].PinRouteModel.ScheduledRouteStart.TimeOfDay,
                     allRoutes[i].PinRouteModel.ScheduledRouteEnd.TimeOfDay,
+                    allRoutes[i].NumberOfColdBoxes,
+                    allRoutes[i].RestPicking,
+                    allRoutes[i].NumberOfFrozenBoxes,
+                    allRoutes[i].NumberOfBreadBoxes
+                    ));
+            }
+            return returnModels;
+        }
+
+        private List<TransportViewModel> ConvertToPublic(List<DataModel> allRoutes)
+        {
+            allRoutes = _qnHelper.AddNamesToData(allRoutes);
+            var returnModels = new List<TransportViewModel>();
+            for (int i = 0; i < allRoutes.Count; i++)
+            {
+                returnModels.Add(new TransportViewModel(
+                    allRoutes[i].PinRouteModel.RouteName,
+                    allRoutes[i].Driver.ConvertToDriverViewModel(),
+                    allRoutes[i].CarModel.GetValue(),
+                    allRoutes[i].PortNumber,
+                    allRoutes[i].LoadingIsDone,
+                    allRoutes[i].PreRideAnnotation,
+                    allRoutes[i].PinRouteModel.NumberOfCustomers,
                     allRoutes[i].NumberOfColdBoxes,
                     allRoutes[i].RestPicking,
                     allRoutes[i].NumberOfFrozenBoxes,

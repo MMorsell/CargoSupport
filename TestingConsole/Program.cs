@@ -4,6 +4,10 @@
     {
         private static void Main(string[] args)
         {
+            for (int i = 0; i < 100; i++)
+            {
+                System.Console.Write($"<option>{i}</option>");
+            }
             //var _dbhelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
             //var ph = new PinHelper();
             //var _qnHelper = new QuinyxHelper();

@@ -31,9 +31,9 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             {
                 return Unauthorized();
             }
-            //var _ph = new PinHelper();
-            //List<PinRouteModel> routes = _ph.RetrieveRoutesFromActualPin(model.PinId).Result;
-            //_ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes).Wait();
+            var _ph = new PinHelper();
+            List<PinRouteModel> routes = _ph.RetrieveRoutesFromActualPin(model.PinId).Result;
+            _ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes).Wait();
             return View("../Home/Index");
         }
 

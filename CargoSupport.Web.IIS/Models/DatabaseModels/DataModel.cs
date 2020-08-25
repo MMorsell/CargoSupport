@@ -35,10 +35,12 @@ namespace CargoSupport.Models.DatabaseModels
         /*
          * Custom
          */
+        public bool IsResourceRoute { get; set; }
         public CarNumber CarModel { get; set; }
         public int PortNumber { get; set; }
         public bool LoadingIsDone { get; set; }
         public DateTime DateOfRoute { get; set; }
+        public bool ControlIsDone { get; set; } = false;
         public List<PickingVerifyModel> NumberOfColdBoxes { get; set; }
         public List<PickingVerifyModel> RestPicking { get; set; }
         public List<PickingVerifyModel> NumberOfFrozenBoxes { get; set; }

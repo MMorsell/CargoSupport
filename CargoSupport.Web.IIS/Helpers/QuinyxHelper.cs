@@ -45,12 +45,10 @@ namespace CargoSupport.Helpers
             var returnList = new List<DriverViewModel>();
             for (int i = 0; i < modelList.Count; i++)
             {
-                returnList.Add(new DriverViewModel
+                returnList.Add(new DriverViewModel(modelList[i].begTime, modelList[i].endTime)
                 {
                     Active = 1,
                     FullName = modelList[i].GetDriverName(),
-                    BegTime = modelList[i].begTime,
-                    EndTime = modelList[i].endTime
                 });
             }
             return returnList;

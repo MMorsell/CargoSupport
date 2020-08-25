@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CargoSupport.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,6 +43,23 @@ namespace CargoSupport.Models.QuinyxModels
             {
                 return "";
             }
+        }
+
+        public DriverViewModel ConvertToDriverViewModel()
+        {
+            string fullName = "";
+            int active = 1;
+            if (ExtendedInformationModel != null)
+            {
+                fullName = $"Martin Mörsell";
+                active = ExtendedInformationModel.Active;
+            }
+            return new DriverViewModel(begTime, endTime)
+            {
+                FullName = fullName,
+                Active = active,
+                Id = this.Id,
+            };
         }
 
         public ExtendedInformationModel ExtendedInformationModel { get; set; }

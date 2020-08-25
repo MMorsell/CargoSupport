@@ -68,6 +68,15 @@ namespace CargoSupport.Web.IIS.Controllers
             return View();
         }
 
+        public async Task<IActionResult> Index3()
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

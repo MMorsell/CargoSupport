@@ -10,11 +10,11 @@ namespace CargoSupport.ViewModels.Public
     {
         //TidFrys = tidFrys.ToString(@"hh\:mm");
 
-        public TransportViewModel(Guid id, string routeName, string driverFullName, string carNumberString, int portNumber, bool loadingIsDone, string preRideAnnotation, string postRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyModel> numberOfColdBoxes, List<PickingVerifyModel> restPicking, List<PickingVerifyModel> numberOfFrozenBoxes, List<PickingVerifyModel> numberOfBreadBoxes)
+        public TransportViewModel(Guid id, string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, bool loadingIsDone, string preRideAnnotation, string postRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyModel> numberOfColdBoxes, List<PickingVerifyModel> restPicking, List<PickingVerifyModel> numberOfFrozenBoxes, List<PickingVerifyModel> numberOfBreadBoxes)
         {
             Id = id;
             RouteName = routeName;
-            DriverFullName = driverFullName;
+            Driver = driverModel;
             CarNumber = carNumberString;
             PortNumber = portNumber;
             LoadingIsDone = loadingIsDone;
@@ -26,7 +26,19 @@ namespace CargoSupport.ViewModels.Public
             SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes);
         }
 
-        public void SetPickingValues(List<PickingVerifyModel> numberOfColdBoxes, List<PickingVerifyModel> restPicking, List<PickingVerifyModel> numberOfFrozenBoxes, List<PickingVerifyModel> numberOfBreadBoxes)
+        public TransportViewModel(string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, bool loadingIsDone, string preRideAnnotation, double numberOfCustomers, List<PickingVerifyModel> numberOfColdBoxes, List<PickingVerifyModel> restPicking, List<PickingVerifyModel> numberOfFrozenBoxes, List<PickingVerifyModel> numberOfBreadBoxes)
+        {
+            RouteName = routeName;
+            Driver = driverModel;
+            CarNumber = carNumberString;
+            PortNumber = portNumber;
+            LoadingIsDone = loadingIsDone;
+            PreRideAnnotation = preRideAnnotation;
+            NumberOfCustomers = numberOfCustomers;
+            SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes);
+        }
+
+        private void SetPickingValues(List<PickingVerifyModel> numberOfColdBoxes, List<PickingVerifyModel> restPicking, List<PickingVerifyModel> numberOfFrozenBoxes, List<PickingVerifyModel> numberOfBreadBoxes)
         {
             if (numberOfColdBoxes.Count > 0)
             {
@@ -67,7 +79,7 @@ namespace CargoSupport.ViewModels.Public
 
         public Guid Id { get; private set; }
         public string RouteName { get; private set; }
-        public string DriverFullName { get; private set; }
+        public DriverViewModel Driver { get; private set; }
         public string CarNumber { get; private set; }
         public int PortNumber { get; private set; }
         public bool LoadingIsDone { get; set; }
