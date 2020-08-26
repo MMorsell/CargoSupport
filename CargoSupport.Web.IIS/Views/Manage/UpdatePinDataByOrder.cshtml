@@ -1,0 +1,27 @@
+﻿@model CargoSupport.Models.PinIdModel;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using (Html.BeginForm("UpdatePinDataByOrder", "Manage", FormMethod.Post))
+{
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <th colspan="2" align="center">Uppdatera data i databasen utifrån OrderId</th>
+        </tr>
+        <tr>
+            <td>OrderId: </td>
+            <td>
+                @Html.TextBoxFor(m => m.PinId)
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Submit" /></td>
+        </tr>
+    </table>
+}
+
+@section Scripts
+{
+}

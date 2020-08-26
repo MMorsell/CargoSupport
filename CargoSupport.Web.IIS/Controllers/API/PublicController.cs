@@ -49,42 +49,43 @@ namespace CargoSupport.Web.Controllers.API
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetPublic(string date)
+        public async Task<ActionResult> GetPublic(string dateString)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
                 return Unauthorized();
             }
 
-            var res = ConvertToPublic(await _dbHelper.GetAllRecords<DataModel>(Constants.MongoDb.OutputScreenTableName));
+            DateTime.TryParse(dateString, out DateTime date);
+
+            if (date.ToString(@"yyyy-MM-dd") != dateString)
+            {
+                //TODO: Implement return invalid date
+            }
+
+            //var res = ConvertToPublic(await _dbHelper.GetAllRecords<DataModel>(Constants.MongoDb.OutputScreenTableName));
+            var res = ConvertToPublic(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
             return Ok(res.ToArray());
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetStorage(string date)
+        public async Task<ActionResult> GetStorage(string dateString)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
                 return Unauthorized();
             }
 
-            var res = ConvertToStorage(await _dbHelper.GetAllRecords<DataModel>(Constants.MongoDb.OutputScreenTableName));
+            DateTime.TryParse(dateString, out DateTime date);
+
+            if (date.ToString(@"yyyy-MM-dd") != dateString)
+            {
+                //TODO: Implement return invalid date
+            }
+
+            var res = ConvertToStorage(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
             return Ok(res.ToArray());
         }
-
-        //[HttpGet]
-        //public async Task<ActionResult> GetAllDrivers(string date)
-        //{
-        //    if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
-        //    {
-        //        return Unauthorized();
-        //    }
-
-        //    _qnHelper.GetAllDriversSorted(DateTime.Now, false);
-
-        //    var res = ConvertToStorage(await _dbHelper.GetAllRecords<DataModel>(Constants.MongoDb.OutputScreenTableName));
-        //    return Ok(res.ToArray());
-        //}
 
         private List<StorageViewModel> ConvertToStorage(List<DataModel> allRoutes)
         {

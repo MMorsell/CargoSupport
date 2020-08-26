@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-<div class="container">
+<div class="container-fluid">
     <h6>Datum</h6>
     <div>
         <div style="padding-left: 20px;" class="group">
@@ -21,31 +21,33 @@
     <script>
         $(document).ready(function () {
             table = $('#example').DataTable({
-                pageLength: 100,
+                pageLength: 250,
                 "ajax": {
-                    "url": "http://localhost:5557/api/public/GetPublic",
-                    "dataSrc": function (response) {
-                        dataR = response;
+                    "url": baseHost + '/api/public/GetPublic',
+                    "data": {
+                        "dateString": function () { return formatDate(ajaxDate) }
                     },
                     "dataSrc": ""
                 },
                 columns: [
                     { data: 'routeName', title: 'Turnamn' },
                     { data: 'driver.fullName', title: 'Lev. Ansvarig', "searchable": false },
-                    { data: 'carNumber', title: 'Bilnr', render: disabled_textInput },
-                    { data: 'portNumber', title: 'Port', render: disabled_textInput },
+                    { data: 'carNumber', title: 'Bilnr', render: renderEmptyIfZero },
+                    { data: 'portNumber', title: 'Port', render: renderEmptyIfZero },
                     { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toValue },
                     { data: 'preRideAnnotation', title: 'Kommentar', render: disabled_textInput },
                     { data: 'numberOfCustomers', title: 'Kunder' },
-                    { data: 'numberOfColdBoxes', title: 'Lådor' },
+                    { data: 'numberOfColdBoxes', title: 'Lådor', render: hidden_IntIfNull },
                     { data: 'restPlock', title: 'Restplock', render: disabled_checkbox },
-                    { data: 'numberOfFrozenBoxes', title: 'Frys' },
-                    { data: 'numberOfBreadBoxes', title: 'Bröd' },
+                    { data: 'numberOfFrozenBoxes', title: 'Frys', render: hidden_IntIfNull },
+                    { data: 'numberOfBreadBoxes', title: 'Bröd', render: hidden_IntIfNull },
                     { data: 'controlIsDone', title: 'Kontroll', render: disabled_checkbox },
                 ],
                 "order": [[1, "asc"]],
-
             });
+            $('thead th').each(function () {
+                $(this).addClass("stickyHeader");
+            })
         });
     </script>
 }

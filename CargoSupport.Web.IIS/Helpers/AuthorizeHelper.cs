@@ -64,7 +64,7 @@ namespace CargoSupport.Helpers
             else
             {
                 matchingRecord.RoleLevel = authModel.RoleLevel;
-                await dbConnection.UpsertRecord<WhitelistModel>(Constants.MongoDb.WhitelistTable, matchingRecord.Id, matchingRecord);
+                await dbConnection.UpsertRecordByNativeGuid<WhitelistModel>(Constants.MongoDb.WhitelistTable, matchingRecord.Id, matchingRecord);
                 return true;
             }
         }

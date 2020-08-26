@@ -1,9 +1,35 @@
-﻿const convert_loadingLevel_toSelectbox = function (data, type, full, meta) {
+﻿const baseHost = "http://81.235.179.124"
+//const baseHost = "http://localhost:5557"
+
+let ajaxDate = new Date();
+
+function formatDate(d) {
+    month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+const preRideInput = function (data, type, full, meta) {
+    return '<input type="text" id="preRideInput" onfocusout=updateRow(this) class="form-control" value="' +
+        data + '"  />';
+}
+const postRideInput = function (data, type, full, meta) {
+    return '<input type="text" id="postRideInput" onfocusout=updateRow(this) class="form-control" value="' +
+        data + '"  />';
+}
+
+const convert_loadingLevel_toSelectbox = function (data, type, full, meta) {
     var selectBox = [];
     selectBox.push(
-        '<div class="selectpicker show-tick"><select class="dropdown bootstrap-select">'
+        '<div class="selectpicker show-tick"><select id="convert_loadingLevel_toSelectbox" onChange=updateRow(this) class="dropdown bootstrap-select">'
     );
-    debugger;
     for (i = 0; i < 4; i++) {
         if (i === 0) {
             if (data === 0) {
@@ -69,12 +95,12 @@ const convert_loadingLevel_toValue = function (data, type, full, meta) {
 
 const disabled_checkbox = function (data, type, full, meta) {
     var is_checked = data == true ? "checked" : "";
-    return '<input type="checkbox" disabled class="checkbox" ' +
+    return '<input type="checkbox" onclick="return false" class="checkbox" ' +
         is_checked + ' />';
 }
 
 const disabled_textInput = function (data, type, full, meta) {
-    return '<input type="text" readonly class="form-control" value="' +
+    return '<input type="text" readonly style="background: white;" class="form-control" value="' +
         data + '"  />';
 }
 
@@ -83,8 +109,24 @@ const disabled_intInput = function (data, type, full, meta) {
         data + '"  />';
 }
 
+const renderEmptyIfZero = function (data, type, full, meta) {
+    if (data === 0 || data === "0") {
+        return '<p></p>'
+    }
+    else {
+        return '<p>"' + data + '"</p>';
+    }
+}
 
-
+const hidden_IntIfNull = function (data, type, full, meta) {
+    debugger;
+    if (data === 0) {
+        return '<p>Ej ifyllt</p>';
+    }
+    else {
+        return '<p> +"' + data + '"  </p>';
+    }
+}
 
 /*
  * Datepicker for basic output table
@@ -116,7 +158,6 @@ flatpickr('#calendar-from-table-tr', {
         //TODO Add post update
     }
 });
-
 
 function reloadDatatableAjax() {
     table.ajax.reload(null, false);

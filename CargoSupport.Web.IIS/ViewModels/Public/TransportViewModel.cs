@@ -41,6 +41,11 @@ namespace CargoSupport.ViewModels.Public
             SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes);
         }
 
+        [Obsolete]
+        public TransportViewModel()
+        {
+        }
+
         private void SetPickingValues(List<PickingVerifyModel> numberOfColdBoxes, List<PickingVerifyModel> restPicking, List<PickingVerifyModel> numberOfFrozenBoxes, List<PickingVerifyModel> numberOfBreadBoxes)
         {
             if (numberOfColdBoxes.Count > 0)
@@ -80,21 +85,21 @@ namespace CargoSupport.ViewModels.Public
             }
         }
 
-        public Guid Id { get; private set; }
-        public string RouteName { get; private set; }
-        public DriverViewModel Driver { get; private set; }
-        public string CarNumber { get; private set; }
-        public int PortNumber { get; private set; }
+        public Guid Id { get; set; }
+        public string RouteName { get; set; }
+        public DriverViewModel Driver { get; set; }
+        public string CarNumber { get; set; }
+        public int PortNumber { get; set; }
         public LoadingLevel LoadingLevel { get; set; }
-        public string PreRideAnnotation { get; private set; } = "";
-        public string PostRideAnnotation { get; private set; } = "";
+        public string PreRideAnnotation { get; set; } = "";
+        public string PostRideAnnotation { get; set; } = "";
         public string PinStartTimeString { get; set; }
         public string PinEndTimeString { get; set; }
-        public double NumberOfCustomers { get; private set; }
-        public int NumberOfColdBoxes { get; private set; }
-        public bool RestPlock { get; private set; }
-        public int NumberOfFrozenBoxes { get; private set; }
-        public int NumberOfBreadBoxes { get; private set; }
+        public double NumberOfCustomers { get; set; }
+        public int NumberOfColdBoxes { get; set; }
+        public bool RestPlock { get; set; }
+        public int NumberOfFrozenBoxes { get; set; }
+        public int NumberOfBreadBoxes { get; set; }
         public bool ControlIsDone { get; set; }
     }
 }

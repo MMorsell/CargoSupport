@@ -71,7 +71,7 @@ namespace CargoSupport.Helpers
                 }
                 else
                 {
-                    allRoutesForToday[i].Driver = allDriversForToday[0];
+                    allRoutesForToday[i].Driver = null;
                 }
             }
 
@@ -81,6 +81,34 @@ namespace CargoSupport.Helpers
             {
                 Console.WriteLine($"{route.PinRouteModel.RouteName} {route.PinRouteModel.ScheduledRouteStart} - {route.Driver.begTime}/{route.Driver.endTime}");
             }
+        }
+
+        public async Task UpdateExistingRecordsIfThereIsOne(List<PinRouteModel> pinRouteModels)
+        {
+            foreach (var pinModel in pinRouteModels)
+            {
+                var existingRecord = await _dbHelper.GetRecordByPinId(Constants.MongoDb.OutputScreenTableName, pinModel);
+
+                if (existingRecord != null)
+                {
+                    existingRecord.PinRouteModel = pinModel;
+                    await _dbHelper.UpsertRecordByNativeGuid(Constants.MongoDb.OutputScreenTableName, existingRecord.Id, existingRecord);
+                }
+            }
+        }
+
+        public async Task<int> AnyPinRouteModelExistInDatabase(List<PinRouteModel> pinRouteModels)
+        {
+            foreach (var pinModel in pinRouteModels)
+            {
+                var existingRecord = await _dbHelper.GetRecordByPinId(Constants.MongoDb.OutputScreenTableName, pinModel);
+
+                if (existingRecord != null)
+                {
+                    return existingRecord.PinRouteModel.RouteId;
+                }
+            }
+            return 0;
         }
     }
 }

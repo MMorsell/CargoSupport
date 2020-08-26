@@ -3,7 +3,7 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="container">
+<div class="container-fluid">
     <h6>Datum</h6>
     <div>
         <div style="padding-left: 20px;" class="group">
@@ -33,161 +33,173 @@
             <ul id="messagesList"></ul>
         </div>
     </div>
+    <table id="example" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
+        <thead style="position: sticky; top: 0;">
+        </thead>
+    </table>
 </div>
 
-<table id="example" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
-    <thead>
-    </thead>
-</table>
 @section Scripts
 {
 
     <script>
-    </script>
+//let Alldrivers = @ViewBag.Alldrivers;
+let table;
 
-    <script>
-        let ajaxDate = new Date();
-        //let Alldrivers = @ViewBag.Alldrivers;
-        let table;
+function updateRow(thisRef) {
+    var dataRef = table.row($(thisRef).parents('tr')).data();
 
-        function formatDate(d) {
-            month = '' + (d.getMonth() + 1),
-                day = '' + d.getDate(),
-                year = d.getFullYear();
+    /*
+     * Updatetypes
+     * driver: 0
+     * preRideAnnotation: 1
+     * postRideAnnotation: 2
+     * portNumber: 3
+     * carNumber: 4
+     * loadingLevel: 5
+     */
 
-            if (month.length < 2)
-                month = '0' + month;
-            if (day.length < 2)
-                day = '0' + day;
+    var object = {
+        id: dataRef.id,
+        routeName: dataRef.routeName,
+        preRideAnnotation: null,
+        postRideAnnotation: null,
+        portNumber: -1,
+        carNumber: null,
+        loadingLevel: -1,
+    };
 
-            return [year, month, day].join('-');
-        }
-
-        function updateRow(thisRef) {
-
-            //TODO Add post update
-            var dataRef = table.row($(thisRef).parents('tr')).data();
-
-            var object = {
-                id: dataRef.id,
-                routeName: dataRef.routeName,
-                driverFullName: dataRef.driverFullName,
-                preRideAnnotation: dataRef.preRideAnnotation,
-                portNumber: dataRef.portNumber,
-                carNumber: dataRef.carNumber,
-                routeHasStarted: dataRef.routeHasStarted,
-                numberOfCustomers: dataRef.numberOfCustomers,
-                tid: dataRef.tid,
-                numberOfColdBoxes: dataRef.numberOfColdBoxes,
-                restPlock: dataRef.restPlock,
-                tidFrys: dataRef.tidFrys,
-                numberOfFrozenBoxes: dataRef.numberOfFrozenBoxes,
-                estimatedRouteStart: dataRef.estimatedRouteStart
-            };
-
-            postUpdate(JSON.stringify(object));
-        }
-
-        function postUpdate(data) {
-            //JSON data
-            var dataType = 'application/json';
-
-            console.log('Submitting form...');
-            $.ajax({
-                type: 'POST',
-                url: 'http://localhost:5557/api/Upsert/UpsertTransport',
-                //dataType: 'json',
-                //contentType: dataType,
-                //data: data,
-                error: function (jqXHR, exception) {
-                    debugger;
-                },
-                success: function (result) {
-                    console.log('Data received: ');
-                    console.log(result);
-                }
-            });
-        }
-
-        const simple_checkbox = function (data, type, full, meta) {
-            var is_checked = data == true ? "checked" : "";
-            return '<input type="checkbox" onclick=updateRow(this) class="checkbox" ' +
-                is_checked + ' />';
-        }
-
-        const simple_textInput = function (data, type, full, meta) {
-            return '<input type="text" onclick=updateRow(this) class="form-control" value="' +
-                data + '"  />';
-        }
-        const simple_intInput = function (data, type, full, meta) {
-            return '<input type="number" onChange=updateRow(this) class="form-control" value="' +
-                data + '"  />';
-        }
-
-        const port_selectBox = function (data, type, full, meta) {
-            if ([24, 26, 27, 29, 31].includes(data)) {
-                $('#port_selectBox').val(data);
+    switch (thisRef.id) {
+        case 'driver_selectBox':
+            break;
+         //TODO: Fix driver update
+        case 'preRideInput':
+            object.preRideAnnotation = thisRef.value;
+            break;
+        case 'postRideInput':
+            object.postRideAnnotation = thisRef.value;
+            break;
+        case 'port_selectBox':
+            object.portNumber = parseInt(thisRef.value);
+            break;
+        case 'carNumber_selectBox':
+            object.carNumber = thisRef.value;
+            break;
+        case 'convert_loadingLevel_toSelectbox':
+            switch (thisRef.value) {
+                case 'Ej påbörjad': object.loadingLevel = 0;
+                    break;
+                case 'Återanvända': object.loadingLevel = 1;
+                    break;
+                case 'Påbörjad': object.loadingLevel = 2;
+                    break;
+                case 'Klar': object.loadingLevel = 3;
+                    break;
             }
-            return '<select onChange=updateRow(this) class="form-control" id="port_selectBox"><option value="24">24</option><option value = "26" >26</option><option value = "27" >27</option ><option value = "29" > 29</option ><option value = "31" > 31</option ></select >';
+    }
+    postUpdate(JSON.stringify(object));
+}
+
+        function postUpdate(jsonData) {
+            debugger;
+    var dataType = 'application/json';
+    console.log('Submitting form...');
+    $.ajax({
+        type: 'POST',
+        url: baseHost + '/api/Upsert/UpsertTransport',
+        dataType: 'json',
+        contentType: dataType,
+        data: jsonData,
+        error: function (jqXHR, exception) {
+            debugger;
+        },
+        success: function (result) {
+            console.log('Data received: ');
+            console.log(result);
         }
+    });
+}
 
-        const carNumber_selectBox = function (data, type, full, meta) {
-            if ([101, 102, 103, 104, 105, "Egen"].includes(data)) {
-                $('#carNumber_selectBox').val(data);
-            }
-            return '<select onChange=updateRow(this) class="form-control" id="carNumber_selectBox"><option value="Egen">Egen</option><option value="101">101</option><option value = "102" >102</option><option value = "103" >103</option ><option value = "104" >104</option ><option value = "105" >105</option ></select >';
-        }
+const simple_checkbox = function (data, type, full, meta) {
+    var is_checked = data == true ? "checked" : "";
+    return '<input type="checkbox" onclick=updateRow(this) class="checkbox" ' +
+        is_checked + ' />';
+}
 
-        const driver_selectBox = function (data, type, full, meta) {
-            if ([101, 102, 103, 104, 105, "Egen"].includes(data)) {
-                $('#driver_selectBox').val(data);
-            }
-            return '<select onChange=updateRow(this) class="form-control" id="driver_selectBox"><option value = "105" >105</option ></select >';
-        }
+const simple_intInput = function (data, type, full, meta) {
+    return '<input type="number" onChange=updateRow(this) class="form-control" value="' +
+        data + '"  />';
+}
 
-        const pinstart_render = function (data, type, full, meta) {
+const port_selectBox = function (data, type, full, meta) {
+    if ([24, 26, 27, 29, 31].includes(data)) {
+        $('#port_selectBox').val(data);
+    }
+    return '<select onChange=updateRow(this) class="form-control" id="port_selectBox"><option value="-1"></option><option value="24">24</option><option value = "26" >26</option><option value = "27" >27</option ><option value = "29" > 29</option ><option value = "31" > 31</option ></select >';
+}
 
-            return '<p>' + data + '-' + full.pinEndTimeString + '</p > ';
-        }
+const carNumber_selectBox = function (data, type, full, meta) {
+    if ([101, 102, 103, 104, 105, "Egen"].includes(data)) {
+        $('#carNumber_selectBox').val(data);
+    }
+    return '<select onChange=updateRow(this) class="form-control" id="carNumber_selectBox"><option value="-1"></option><option value="Egen">Egen</option><option value="101">101</option><option value = "102" >102</option><option value = "103" >103</option ><option value = "104" >104</option ><option value = "105" >105</option ></select >';
+}
 
-        const driver_schedual = function (data, type, full, meta) {
-            return '<p>' + data.begTimeString + '-' + data.endTimeString + '</p > ';
-        }
-        $(document).ready(function () {
-            table = $('#example').DataTable({
-                pageLength: 100,
-                "ajax": {
-                    "url": "http://localhost:5557/api/public/GetTransport",
-                    "data": {
-                        "dateString": function () { return formatDate(ajaxDate) }
-                    },
-                    "dataSrc": ""
-                },
-                columns: [
-                    {
-                        data: 'id', title: 'ID', "visible": false,
-                        "searchable": false
-                    },
-                    { data: 'routeName', title: 'Turnamn' },
-                    { data: 'pinStartTimeString', title: 'Pintid', render: pinstart_render },
-                    { data: 'driver.fullName', title: 'Lev. Ansvarig' },
-                    { data: 'driver', title: 'Lev. Arbetstid', render: driver_schedual },
-                    { data: 'carNumber', title: 'Bilnr', render: carNumber_selectBox },
-                    { data: 'portNumber', title: 'Port', render: port_selectBox },
-                    { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toSelectbox },
-                    { data: 'preRideAnnotation', title: 'Kommentar', render: simple_textInput },
-                    { data: 'postRideAnnotation', title: 'Dold Kommentar', render: simple_textInput },
-                    { data: 'numberOfCustomers', title: 'Kunder' },
-                    { data: 'numberOfColdBoxes', title: 'Lådor' },
-                    { data: 'restPlock', title: 'Restplock', render: disabled_checkbox },
-                    { data: 'numberOfFrozenBoxes', title: 'Frys' },
-                    { data: 'numberOfBreadBoxes', title: 'Bröd' },
-                    { data: 'controlIsDone', title: 'Kontroll', render: disabled_checkbox },
-                ],
-                "order": [[1, "asc"]],
+const driver_selectBox = function (data, type, full, meta) {
+    if ([101, 102, 103, 104, 105, "Egen"].includes(data)) {
+        $('#driver_selectBox').val(data);
+    }
+    return '<select onChange=updateRow(this) class="form-control" id="driver_selectBox"><option value = "105" >105</option ></select >';
+}
 
-            });
+const pinstart_render = function (data, type, full, meta) {
 
-        });
+    return '<p>' + data + '-' + full.pinEndTimeString + '</p > ';
+}
+
+const driver_schedual = function (data, type, full, meta) {
+    return '<p>' + data.begTimeString + '-' + data.endTimeString + '</p > ';
+}
+
+$(document).ready(function () {
+    table = $('#example').DataTable({
+        pageLength: 250,
+        "ajax": {
+            "url": baseHost + '/api/public/GetTransport',
+            "data": {
+                "dateString": function () { return formatDate(ajaxDate) }
+            },
+            "dataSrc": ""
+        },
+        columns: [
+            {
+                data: 'id', title: 'ID', "visible": false,
+                "searchable": false
+            },
+            { data: 'routeName', title: 'Turnamn' },
+            { data: 'pinStartTimeString', title: 'Pintid', render: pinstart_render },
+            { data: 'driver.fullName', title: 'Lev. Ansvarig' },
+            { data: 'driver', title: 'Lev. Arbetstid', render: driver_schedual },
+            { data: 'carNumber', title: 'Bilnr', render: carNumber_selectBox },
+            { data: 'portNumber', title: 'Port', render: port_selectBox },
+            { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toSelectbox },
+            { data: 'preRideAnnotation', title: 'Kommentar', render: preRideInput },
+            { data: 'postRideAnnotation', title: 'Dold Kommentar', render: postRideInput },
+            { data: 'numberOfCustomers', title: 'Kunder' },
+            { data: 'numberOfColdBoxes', title: 'Lådor', render: hidden_IntIfNull},
+            { data: 'restPlock', title: 'Restplock', render: disabled_checkbox },
+            { data: 'numberOfFrozenBoxes', title: 'Frys', render: hidden_IntIfNull},
+            { data: 'numberOfBreadBoxes', title: 'Bröd', render: hidden_IntIfNull},
+            { data: 'controlIsDone', title: 'Kontroll', render: disabled_checkbox },
+        ],
+        "order": [[1, "asc"]],
+
+    });
+
+    $('thead th').each(function () {
+        $(this).addClass("stickyHeader");
+    })
+
+});
     </script>
 }

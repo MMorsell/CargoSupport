@@ -33,8 +33,39 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             }
             var _ph = new PinHelper();
             List<PinRouteModel> routes = _ph.RetrieveRoutesFromActualPin(model.PinId).Result;
+
+            var anyExistingIdOfRouteInDatabase = await _ph.AnyPinRouteModelExistInDatabase(routes);
+
+            if (anyExistingIdOfRouteInDatabase != 0)
+            {
+                return View("Error", new ErrorViewModel { Message = $"Åtgärden misslyckades eftersom någon av orderns rutter redan fanns i systemet: ruttid:'{anyExistingIdOfRouteInDatabase}' hittades" });
+            }
             _ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes).Wait();
-            return View("../Home/Index");
+
+            return View("../Home/Transport");
+        }
+
+        public async Task<IActionResult> UpdatePinDataByOrder()
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdatePinDataByOrder(PinIdModel model)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+            var _ph = new PinHelper();
+            List<PinRouteModel> routes = _ph.RetrieveRoutesFromActualPin(model.PinId).Result;
+            await _ph.UpdateExistingRecordsIfThereIsOne(routes);
+
+            return View("../Home/Transport");
         }
 
         public async Task<IActionResult> AddOrUpdateUser()
@@ -57,7 +88,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             //return Json(new { status = "success", message = "customer created" });
             if (await AddOrUpdateUserRoleLevel(authModel, HttpContext.User))
             {
-                return View("../Home/Index");
+                return View("../Home/Transport");
             }
             else
             {

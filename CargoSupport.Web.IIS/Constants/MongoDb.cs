@@ -7,12 +7,13 @@ namespace CargoSupport.Constants
 {
     public class MongoDb
     {
-#if DEBUG
-        public static string ConnectionString => "mongodb://root:example@localhost:27017";
-#else
-
+        //#if DEBUG
         public static string ConnectionString => "mongodb://localhost:27017";
-#endif
+
+        //        public static string ConnectionString => "mongodb://root:example@localhost:27017";
+        //#else
+
+        //#endif
 
         public static string Host => "https://localhost:27017";
 
