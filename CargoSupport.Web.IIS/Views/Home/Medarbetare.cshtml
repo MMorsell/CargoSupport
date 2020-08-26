@@ -1,0 +1,51 @@
+﻿@model List<CargoSupport.Models.DatabaseModels.DataModel>;
+@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="container">
+    <h6>Datum</h6>
+    <div>
+        <div style="padding-left: 20px;" class="group">
+            <input type="text" id="calendar-from-table">
+            <span class="bar"></span>
+        </div>
+    </div>
+    <table id="example" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
+        <thead>
+        </thead>
+    </table>
+</div>
+@section Scripts
+{
+
+    <script>
+        $(document).ready(function () {
+            table = $('#example').DataTable({
+                pageLength: 100,
+                "ajax": {
+                    "url": "http://localhost:5557/api/public/GetPublic",
+                    "dataSrc": function (response) {
+                        dataR = response;
+                    },
+                    "dataSrc": ""
+                },
+                columns: [
+                    { data: 'routeName', title: 'Turnamn' },
+                    { data: 'driver.fullName', title: 'Lev. Ansvarig', "searchable": false },
+                    { data: 'carNumber', title: 'Bilnr', render: disabled_textInput },
+                    { data: 'portNumber', title: 'Port', render: disabled_textInput },
+                    { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toValue },
+                    { data: 'preRideAnnotation', title: 'Kommentar', render: disabled_textInput },
+                    { data: 'numberOfCustomers', title: 'Kunder' },
+                    { data: 'numberOfColdBoxes', title: 'Lådor' },
+                    { data: 'restPlock', title: 'Restplock', render: disabled_checkbox },
+                    { data: 'numberOfFrozenBoxes', title: 'Frys' },
+                    { data: 'numberOfBreadBoxes', title: 'Bröd' },
+                    { data: 'controlIsDone', title: 'Kontroll', render: disabled_checkbox },
+                ],
+                "order": [[1, "asc"]],
+
+            });
+        });
+    </script>
+}

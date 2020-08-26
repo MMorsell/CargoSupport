@@ -97,7 +97,7 @@ namespace CargoSupport.Web.Controllers.API
                     allRoutes[i].PinRouteModel.RouteName,
                     allRoutes[i].CarModel.GetValue(),
                     allRoutes[i].PortNumber,
-                    allRoutes[i].LoadingIsDone,
+                    allRoutes[i].LoadingLevel,
                     allRoutes[i].PinRouteModel.NumberOfCustomers,
                     allRoutes[i].ControlIsDone,
                     allRoutes[i].NumberOfColdBoxes,
@@ -121,7 +121,7 @@ namespace CargoSupport.Web.Controllers.API
                     allRoutes[i].Driver.ConvertToDriverViewModel(),
                     allRoutes[i].CarModel.GetValue(),
                     allRoutes[i].PortNumber,
-                    allRoutes[i].LoadingIsDone,
+                    allRoutes[i].LoadingLevel,
                     allRoutes[i].PreRideAnnotation,
                     allRoutes[i].PostRideAnnotation,
                     allRoutes[i].PinRouteModel.NumberOfCustomers,
@@ -130,7 +130,8 @@ namespace CargoSupport.Web.Controllers.API
                     allRoutes[i].NumberOfColdBoxes,
                     allRoutes[i].RestPicking,
                     allRoutes[i].NumberOfFrozenBoxes,
-                    allRoutes[i].NumberOfBreadBoxes
+                    allRoutes[i].NumberOfBreadBoxes,
+                    allRoutes[i].ControlIsDone
                     ));
             }
             return returnModels;
@@ -147,13 +148,14 @@ namespace CargoSupport.Web.Controllers.API
                     allRoutes[i].Driver.ConvertToDriverViewModel(),
                     allRoutes[i].CarModel.GetValue(),
                     allRoutes[i].PortNumber,
-                    allRoutes[i].LoadingIsDone,
+                    allRoutes[i].LoadingLevel,
                     allRoutes[i].PreRideAnnotation,
                     allRoutes[i].PinRouteModel.NumberOfCustomers,
                     allRoutes[i].NumberOfColdBoxes,
                     allRoutes[i].RestPicking,
                     allRoutes[i].NumberOfFrozenBoxes,
-                    allRoutes[i].NumberOfBreadBoxes
+                    allRoutes[i].NumberOfBreadBoxes,
+                    allRoutes[i].ControlIsDone
                     ));
             }
             return returnModels;

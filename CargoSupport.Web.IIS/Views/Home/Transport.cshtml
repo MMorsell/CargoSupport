@@ -7,7 +7,7 @@
     <h6>Datum</h6>
     <div>
         <div style="padding-left: 20px;" class="group">
-            <input type="text" id="calendar-from">
+            <input type="text" id="calendar-from-table-tr">
             <span class="bar"></span>
         </div>
     </div>
@@ -43,22 +43,6 @@
 {
 
     <script>
-        const timeFormat = 'YYYY-MM-DD';
-        let fromDate = moment().subtract(7, 'd');
-        let toDate = moment();
-
-        flatpickr('#calendar-from', {
-            "locale": "sv",
-            "maxDate": new Date().fp_incr(1),
-            defaultDate: new Date(),
-            onChange: function (selectedDates, dateStr, instance) {
-                ajaxDate = new Date(dateStr);
-                debugger;
-                reloadAjax();
-
-                //TODO Add post update
-            }
-        });
     </script>
 
     <script>
@@ -82,29 +66,26 @@
         function updateRow(thisRef) {
 
             //TODO Add post update
-            //var dataRef = table.row($(thisRef).parents('tr')).data();
+            var dataRef = table.row($(thisRef).parents('tr')).data();
 
-            //var object = {
-            //    id: dataRef.id,
-            //    routeName: dataRef.routeName,
-            //    driverFullName: dataRef.driverFullName,
-            //    preRideAnnotation: dataRef.preRideAnnotation,
-            //    portNumber: dataRef.portNumber,
-            //    carNumber: dataRef.carNumber,
-            //    routeHasStarted: dataRef.routeHasStarted,
-            //    numberOfCustomers: dataRef.numberOfCustomers,
-            //    tid: dataRef.tid,
-            //    numberOfColdBoxes: dataRef.numberOfColdBoxes,
-            //    restPlock: dataRef.restPlock,
-            //    tidFrys: dataRef.tidFrys,
-            //    numberOfFrozenBoxes: dataRef.numberOfFrozenBoxes,
-            //    estimatedRouteStart: dataRef.estimatedRouteStart
-            //};
+            var object = {
+                id: dataRef.id,
+                routeName: dataRef.routeName,
+                driverFullName: dataRef.driverFullName,
+                preRideAnnotation: dataRef.preRideAnnotation,
+                portNumber: dataRef.portNumber,
+                carNumber: dataRef.carNumber,
+                routeHasStarted: dataRef.routeHasStarted,
+                numberOfCustomers: dataRef.numberOfCustomers,
+                tid: dataRef.tid,
+                numberOfColdBoxes: dataRef.numberOfColdBoxes,
+                restPlock: dataRef.restPlock,
+                tidFrys: dataRef.tidFrys,
+                numberOfFrozenBoxes: dataRef.numberOfFrozenBoxes,
+                estimatedRouteStart: dataRef.estimatedRouteStart
+            };
 
-            ////var object = {
-            ////    Public_Transport: nestledObject
-            ////};
-            //postUpdate(object);
+            postUpdate(JSON.stringify(object));
         }
 
         function postUpdate(data) {
@@ -114,11 +95,12 @@
             console.log('Submitting form...');
             $.ajax({
                 type: 'POST',
-                url: 'http://localhost:5555/api/public/UpdateRecord',
-                dataType: 'json',
-                contentType: dataType,
-                data: data,
+                url: 'http://localhost:5557/api/Upsert/UpsertTransport',
+                //dataType: 'json',
+                //contentType: dataType,
+                //data: data,
                 error: function (jqXHR, exception) {
+                    debugger;
                 },
                 success: function (result) {
                     console.log('Data received: ');
@@ -130,12 +112,6 @@
         const simple_checkbox = function (data, type, full, meta) {
             var is_checked = data == true ? "checked" : "";
             return '<input type="checkbox" onclick=updateRow(this) class="checkbox" ' +
-                is_checked + ' />';
-        }
-
-        const disabled_checkbox = function (data, type, full, meta) {
-            var is_checked = data == true ? "checked" : "";
-            return '<input type="checkbox" disabled class="checkbox" ' +
                 is_checked + ' />';
         }
 
@@ -181,7 +157,7 @@
             table = $('#example').DataTable({
                 pageLength: 100,
                 "ajax": {
-                    "url": "http://localhost:5555/api/public/GetTransport",
+                    "url": "http://localhost:5557/api/public/GetTransport",
                     "data": {
                         "dateString": function () { return formatDate(ajaxDate) }
                     },
@@ -193,12 +169,12 @@
                         "searchable": false
                     },
                     { data: 'routeName', title: 'Turnamn' },
-                    { data: 'pinStartTimeString', title: 'Pinstart', render: pinstart_render },
+                    { data: 'pinStartTimeString', title: 'Pintid', render: pinstart_render },
                     { data: 'driver.fullName', title: 'Lev. Ansvarig' },
                     { data: 'driver', title: 'Lev. Arbetstid', render: driver_schedual },
                     { data: 'carNumber', title: 'Bilnr', render: carNumber_selectBox },
                     { data: 'portNumber', title: 'Port', render: port_selectBox },
-                    { data: 'loadingIsDone', title: 'Lastning klar', render: simple_checkbox },
+                    { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toSelectbox },
                     { data: 'preRideAnnotation', title: 'Kommentar', render: simple_textInput },
                     { data: 'postRideAnnotation', title: 'Dold Kommentar', render: simple_textInput },
                     { data: 'numberOfCustomers', title: 'Kunder' },
@@ -206,14 +182,12 @@
                     { data: 'restPlock', title: 'Restplock', render: disabled_checkbox },
                     { data: 'numberOfFrozenBoxes', title: 'Frys' },
                     { data: 'numberOfBreadBoxes', title: 'Bröd' },
+                    { data: 'controlIsDone', title: 'Kontroll', render: disabled_checkbox },
                 ],
                 "order": [[1, "asc"]],
 
             });
 
         });
-        function reloadAjax() {
-            table.ajax.reload(null, false);
-        }
     </script>
 }

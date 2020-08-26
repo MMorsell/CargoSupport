@@ -1,4 +1,5 @@
-﻿using CargoSupport.Models.PinModels;
+﻿using CargoSupport.Enums;
+using CargoSupport.Models.PinModels;
 using CargoSupport.Models.QuinyxModels;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
@@ -35,10 +36,10 @@ namespace CargoSupport.Models.DatabaseModels
         /*
          * Custom
          */
-        public bool IsResourceRoute { get; set; }
+        public bool IsResourceRoute { get; set; } = false;
         public CarNumber CarModel { get; set; }
         public int PortNumber { get; set; }
-        public bool LoadingIsDone { get; set; }
+        public LoadingLevel LoadingLevel { get; set; } = LoadingLevel.Ej_påbörjad;
         public DateTime DateOfRoute { get; set; }
         public bool ControlIsDone { get; set; } = false;
         public List<PickingVerifyModel> NumberOfColdBoxes { get; set; }

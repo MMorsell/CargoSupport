@@ -33,7 +33,7 @@ namespace CargoSupport.Web.IIS.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Transport()
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
@@ -51,7 +51,7 @@ namespace CargoSupport.Web.IIS.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Index2()
+        public async Task<IActionResult> Plock()
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
@@ -68,7 +68,7 @@ namespace CargoSupport.Web.IIS.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Index3()
+        public async Task<IActionResult> Medarbetare()
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {

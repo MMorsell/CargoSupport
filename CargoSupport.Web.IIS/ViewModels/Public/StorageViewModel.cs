@@ -1,4 +1,5 @@
-﻿using CargoSupport.Models;
+﻿using CargoSupport.Enums;
+using CargoSupport.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace CargoSupport.ViewModels.Public
             string routeName,
             string carNumberString,
             int portNumber,
-            bool loadingIsDone,
+            LoadingLevel loadingLevel,
             double numberOfCustomers,
             bool controlIsDone,
             List<PickingVerifyModel> numberOfColdBoxes,
@@ -25,7 +26,7 @@ namespace CargoSupport.ViewModels.Public
             RouteName = routeName;
             CarNumber = carNumberString;
             PortNumber = portNumber;
-            LoadingIsDone = loadingIsDone;
+            LoadingLevel = loadingLevel;
             NumberOfCustomers = numberOfCustomers;
             ControlIsDone = controlIsDone;
 
@@ -75,7 +76,7 @@ namespace CargoSupport.ViewModels.Public
         public string RouteName { get; private set; }
         public string CarNumber { get; private set; }
         public int PortNumber { get; private set; }
-        public bool LoadingIsDone { get; set; }
+        public LoadingLevel LoadingLevel { get; set; }
         public double NumberOfCustomers { get; private set; }
         public PickingVerifyModel NumberOfColdBoxes { get; set; }
         public PickingVerifyModel RestPicking { get; set; }
