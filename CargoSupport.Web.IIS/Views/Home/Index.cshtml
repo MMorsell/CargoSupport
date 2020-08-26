@@ -2,12 +2,6 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" type="text/css"
-      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
-<link rel="stylesheet" type="text/css"
-      href="https://cdn.datatables.net/rowreorder/1.2.7/css/rowReorder.bootstrap4.min.css">
 
 <div class="container">
     <h6>Datum</h6>
@@ -40,8 +34,6 @@
         </div>
     </div>
 </div>
-<script src="~/lib/aspnet/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/chat.js"></script>
 
 <table id="example" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
     <thead>
@@ -49,17 +41,6 @@
 </table>
 @section Scripts
 {
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-    <script src="https://npmcdn.com/flatpickr/dist/l10n/sv.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
-            integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    <script type="text/javascript" charset="utf8"
-            src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" charset="utf8"
-            src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
-    <script type="text/javascript" charset="utf8"
-            src="https://cdn.datatables.net/rowreorder/1.2.7/js/dataTables.rowReorder.min.js"></script>
 
     <script>
         const timeFormat = 'YYYY-MM-DD';
@@ -71,15 +52,32 @@
             "maxDate": new Date().fp_incr(1),
             defaultDate: new Date(),
             onChange: function (selectedDates, dateStr, instance) {
-                fromDate = moment(dateStr, timeFormat);
+                ajaxDate = new Date(dateStr);
+                debugger;
+                reloadAjax();
+
                 //TODO Add post update
             }
         });
     </script>
 
     <script>
+        let ajaxDate = new Date();
         //let Alldrivers = @ViewBag.Alldrivers;
         let table;
+
+        function formatDate(d) {
+            month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
 
         function updateRow(thisRef) {
 
@@ -110,19 +108,17 @@
         }
 
         function postUpdate(data) {
-            debugger;
             //JSON data
             var dataType = 'application/json';
 
             console.log('Submitting form...');
             $.ajax({
                 type: 'POST',
-                url: 'https://localhost:44374/api/public/UpdateRecord',
+                url: 'http://localhost:5555/api/public/UpdateRecord',
                 dataType: 'json',
                 contentType: dataType,
                 data: data,
                 error: function (jqXHR, exception) {
-                    debugger;
                 },
                 success: function (result) {
                     console.log('Data received: ');
@@ -160,7 +156,6 @@
         }
 
         const carNumber_selectBox = function (data, type, full, meta) {
-            console.log(data);
             if ([101, 102, 103, 104, 105, "Egen"].includes(data)) {
                 $('#carNumber_selectBox').val(data);
             }
@@ -168,7 +163,6 @@
         }
 
         const driver_selectBox = function (data, type, full, meta) {
-            console.log(data);
             if ([101, 102, 103, 104, 105, "Egen"].includes(data)) {
                 $('#driver_selectBox').val(data);
             }
@@ -181,16 +175,15 @@
         }
 
         const driver_schedual = function (data, type, full, meta) {
-            debugger;
             return '<p>' + data.begTimeString + '-' + data.endTimeString + '</p > ';
         }
         $(document).ready(function () {
             table = $('#example').DataTable({
                 pageLength: 100,
                 "ajax": {
-                    "url": "https://localhost:44374/api/public/GetTransport",
-                    "dataSrc": function (response) {
-                        dataR = response;
+                    "url": "http://localhost:5555/api/public/GetTransport",
+                    "data": {
+                        "dateString": function () { return formatDate(ajaxDate) }
                     },
                     "dataSrc": ""
                 },

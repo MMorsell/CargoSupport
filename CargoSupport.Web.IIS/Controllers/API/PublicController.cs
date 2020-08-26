@@ -30,14 +30,21 @@ namespace CargoSupport.Web.Controllers.API
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetTransport(string date)
+        public async Task<ActionResult> GetTransport(string dateString)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
                 return Unauthorized();
             }
 
-            var res = ConvertToTransport(await _dbHelper.GetAllRecords<DataModel>(Constants.MongoDb.OutputScreenTableName));
+            DateTime.TryParse(dateString, out DateTime date);
+
+            if (date.ToString(@"yyyy-MM-dd") != dateString)
+            {
+                //TODO: Implement return invalid date
+            }
+
+            var res = ConvertToTransport(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
             return Ok(res.ToArray());
         }
 

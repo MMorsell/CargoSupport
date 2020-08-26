@@ -44,7 +44,20 @@ namespace CargoSupport.Helpers
             var today = DateTime.Today; //2017-03-31 00:00:00.000
 
             var filterBuilder = Builders<DataModel>.Filter;
-            var filter = filterBuilder.Gte(x => x.DateOfRoute, today);
+            var filter = filterBuilder.Where(x => x.DateOfRoute < today && x.DateOfRoute > today);
+            return await collection.FindAsync(filter).Result.ToListAsync();
+        }
+
+        public async Task<List<DataModel>> GetAllRecordsByDate(string tableName, DateTime date)
+        {
+            var maxTime = date.Add(DateTime.MaxValue.TimeOfDay);
+            var minTime = date.Add(DateTime.MinValue.TimeOfDay);
+            var collection = _database.GetCollection<DataModel>(tableName);
+
+            var today = DateTime.Today; //2017-03-31 00:00:00.000
+
+            var filterBuilder = Builders<DataModel>.Filter;
+            var filter = filterBuilder.Where(x => x.DateOfRoute < maxTime && x.DateOfRoute > minTime);
             return await collection.FindAsync(filter).Result.ToListAsync();
         }
 
