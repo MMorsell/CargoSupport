@@ -38,6 +38,7 @@ namespace CargoSupport.Models.QuinyxModels
             if (ExtendedInformationModel != null)
             {
                 return $"Martin Mörsell";
+                //return $"{ExtendedInformationModel.GivenName} {ExtendedInformationModel.FamilyName}";
             }
             else
             {
@@ -51,6 +52,7 @@ namespace CargoSupport.Models.QuinyxModels
             int active = 1;
             if (ExtendedInformationModel != null)
             {
+                //fullName = $"{ExtendedInformationModel.GivenName} {ExtendedInformationModel.FamilyName}";
                 fullName = $"Martin Mörsell";
                 active = ExtendedInformationModel.Active;
             }
@@ -64,5 +66,7 @@ namespace CargoSupport.Models.QuinyxModels
 
         public ExtendedInformationModel ExtendedInformationModel { get; set; }
         public string CategoryName { get; internal set; }
+
+        public string FullNameWithTime => $"{ExtendedInformationModel.GivenName} {ExtendedInformationModel.FamilyName} {begTime.ToString(@"hh\:mm")}-{endTime.ToString(@"hh\:mm")}";
     }
 }

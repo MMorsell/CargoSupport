@@ -31,16 +31,16 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             {
                 return Unauthorized();
             }
-            var _ph = new PinHelper();
-            List<PinRouteModel> routes = _ph.RetrieveRoutesFromActualPin(model.PinId).Result;
+            var ph = new PinHelper();
+            List<PinRouteModel> routes = await ph.RetrieveRoutesFromActualPin(model.PinId);
 
-            var anyExistingIdOfRouteInDatabase = await _ph.AnyPinRouteModelExistInDatabase(routes);
+            var anyExistingIdOfRouteInDatabase = await ph.AnyPinRouteModelExistInDatabase(routes);
 
             if (anyExistingIdOfRouteInDatabase != 0)
             {
                 return View("Error", new ErrorViewModel { Message = $"Åtgärden misslyckades eftersom någon av orderns rutter redan fanns i systemet: ruttid:'{anyExistingIdOfRouteInDatabase}' hittades" });
             }
-            _ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes).Wait();
+            await ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes);
 
             return View("../Home/Transport");
         }

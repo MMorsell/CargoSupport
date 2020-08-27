@@ -9,6 +9,8 @@ using CargoSupport.ViewModels.Public;
 using CargoSupport.Enums;
 using static CargoSupport.Helpers.AuthorizeHelper;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
+using CargoSupport.Models.QuinyxModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -44,8 +46,21 @@ namespace CargoSupport.Web.Controllers.API
                 //TODO: Implement return invalid date
             }
 
-            var res = ConvertToTransport(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
-            return Ok(res.ToArray());
+            var dataBaseRes = ConvertToTransport(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
+            var driversThatWorksOnThisDate = _qnHelper.GetAllDriversSorted(date, false);
+
+            //return Ok(dataBaseRes.ToArray());
+            return Ok(new ReturnModel
+            {
+                data = dataBaseRes.ToArray(),
+                selectValues = driversThatWorksOnThisDate.ToArray()
+            });
+        }
+
+        public class ReturnModel
+        {
+            public TransportViewModel[] data { get; set; }
+            public QuinyxModel[] selectValues { get; set; }
         }
 
         [HttpGet]
@@ -94,7 +109,7 @@ namespace CargoSupport.Web.Controllers.API
             for (int i = 0; i < allRoutes.Count; i++)
             {
                 returnModels.Add(new StorageViewModel(
-                    allRoutes[i].Id,
+                    allRoutes[i]._Id,
                     allRoutes[i].PinRouteModel.RouteName,
                     allRoutes[i].CarModel.GetValue(),
                     allRoutes[i].PortNumber,
@@ -117,7 +132,7 @@ namespace CargoSupport.Web.Controllers.API
             for (int i = 0; i < allRoutes.Count; i++)
             {
                 returnModels.Add(new TransportViewModel(
-                    allRoutes[i].Id,
+                    allRoutes[i]._Id,
                     allRoutes[i].PinRouteModel.RouteName,
                     allRoutes[i].Driver.ConvertToDriverViewModel(),
                     allRoutes[i].CarModel.GetValue(),

@@ -1,5 +1,5 @@
-﻿const baseHost = "http://81.235.179.124"
-//const baseHost = "http://localhost:5557"
+﻿//const baseHost = "http://81.235.179.124"
+const baseHost = "http://localhost:5557"
 
 let ajaxDate = new Date();
 
@@ -17,18 +17,18 @@ function formatDate(d) {
 }
 
 const preRideInput = function (data, type, full, meta) {
-    return '<input type="text" id="preRideInput" onfocusout=updateRow(this) class="form-control" value="' +
+    return '<input contenteditable="true" type="text" id="preRideInput" onfocusout=updateRow(this) class="form-control" value="' +
         data + '"  />';
 }
 const postRideInput = function (data, type, full, meta) {
-    return '<input type="text" id="postRideInput" onfocusout=updateRow(this) class="form-control" value="' +
+    return '<input contenteditable="true" type="text" id="postRideInput" onfocusout=updateRow(this) class="form-control" value="' +
         data + '"  />';
 }
 
 const convert_loadingLevel_toSelectbox = function (data, type, full, meta) {
     var selectBox = [];
     selectBox.push(
-        '<div class="selectpicker show-tick"><select id="convert_loadingLevel_toSelectbox" onChange=updateRow(this) class="dropdown bootstrap-select">'
+        '<div><select id="convert_loadingLevel_toSelectbox" onChange=updateRow(this) class="form-control">'
     );
     for (i = 0; i < 4; i++) {
         if (i === 0) {
@@ -119,7 +119,6 @@ const renderEmptyIfZero = function (data, type, full, meta) {
 }
 
 const hidden_IntIfNull = function (data, type, full, meta) {
-    debugger;
     if (data === 0) {
         return '<p>Ej ifyllt</p>';
     }

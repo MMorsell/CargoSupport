@@ -1,6 +1,7 @@
 ﻿using CargoSupport.Enums;
 using CargoSupport.Models.PinModels;
 using CargoSupport.Models.QuinyxModels;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,8 @@ namespace CargoSupport.Models.DatabaseModels
         }
 
         [BsonId]
-        public Guid Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string _Id { get; set; }
 
         /*
          * From Pin

@@ -36,18 +36,34 @@ namespace CargoSupport.Helpers
         {
             var collection = _database.GetCollection<T>(tableName);
             var result = await collection.FindAsync(Builders<T>.Filter.Empty).Result.ToListAsync();
-            return result.ToList();
+            return result;
         }
 
-        public async Task<List<DataModel>> GetAllRoutesToday(string tableName)
+        public async Task UpsertDataRecordById(string tableName, DataModel record)
         {
             var collection = _database.GetCollection<DataModel>(tableName);
 
-            var today = DateTime.Today; //2017-03-31 00:00:00.000
+            await collection.ReplaceOneAsync(p => p._Id == record._Id,
+                            record,
+                            new ReplaceOptions { IsUpsert = true });
+        }
 
-            var filterBuilder = Builders<DataModel>.Filter;
-            var filter = filterBuilder.Where(x => x.DateOfRoute < today && x.DateOfRoute > today);
-            return await collection.FindAsync(filter).Result.ToListAsync();
+        public async Task<T> GetRecordByStringId<T>(string tableName, string id)
+        {
+            var collection = _database.GetCollection<T>(tableName);
+            var filter = Builders<T>.Filter.Eq("_Id", id);
+            var result = await collection.FindAsync(filter);
+
+            return result.First();
+        }
+
+        public async Task<T> GetRecordById<T>(string tableName, string id)
+        {
+            var collection = _database.GetCollection<T>(tableName);
+            var filter = Builders<T>.Filter.Eq("_Id", id);
+            var result = await collection.Find(filter).FirstOrDefaultAsync();
+
+            return result;
         }
 
         public async Task<List<DataModel>> GetAllRecordsByDate(string tableName, DateTime date)
@@ -63,49 +79,12 @@ namespace CargoSupport.Helpers
             return await collection.FindAsync(filter).Result.ToListAsync();
         }
 
-        public async Task<T> GetRecordById<T>(string tableName, Guid guid)
-        {
-            var collection = _database.GetCollection<T>(tableName);
-            var filter = Builders<T>.Filter.Eq("_id", guid);
-            var result = await collection.FindAsync(filter);
-
-            return result.First();
-        }
-
         public async Task<DataModel> GetRecordByPinId(string tableName, PinRouteModel pinModel)
         {
             var collection = _database.GetCollection<DataModel>(tableName);
             var result = await collection.Find(_ => _.PinRouteModel.RouteId == pinModel.RouteId).FirstOrDefaultAsync();
 
             return result;
-        }
-
-        public async Task<DataModel> GetRecordByGuid(string tableName, TransportViewModel transportViewModel)
-        {
-            var collection = _database.GetCollection<DataModel>(tableName);
-
-            try
-            {
-                var filterBuilder = Builders<DataModel>.Filter;
-                var filter = filterBuilder.Where(x => x.ControlIsDone == false);
-                var result = await collection.FindAsync(filter).Result.ToListAsync();
-                return result[0];
-            }
-            catch (Exception ex)
-            {
-            }
-
-            return null;
-        }
-
-        public async Task UpsertRecordByNativeGuid<T>(string tableName, Guid guid, T record)
-        {
-            var collection = _database.GetCollection<T>(tableName);
-
-            await collection.ReplaceOneAsync(
-                filter: new BsonDocument("_id", guid),
-                options: new ReplaceOptions { IsUpsert = true },
-                replacement: record);
         }
 
         //public async Task UpsertRecord<T>(string tableName, Guid guid, T record)
@@ -128,7 +107,7 @@ namespace CargoSupport.Helpers
             for (int i = 0; i < pinRouteModels.Count; i++)
             {
                 await collection.ReplaceOneAsync(
-                new BsonDocument("Id", pinRouteModels[i].Id),
+                new BsonDocument("_Id", pinRouteModels[i]._Id),
                 pinRouteModels[i],
                 new ReplaceOptions
                 {
@@ -140,7 +119,7 @@ namespace CargoSupport.Helpers
         public async Task DeleteRecord<T>(string tableName, Guid guid)
         {
             var collection = _database.GetCollection<T>(tableName);
-            var filter = Builders<T>.Filter.Eq("Id", guid);
+            var filter = Builders<T>.Filter.Eq("_Id", guid);
             await collection.DeleteOneAsync(filter);
         }
 

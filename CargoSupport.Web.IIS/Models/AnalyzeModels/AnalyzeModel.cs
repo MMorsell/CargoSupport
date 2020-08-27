@@ -27,7 +27,7 @@ namespace CargoSupport.Models
 
         public void AddPinRouteModelIfItHasNotBeenAdded(DataModel pinRouteModel)
         {
-            if (_routesForThisDriver.FirstOrDefault(a => a.Id.Equals(pinRouteModel.Id)) == null)
+            if (_routesForThisDriver.FirstOrDefault(a => a._Id.Equals(pinRouteModel._Id)) == null)
             {
                 _routesForThisDriver.Add(pinRouteModel);
             }

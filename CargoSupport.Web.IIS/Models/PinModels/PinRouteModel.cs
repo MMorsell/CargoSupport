@@ -67,7 +67,14 @@ namespace CargoSupport.Models.PinModels
             NumberOfCustomers = Customers.Count;
             int.TryParse(RouteInfoModel.DistanceInMeters, out int result);
             DistanceInMeters = result;
-            ScheduledRouteEnd = ScheduledRouteStart.AddSeconds(double.Parse(RouteInfoModel.duration));
+            ScheduledRouteEnd = ScheduledRouteStart.AddSeconds(double.Parse(RouteInfoModel.duration)).AddHours(2);
+            ScheduledRouteStart = ScheduledRouteStart.AddHours(2);
+
+            //TODO: Fix actualRouteStart and add time
+            //if (ActualRouteStart != null && ActualRouteStart is DateTime)
+            //{
+            //    ActualRouteStart = new DateTime()
+            //}
         }
     }
 

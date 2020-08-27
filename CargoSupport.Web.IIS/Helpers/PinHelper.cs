@@ -55,7 +55,7 @@ namespace CargoSupport.Helpers
                     DateOfRoute = pinRouteModels[i].ScheduledRouteStart
                 });
             }
-            await PopulateAllRoutesWithDriversAndSaveToDatabase(dbModelCollection, DateTime.Now.AddDays(1));
+            await PopulateAllRoutesWithDriversAndSaveToDatabase(dbModelCollection, dbModelCollection[0].DateOfRoute);
         }
 
         private async Task PopulateAllRoutesWithDriversAndSaveToDatabase(List<DataModel> allRoutesForToday, DateTime dateToGetDriversFrom)
@@ -76,11 +76,6 @@ namespace CargoSupport.Helpers
             }
 
             await _dbHelper.InsertMultipleRecords(Constants.MongoDb.OutputScreenTableName, allRoutesForToday);
-
-            foreach (var route in allRoutesForToday)
-            {
-                Console.WriteLine($"{route.PinRouteModel.RouteName} {route.PinRouteModel.ScheduledRouteStart} - {route.Driver.begTime}/{route.Driver.endTime}");
-            }
         }
 
         public async Task UpdateExistingRecordsIfThereIsOne(List<PinRouteModel> pinRouteModels)
@@ -92,7 +87,7 @@ namespace CargoSupport.Helpers
                 if (existingRecord != null)
                 {
                     existingRecord.PinRouteModel = pinModel;
-                    await _dbHelper.UpsertRecordByNativeGuid(Constants.MongoDb.OutputScreenTableName, existingRecord.Id, existingRecord);
+                    await _dbHelper.UpsertDataRecordById(Constants.MongoDb.OutputScreenTableName, existingRecord);
                 }
             }
         }

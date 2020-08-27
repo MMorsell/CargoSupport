@@ -1,13 +1,22 @@
-﻿namespace TestingConsole
+﻿using CargoSupport.Helpers;
+using System;
+using System.Linq;
+
+namespace TestingConsole
 {
     internal class Program
     {
         private static void Main(string[] args)
         {
-            for (int i = 0; i < 100; i++)
-            {
-                System.Console.Write($"<option>{i}</option>");
-            }
+            //var qh = new CargoSupport.Helpers.QuinyxHelper();
+
+            //var res = qh.GetAllDriversFromADate(DateTime.Now).ToList();
+
+            //foreach (var r in res)
+            //{
+            //    Console.WriteLine($"{r.GivenName} - {r.begTimeString}");
+            //}
+
             //var _dbhelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
             //var ph = new PinHelper();
             //var _qnHelper = new QuinyxHelper();

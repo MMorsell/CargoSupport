@@ -1,5 +1,6 @@
 ﻿using CargoSupport.Enums;
 using CargoSupport.Models;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,9 @@ namespace CargoSupport.ViewModels.Public
     {
         //TidFrys = tidFrys.ToString(@"hh\:mm");
 
-        public TransportViewModel(Guid id, string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingIsDone, string preRideAnnotation, string postRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyModel> numberOfColdBoxes, List<PickingVerifyModel> restPicking, List<PickingVerifyModel> numberOfFrozenBoxes, List<PickingVerifyModel> numberOfBreadBoxes, bool controlIsDone)
+        public TransportViewModel(string _id, string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingIsDone, string preRideAnnotation, string postRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyModel> numberOfColdBoxes, List<PickingVerifyModel> restPicking, List<PickingVerifyModel> numberOfFrozenBoxes, List<PickingVerifyModel> numberOfBreadBoxes, bool controlIsDone)
         {
-            Id = id;
+            _Id = _id;
             RouteName = routeName;
             Driver = driverModel;
             CarNumber = carNumberString;
@@ -85,7 +86,7 @@ namespace CargoSupport.ViewModels.Public
             }
         }
 
-        public Guid Id { get; set; }
+        public string _Id { get; set; }
         public string RouteName { get; set; }
         public DriverViewModel Driver { get; set; }
         public string CarNumber { get; set; }

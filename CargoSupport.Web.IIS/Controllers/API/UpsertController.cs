@@ -19,16 +19,9 @@ namespace CargoSupport.Web.IIS.Controllers.API
     [ApiController]
     public class UpsertController : ControllerBase
     {
-        //[HttpPost]
-        //public async Task<ActionResult> UpsertTransport(TransportViewModel transportViewModel)
-        //{
-        //    if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
-        //    {
-        //        return Unauthorized();
-        //    }
-
-        //    return Ok();
-        //}
+        public UpsertController()
+        {
+        }
 
         [HttpPost]
         public async Task<ActionResult> UpsertTransport([FromBody] TransportViewModel transportViewModel)
@@ -38,9 +31,9 @@ namespace CargoSupport.Web.IIS.Controllers.API
                 return Unauthorized();
             }
 
-            var dbConnection = new MongoDbHelper(Constants.MongoDb.ConnectionString);
+            var dbConnection = new MongoDbHelper(Constants.MongoDb.DatabaseName);
 
-            var existingRecord = await dbConnection.GetRecordByGuid(Constants.MongoDb.OutputScreenTableName, transportViewModel);
+            var existingRecord = await dbConnection.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, transportViewModel._Id);
 
             if (existingRecord == null)
             {
@@ -67,12 +60,12 @@ namespace CargoSupport.Web.IIS.Controllers.API
                 existingRecord.LoadingLevel = transportViewModel.LoadingLevel;
                 update = true;
             }
-            else if (transportViewModel.PreRideAnnotation != "")
+            else if (transportViewModel.PreRideAnnotation != null)
             {
                 existingRecord.PreRideAnnotation = transportViewModel.PreRideAnnotation;
                 update = true;
             }
-            else if (transportViewModel.PostRideAnnotation != "")
+            else if (transportViewModel.PostRideAnnotation != null)
             {
                 existingRecord.PostRideAnnotation = transportViewModel.PostRideAnnotation;
                 update = true;
@@ -80,7 +73,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
 
             if (update)
             {
-                await dbConnection.UpsertRecordByNativeGuid(Constants.MongoDb.OutputScreenTableName, existingRecord.Id, existingRecord);
+                await dbConnection.UpsertDataRecordById(Constants.MongoDb.OutputScreenTableName, existingRecord);
             }
         }
 
@@ -93,6 +86,38 @@ namespace CargoSupport.Web.IIS.Controllers.API
             }
 
             return Ok();
+        }
+
+        private static async Task UpsertStorage(TransportViewModel transportViewModel, MongoDbHelper dbConnection, DataModel existingRecord)
+        {
+            //var update = false;
+            ////existingRecord.Driver.Id = transportViewModel.Driver.Id;
+            ////existingRecord.CarModel = transportViewModel.CarNumber;
+            //if (transportViewModel.PortNumber != -1)
+            //{
+            //    existingRecord.PortNumber = transportViewModel.PortNumber;
+            //    update = true;
+            //}
+            //else if ((int)transportViewModel.LoadingLevel != -1)
+            //{
+            //    existingRecord.LoadingLevel = transportViewModel.LoadingLevel;
+            //    update = true;
+            //}
+            //else if (transportViewModel.PreRideAnnotation != "")
+            //{
+            //    existingRecord.PreRideAnnotation = transportViewModel.PreRideAnnotation;
+            //    update = true;
+            //}
+            //else if (transportViewModel.PostRideAnnotation != "")
+            //{
+            //    existingRecord.PostRideAnnotation = transportViewModel.PostRideAnnotation;
+            //    update = true;
+            //}
+
+            //if (update)
+            //{
+            //    await dbConnection.UpsertRecordByNativeGuid(Constants.MongoDb.OutputScreenTableName, existingRecord.Id, existingRecord);
+            //}
         }
     }
 }

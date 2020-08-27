@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
+using System.Linq;
 
 namespace CargoSupport.Web.IIS.Controllers
 {
@@ -39,8 +40,6 @@ namespace CargoSupport.Web.IIS.Controllers
             {
                 return Unauthorized();
             }
-            var qh = new QuinyxHelper();
-            ViewBag.Alldrivers = JsonSerializer.Serialize(qh.GetAllActiveDriversWithSchedual(DateTime.Now));
             //var a2 = Environment.UserName;
             //string email = a.FindFirstValue(ClaimTypes.Email); // Always null. Not returning logged in user's Email
             //string userName = a.FindFirstValue(ClaimTypes.Name); // Returning logged in user's UserName

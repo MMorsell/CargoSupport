@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CargoSupport.Web\CargoSupport.Web.csproj" />
+    <ProjectReference Include="..\CargoSupport.Web.IIS\CargoSupport.Web.IIS.csproj" />
   </ItemGroup>
 
 </Project>

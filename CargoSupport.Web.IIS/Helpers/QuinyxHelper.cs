@@ -120,6 +120,57 @@ namespace CargoSupport.Helpers
             }
         }
 
+        public BasicQuinyxModel[] GetAllDriversFromADate(DateTime date)
+        {
+            List<BasicQuinyxModel> schedualedDrivers = GetAllDriversSorted(date, false).ConvertQuinyxModelToBasic();
+            List<BasicQuinyxModel> allExtendedInformationDrivers = GetNonSchedualedDrivers();
+
+            foreach (var schedModel in schedualedDrivers)
+            {
+                var existingModelInExtended = allExtendedInformationDrivers.FirstOrDefault(
+                    mod => mod.Id.Equals(schedModel.Id));
+
+                if (existingModelInExtended != null)
+                {
+                    allExtendedInformationDrivers.Remove(existingModelInExtended);
+                }
+            }
+
+            return schedualedDrivers.Union(allExtendedInformationDrivers).OrderBy(res => res.begTime).ThenBy(res => res.endTime).ToArray();
+        }
+
+        private static List<BasicQuinyxModel> GetNonSchedualedDrivers()
+        {
+            XmlDocument soapEnvelopeXml = CreateSoapGetAllDriversEnvelope();
+            HttpWebRequest webRequest = CreateWebRequest(CargoSupport.Constants.SoapApi.Connection);
+            InsertSoapEnvelopeIntoWebRequest(soapEnvelopeXml, webRequest);
+
+            // begin async call to web request.
+            IAsyncResult asyncResult = webRequest.BeginGetResponse(null, null);
+
+            // suspend this thread until call is complete. You might want to
+            // do something usefull here like update your UI.
+            asyncResult.AsyncWaitHandle.WaitOne();
+
+            // get the response from the completed web request.
+            var quinyxBasicModels = new List<BasicQuinyxModel>();
+            using (WebResponse webResponse = webRequest.EndGetResponse(asyncResult))
+            {
+                using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
+                {
+                    XDocument doc = XDocument.Load(rd);
+                    quinyxBasicModels = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new BasicQuinyxModel
+                    {
+                        Id = (int)y.Elements().Where(z => z.Name.LocalName == "id").FirstOrDefault(),
+                        GivenName = (string)y.Elements().Where(z => z.Name.LocalName == "givenName").FirstOrDefault(),
+                        FamilyName = (string)y.Elements().Where(z => z.Name.LocalName == "familyName").FirstOrDefault(),
+                        Active = (int)y.Elements().Where(z => z.Name.LocalName == "active").FirstOrDefault(),
+                    }).ToList();
+                }
+            }
+            return quinyxBasicModels.Where(mod => mod.Active == 1).ToList();
+        }
+
         public List<DataModel> AddNamesToData(List<DataModel> Data)
         {
             XmlDocument soapEnvelopeXml = CreateSoapGetAllDriversEnvelope();

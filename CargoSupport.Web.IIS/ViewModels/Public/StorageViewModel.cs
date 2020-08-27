@@ -1,5 +1,6 @@
 ﻿using CargoSupport.Enums;
 using CargoSupport.Models;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace CargoSupport.ViewModels.Public
     public class StorageViewModel
     {
         public StorageViewModel(
-            Guid id,
+            string _id,
             string routeName,
             string carNumberString,
             int portNumber,
@@ -22,7 +23,7 @@ namespace CargoSupport.ViewModels.Public
             List<PickingVerifyModel> numberOfFrozenBoxes,
             List<PickingVerifyModel> numberOfBreadBoxes)
         {
-            Id = id;
+            _Id = _id;
             RouteName = routeName;
             CarNumber = carNumberString;
             PortNumber = portNumber;
@@ -72,7 +73,7 @@ namespace CargoSupport.ViewModels.Public
             }
         }
 
-        public Guid Id { get; private set; }
+        public string _Id { get; private set; }
         public string RouteName { get; private set; }
         public string CarNumber { get; private set; }
         public int PortNumber { get; private set; }
