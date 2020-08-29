@@ -19,6 +19,8 @@
 
 @section Scripts
 {
+    <script src="~/lib/aspnet/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/chat.js"></script>
     <script>
         let table;
 
@@ -133,7 +135,7 @@
             console.log('Submitting form...');
             $.ajax({
                 type: 'POST',
-                url: baseHost + '/api/Upsert/UpsertStorage',
+                url: '/api/Upsert/UpsertStorage',
                 //dataType: 'json',
                 contentType: dataType,
                 data: jsonData,
@@ -221,7 +223,7 @@
             table = $('#dataTable').DataTable({
                 pageLength: 250,
                 "ajax": {
-                    "url": baseHost + '/api/public/GetStorage',
+                    "url": '/api/public/GetStorage',
                     "data": {
                         "dateString": function () { return formatDate(ajaxDate) }
                     },
@@ -233,6 +235,7 @@
                         "searchable": false
                     },
                     { data: 'routeName', title: 'Tur' },
+                    { data: 'pinStartTimeString', title: 'Pintid', render: pinstart_render, "visible": false, },
                     { data: 'carNumber', title: 'Bilnr', },
                     { data: 'portNumber', title: 'Port', },
                     { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toValue },
@@ -243,7 +246,7 @@
                     { data: 'numberOfBreadBoxes.value', title: 'Bröd', render: numberOfBreadBoxes_input },
                     { data: 'controlIsDone.value', title: 'Kontroll', render: controlIsDone_input },
                 ],
-                "order": [[1, "asc"]],
+                "order": [[2, "asc"]],
 
             });
             $('thead th').each(function () {

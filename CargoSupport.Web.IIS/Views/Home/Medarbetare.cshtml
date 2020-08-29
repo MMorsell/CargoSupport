@@ -17,13 +17,14 @@
 </div>
 @section Scripts
 {
-
+    <script src="~/lib/aspnet/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/chat.js"></script>
     <script>
         $(document).ready(function () {
             table = $('#dataTable').DataTable({
                 pageLength: 250,
                 "ajax": {
-                    "url": baseHost + '/api/public/GetPublic',
+                    "url": '/api/public/GetPublic',
                     "data": {
                         "dateString": function () { return formatDate(ajaxDate) }
                     },
@@ -31,7 +32,8 @@
                 },
                 columns: [
                     { data: 'routeName', title: 'Turnamn' },
-                    { data: 'driver.fullName', title: 'Lev. Ansvarig', "searchable": false },
+                    { data: 'driver.fullName', title: 'Lev. Ansvarig' },
+                    { data: 'pinStartTimeString', title: 'Pintid', render: pinstart_render, "visible": false, },
                     { data: 'carNumber', title: 'Bilnr', render: renderEmptyIfZero },
                     { data: 'portNumber', title: 'Port', render: renderEmptyIfZero },
                     { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toValue },
@@ -43,7 +45,7 @@
                     { data: 'numberOfBreadBoxes', title: 'Bröd', render: hidden_IntIfNull },
                     { data: 'controlIsDone', title: 'Kontroll', render: disabled_checkbox },
                 ],
-                "order": [[1, "asc"]],
+                "order": [[2, "asc"]],
             });
             $('thead th').each(function () {
                 $(this).addClass("stickyHeader");

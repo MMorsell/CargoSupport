@@ -12,6 +12,7 @@ using CargoSupport.ViewModels;
 using CargoSupport.ViewModels.Public;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using static CargoSupport.Helpers.AuthorizeHelper;
@@ -22,8 +23,8 @@ namespace CargoSupport.Web.IIS.Controllers.API
     [ApiController]
     public class UpsertController : ControllerBase
     {
-
         private readonly IHubContext<ChatHub> _chatHub;
+
         public UpsertController(IHubContext<ChatHub> chatHub)
         {
             _chatHub = chatHub;
@@ -56,7 +57,14 @@ namespace CargoSupport.Web.IIS.Controllers.API
             var update = false;
             if (transportViewModel.Driver.Id != 0)
             {
-                existingRecord.Driver = TryGetDriverInfo(transportViewModel.Driver.Id, existingRecord.DateOfRoute, existingRecord.Driver);
+                if (transportViewModel.Driver.Id == -1)
+                {
+                    existingRecord.Driver = new QuinyxModel();
+                }
+                else
+                {
+                    existingRecord.Driver = TryGetDriverInfo(transportViewModel.Driver.Id, existingRecord.DateOfRoute, existingRecord.Driver);
+                }
                 update = true;
             }
             else if (transportViewModel.PortNumber != -1)
@@ -98,7 +106,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
             {
                 var qh = new QuinyxHelper();
                 var driversThatWorksOnThisDate = qh.GetAllDriversSorted(date);
-                var matchingDriver = driversThatWorksOnThisDate
+                var matchingDriver = driversThatWorksOnThisDate.Result
                     .FirstOrDefault(dr => dr.Id.Equals(newDriverID));
 
                 if (matchingDriver != null)
@@ -159,7 +167,6 @@ namespace CargoSupport.Web.IIS.Controllers.API
                 existingRecord.ControlIsDone.Insert(0, storageViewModel.ControlIsDone);
                 update = true;
             }
-
 
             if (update)
             {

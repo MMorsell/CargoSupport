@@ -8,6 +8,7 @@ namespace CargoSupport.Models.PinModels
 {
     public class OrderRecord
     {
+        public string id { get; set; }
         public List<PinOrderModel> routes { get; set; }
     }
 

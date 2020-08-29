@@ -34,22 +34,25 @@ namespace CargoSupport.Web.IIS.Controllers
                 return Unauthorized();
             }
 
-            List<DataModel> allRoutes = await _dbHelper.GetAllRecords<DataModel>(Constants.MongoDb.OutputScreenTableName);
-            var analyzeModels = CargoSupport.Helpers.DataConversionHelper.ConvertPinRouteModelToAnalyzeModel(allRoutes);
-            ViewBag.DataTable = JsonSerializer.Serialize(analyzeModels);
             return View();
         }
 
-        public async Task<IActionResult> AllData()
+        [Route("[controller]/AllData/{id:int}")]
+        public async Task<IActionResult> AllData(int id)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
                 return Unauthorized();
             }
 
-            List<DataModel> allRoutes = await _dbHelper.GetAllRecords<DataModel>(Constants.MongoDb.OutputScreenTableName);
-            var analyzeModels = CargoSupport.Helpers.DataConversionHelper.ConvertPinRouteModelToAnalyzeModel(allRoutes);
-            ViewBag.DataTable = JsonSerializer.Serialize(allRoutes);
+            if (id <= 0)
+            {
+                return Unauthorized();
+            }
+
+            List<DataModel> allRoutes = await _dbHelper.GetAllRecordsByDriverId(Constants.MongoDb.OutputScreenTableName, id);
+            var analyzeModels = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToFullViewModel(allRoutes);
+            ViewBag.DataTable = JsonSerializer.Serialize(analyzeModels);
             return View(allRoutes);
         }
 
@@ -61,6 +64,34 @@ namespace CargoSupport.Web.IIS.Controllers
             }
 
             return View();
+        }
+
+        [HttpGet]
+        [Route("api/[controller]/GetSlim")]
+        public async Task<ActionResult> GetSlim(string fromDate, string toDate)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            DateTime.TryParse(fromDate, out DateTime from);
+
+            if (from.ToString(@"yyyy-MM-dd") != fromDate)
+            {
+                //TODO: Implement return invalid date
+            }
+
+            DateTime.TryParse(toDate, out DateTime to);
+
+            if (to.ToString(@"yyyy-MM-dd") != toDate)
+            {
+                //TODO: Implement return invalid date
+            }
+
+            List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToSlimViewModels(analyzeModels);
+            return Ok(res);
         }
     }
 }

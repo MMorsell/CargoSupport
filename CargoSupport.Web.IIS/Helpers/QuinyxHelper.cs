@@ -10,19 +10,31 @@ using CargoSupport.Enums;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Extensions;
 using CargoSupport.ViewModels;
+using System.Threading.Tasks;
 
 namespace CargoSupport.Helpers
 {
     public class QuinyxHelper
     {
-        public List<QuinyxModel> GetAllDriversSorted(DateTime date, bool clearNames = true)
+        public async Task<List<QuinyxModel>> GetAllDriversSorted(DateTime date, bool clearNames = true)
         {
-            return GetDrivers(date, date, clearNames).OrderBy(e => e.begTime).ThenBy(e => e.endTime).ToList();
+            return await Task.Run(() =>
+            {
+                return GetDrivers(date, date, clearNames).OrderBy(e => e.begTime).ThenBy(e => e.endTime).ToList();
+            });
+        }
+
+        public async Task<QuinyxModel[]> GetAllDriversSortedToArray(DateTime date, bool clearNames = true)
+        {
+            return await Task.Run(() =>
+            {
+                return GetDrivers(date, date, clearNames).OrderBy(e => e.begTime).ThenBy(e => e.endTime).ToArray();
+            });
         }
 
         public List<DriverViewModel> GetAllActiveDriversWithSchedual(DateTime date)
         {
-            List<DriverViewModel> schedualed = ConvertQuinyxModelToDriverViewModel(GetAllDriversSorted(date, false));
+            List<DriverViewModel> schedualed = ConvertQuinyxModelToDriverViewModel(GetAllDriversSorted(date, false).Result);
             List<DriverViewModel> allActiveDrivers = GetAllDrivers();
 
             List<DriverViewModel> result = new List<DriverViewModel>();
@@ -122,7 +134,7 @@ namespace CargoSupport.Helpers
 
         public BasicQuinyxModel[] GetAllDriversFromADate(DateTime date)
         {
-            List<BasicQuinyxModel> schedualedDrivers = GetAllDriversSorted(date, false).ConvertQuinyxModelToBasic();
+            List<BasicQuinyxModel> schedualedDrivers = GetAllDriversSorted(date, false).Result.ConvertQuinyxModelToBasic();
             List<BasicQuinyxModel> allExtendedInformationDrivers = GetNonSchedualedDrivers();
 
             foreach (var schedModel in schedualedDrivers)

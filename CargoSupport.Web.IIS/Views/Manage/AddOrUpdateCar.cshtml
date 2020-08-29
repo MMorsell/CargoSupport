@@ -1,0 +1,29 @@
+﻿@model CargoSupport.Models.DatabaseModels.CarModel;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using (Html.BeginForm("AddOrUpdateCar", "Manage", FormMethod.Post))
+{
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <th colspan="2" align="center">Lägg till ny bil</th>
+        </tr>
+        <tr>
+            <td>Bilnamn</td>
+            <td>
+                @Html.TextBoxFor(m => m.Name)
+            </td>
+        </tr>
+
+        <tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Submit" /></td>
+        </tr>
+    </table>
+}
+
+@section Scripts
+{
+}

@@ -40,16 +40,20 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Medarbetare">Medarbetare</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="manage" asp-action="GetFromPin">Hämta från pin</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="manage" asp-action="UpdatePinDataByOrder">Uppdatera befintlig pin-order</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="manage" asp-action="AddOrUpdateUser">Lägg till användare</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Analyze" asp-action="Index">Analysera</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Admin
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="AddOrUpdateUser">Lägg till användare</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="AddOrUpdateCar">Lägg till bil</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="GetFromPin">Hämta från pin</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="UpdatePinDataByOrder">Uppdatera befintlig pin-order</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="Index">Analysera</a>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -100,9 +104,6 @@
 
     <script type="text/javascript" charset="utf8"
             src="https://cdn.datatables.net/rowreorder/1.2.7/js/dataTables.rowReorder.min.js"></script>
-
-    <script src="~/lib/aspnet/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/chat.js"></script>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/InputFunctions.js" asp-append-version="true"></script>

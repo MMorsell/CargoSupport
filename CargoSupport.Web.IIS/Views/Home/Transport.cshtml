@@ -19,7 +19,8 @@
 
 @section Scripts
 {
-
+    <script src="~/lib/aspnet/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/chat.js"></script>
     <script>
         let table;
 
@@ -82,7 +83,7 @@
             console.log('Submitting form...');
             $.ajax({
                 type: 'POST',
-                url: baseHost + '/api/Upsert/UpsertTransport',
+                url: '/api/Upsert/UpsertTransport',
                 //dataType: 'json',
                 contentType: dataType,
                 data: jsonData,
@@ -144,12 +145,17 @@
                 '<select class="form-control" id="carNumber_selectBox" onChange=updateRow(this)>'
             );
 
-            for (i = 0; i < availableCars.length; i++) {
-                if (availableCars[i] === data) {
-                    selectBox.push('<option value="' + availableCars[i] + '" selected>' + availableCars[i] + '</option>')
+            selectBox.push(
+                '<option value=""></option>'
+            );
+
+            const avaialableCars = table.ajax.json().carOptions;
+            for (i = 0; i < avaialableCars.length; i++) {
+                if (avaialableCars[i].name === data) {
+                    selectBox.push('<option value="' + avaialableCars[i].name + '" selected>' + avaialableCars[i].name + '</option>')
                 }
                 else {
-                    selectBox.push('<option value="' + availableCars[i] + '">' + availableCars[i] + '</option>')
+                    selectBox.push('<option value="' + avaialableCars[i].name + '">' + avaialableCars[i].name + '</option>')
                 }
             }
 
@@ -157,17 +163,6 @@
                 '</select>'
             );
             return selectBox.join("");
-        }
-
-        const driver_selectBox = function (data, type, full, meta) {
-            if ([101, 102, 103, 104, 105, "Egen"].includes(data)) {
-                $('#driver_selectBox').val(data);
-            }
-            return '<select class="form-control" onChange=updateRow(this) id="driver_selectBox"><option value = "105" >105</option ></select >';
-        }
-
-        const pinstart_render = function (data, type, full, meta) {
-            return '<p>' + data + '-' + full.pinEndTimeString + '</p > ';
         }
 
         const driver_schedual = function (data, type, full, meta) {
@@ -184,6 +179,17 @@
             selectBox.push(
                 '<select class="form-control" id="driver_select" onChange=updateRow(this)>'
             );
+
+            if (driverObject.id === -1) {
+                selectBox.push(
+                    '<option value="-1" selected></option>'
+                );
+            }
+            else {
+                selectBox.push(
+                    '<option value="-1"></option>'
+                );
+            }
 
             const availableDrivers = table.ajax.json().selectValues;
             for (i = 0; i < availableDrivers.length; i++) {
@@ -205,7 +211,7 @@
             table = $('#dataTable').DataTable({
                 pageLength: 250,
                 "ajax": {
-                    "url": baseHost + '/api/public/GetTransport',
+                    "url": '/api/public/GetTransport',
                     "data": {
                         "dateString": function () { return formatDate(ajaxDate) }
                     },
@@ -237,7 +243,7 @@
                     { data: 'numberOfBreadBoxes', title: 'Bröd', render: hidden_IntIfNull },
                     { data: 'controlIsDone', title: 'Kontroll', render: disabled_checkbox },
                 ],
-                "order": [[1, "asc"]],
+                "order": [[2, "asc"]],
 
             });
 

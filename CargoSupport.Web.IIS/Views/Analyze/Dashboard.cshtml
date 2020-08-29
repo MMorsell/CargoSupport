@@ -52,24 +52,15 @@
 
 @section Scripts
 {
-    <script src="~/js/Leaflet-icons.js"></script>
     <script>
-        const data = @Html.Raw(ViewBag.DataTable)
-
-        document.getElementById("SelectedAvrWeight").innerText = 'Veckans vikt/tur: ' + data.SlimViewModel.AvrWeight;
-        document.getElementById("SelectedAvrCustomers").innerText = 'Veckans kunder/tur: ' + data.SlimViewModel.AvrCustomers;
-        document.getElementById("SelectedAvrDistance").innerText = 'Veckans kördistans/tur: ' + data.SlimViewModel.AvrDrivingDistance;
-
         flatpickr('#calendar-from', {
             "locale": "sv",
             "maxDate": new Date(),
-            defaultDate: new Date().fp_incr(-6),
+            defaultDate: new Date(),
             onChange: function (selectedDates, dateStr, instance) {
                 fromDate = moment(dateStr, timeFormat);
                 window.myLine.options.scales.xAxes[0].time.min = dateStr;
                 window.myLine.update();
-                updateAverage();
-                addCustomersToMap()
             }
         });
         flatpickr('#calendar-to', {
@@ -80,8 +71,6 @@
                 toDate = moment(dateStr, timeFormat);
                 window.myLine.options.scales.xAxes[0].time.max = dateStr;
                 window.myLine.update();
-                updateAverage();
-                addCustomersToMap();
             }
         });
 
@@ -133,46 +122,8 @@
 
         }
 
-        function convertStringToDate(date) {
-            var splittedDate = date.split('-');
-            return new Date(splittedDate[2], parseInt(splittedDate[1]) - 1, splittedDate[0]);
-        }
-
-        var map = L.map('mapid');
-        L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-        map.setView([59.4293, 18.0686], 10);
-        var markersLayer = new L.LayerGroup();
-
-        function addCustomersToMap() {
-            colorIconIndex = 0;
-            markersLayer.clearLayers();
-
-            let matchingData = getDataBetweenTwoDates(data.CustomerPositionData, fromDate, toDate)
-            let marker;
-            //allIconColors
-            for (var i = 0; i < matchingData.length; i++) {
-
-                marker = L.marker([matchingData[i].y, matchingData[i].z], { icon: getIconColor(matchingData, i) })
-                    .bindPopup('Datum för leverans: ' + matchingData[i].x)
-
-                markersLayer.addLayer(marker);
-            }
-        }
-
-        addCustomersToMap()
-        markersLayer.addTo(map);
-
-        function updateAverage() {
-            document.getElementById('SelectedAvrWeight').innerText = "Vikt/tur mellan valda datum: " + calculateAvr(getDataBetweenTwoDates(data.KiloData, fromDate, toDate), getDataBetweenTwoDates(data.KiloData, fromDate, toDate).length) + " kg"
-            document.getElementById('SelectedAvrCustomers').innerText = "Kunder/tur mellan valda datum: " + calculateAvr(getDataBetweenTwoDates(data.CustomerPositionData, fromDate, toDate), getDataBetweenTwoDates(data.CustomerPositionData, fromDate, toDate).length) + " kunder"
-            document.getElementById('SelectedAvrDistance').innerText = "Kördistans/tur mellan valda datum: " + calculateAvr(getDataBetweenTwoDates(data.DistanceData, fromDate, toDate), getDataBetweenTwoDates(data.DistanceData, fromDate, toDate).length) + " km"
-        }
-
-        let headerText = "Detaljerad rapport förare: " + data.SlimViewModel.DriverFullName;
         var config = {
-            type: 'line',
+            type: '´bar',
             data: {
                 datasets: [
                     {

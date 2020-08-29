@@ -48,6 +48,24 @@ namespace CargoSupport.Helpers
                             new ReplaceOptions { IsUpsert = true });
         }
 
+        public async Task UpsertCarRecordById(string tableName, CarModel carModel)
+        {
+            var collection = _database.GetCollection<CarModel>(tableName);
+
+            await collection.ReplaceOneAsync(p => p._Id == carModel._Id,
+                            carModel,
+                            new ReplaceOptions { IsUpsert = true });
+        }
+
+        public async Task UpsertWhitelistRecordById(string tableName, WhitelistModel whiteListModel)
+        {
+            var collection = _database.GetCollection<WhitelistModel>(tableName);
+
+            await collection.ReplaceOneAsync(p => p._Id == whiteListModel._Id,
+                            whiteListModel,
+                            new ReplaceOptions { IsUpsert = true });
+        }
+
         public async Task<T> GetRecordByStringId<T>(string tableName, string id)
         {
             var collection = _database.GetCollection<T>(tableName);
@@ -66,13 +84,31 @@ namespace CargoSupport.Helpers
             return result;
         }
 
+        public async Task<List<DataModel>> GetAllRecordsByDriverId(string tableName, int driverId)
+        {
+            var collection = _database.GetCollection<DataModel>(tableName);
+
+            var filterBuilder = Builders<DataModel>.Filter;
+            var filter = filterBuilder.Where(x => x.Driver.Id.Equals(driverId));
+            return await collection.FindAsync(filter).Result.ToListAsync();
+        }
+
         public async Task<List<DataModel>> GetAllRecordsByDate(string tableName, DateTime date)
         {
             var maxTime = date.Add(DateTime.MaxValue.TimeOfDay);
             var minTime = date.Add(DateTime.MinValue.TimeOfDay);
             var collection = _database.GetCollection<DataModel>(tableName);
 
-            var today = DateTime.Today; //2017-03-31 00:00:00.000
+            var filterBuilder = Builders<DataModel>.Filter;
+            var filter = filterBuilder.Where(x => x.DateOfRoute < maxTime && x.DateOfRoute > minTime);
+            return await collection.FindAsync(filter).Result.ToListAsync();
+        }
+
+        public async Task<List<DataModel>> GetAllRecordsBetweenDates(string tableName, DateTime from, DateTime to)
+        {
+            var maxTime = to.Add(DateTime.MaxValue.TimeOfDay);
+            var minTime = from.Add(DateTime.MinValue.TimeOfDay);
+            var collection = _database.GetCollection<DataModel>(tableName);
 
             var filterBuilder = Builders<DataModel>.Filter;
             var filter = filterBuilder.Where(x => x.DateOfRoute < maxTime && x.DateOfRoute > minTime);

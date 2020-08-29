@@ -9,7 +9,7 @@ namespace CargoSupport.Models.QuinyxModels
 {
     public class QuinyxModel
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = -1;
 
         public string BadgeNo { get; set; }
 
@@ -37,12 +37,11 @@ namespace CargoSupport.Models.QuinyxModels
         {
             if (ExtendedInformationModel != null)
             {
-                return $"Martin Mörsell";
-                //return $"{ExtendedInformationModel.GivenName} {ExtendedInformationModel.FamilyName}";
+                return $"{ExtendedInformationModel.GivenName} {ExtendedInformationModel.FamilyName}";
             }
             else
             {
-                return "";
+                return $"Name not found for driver with id '{Id}' and badgeId '{BadgeNo}'";
             }
         }
 

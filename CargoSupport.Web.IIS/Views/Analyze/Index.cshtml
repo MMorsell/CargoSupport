@@ -8,47 +8,74 @@
     <input disabled type="button" class="btn btn-primary" value="Visa alla förare under en chef" onclick="location.href='@Url.Action("DriversUnderMe", "Analyze")'" />
 </div>
 
-<div class="text-center">
-    <div id="grid-wrapper" style="width:100%; height: 100%">
-        <div id="myGrid" style="height: 100vw; width: 100vw;" class="ag-theme-alpine"></div>
+<div class="row">
+    <p></p>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <h6>Visa data</h6>
+        <div>
+            <div style="padding-left: 20px;" class="group">
+                <label class="input-label">Från</label>
+                <input type="text" id="calendar-from-vanilla">
+                <span class="bar"></span>
+            </div>
+            <div style="padding-left: 30px;" class="group">
+                <label class="input-label">Till</label>
+                <input type="text" id="calendar-to-vanilla">
+                <span class="bar"></span>
+            </div>
+        </div>
     </div>
 </div>
 
+<table id="dataTable" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
+    <thead style="position: sticky; top: 0;">
+    </thead>
+</table>
+
 @section Scripts
 {
-    <script type="text/javascript" charset="utf-8">
+    <script>
+        let table;
 
-        var allData = @Html.Raw(ViewBag.DataTable)
-            console.log(allData);
-        // specify the columns
-        let columnDefs = [
-            {
-                headerName: "Namn", field: "FullName",
-                cellRenderer: function (params) {
-                    return '<a onclick=\'OpenDetailedInfo(this.WeekAvrWeight)\' style="color:blue;cursor: pointer;">' + params.value + '</a>'
-                },
-                sortable: true, filter: true, checkboxSelection: true
-            },
-            { headerName: "Veckans snitt vikt", field: "WeekAvrWeight", sortable: true, filter: true },
-            { headerName: "Veckans snitt kunder", field: "WeekAvrCustomers", sortable: true, filter: true },
-            { headerName: "Veckans snitt kördistans", field: "WeekAvrDistance", sortable: true, filter: true },
-        ];
-
-        // let the grid know which columns and what data to use
-        let gridOptions = {
-            columnDefs: columnDefs,
-            rowData: allData
-        };
-
-        // lookup the container we want the Grid to use
-        var eGridDiv = document.querySelector('#myGrid');
-
-        // create the grid passing in the div to use together with the columns & data we want to use
-        new agGrid.Grid(eGridDiv, gridOptions);
-
-        function OpenDetailedInfo(row) {
-            debugger;
-            myWindow = window.open('Analyze/AllData', "_self")
+        const driver_extendedInfo = function (data, type, full, meta) {
+            if (type === 'sort' || type === 'filter') {
+                return data;
+            }
+            return '<a class="nav-link text-dark" href="/Analyze/AllData/' + full.quinyxId + '">' + data + '</a>';
+            //return '<a class="nav-link text-dark" asp-route-id="' + full.quinyxId + '" asp-area="" asp-controller="Analyze" asp-action="AllData">' + data + '</a>';
         }
+
+        $(document).ready(function () {
+            table = $('#dataTable').DataTable({
+                pageLength: 250,
+                "ajax": {
+                    "url": '/api/Analyze/GetSlim',
+                    "data": {
+                        "fromDate": function () { return fromDate.format(timeFormat) },
+                        "toDate": function () { return toDate.format(timeFormat) }
+                    },
+                    "dataSrc": ""
+                },
+                columnDefs: [
+                    { "width": "20%", "targets": 3 }
+                ],
+                columns: [
+                    { data: 'driverFullName', title: 'Leveransansvarig', render: driver_extendedInfo },
+                    //{ data: 'driverFullName', title: 'Chef', render: driver_extendedInfo },
+                    { data: 'avrWeight', title: 'Snittvikt', render: input_kilos },
+                    { data: 'avrCustomers', title: 'Snitt antal kunder' },
+                    { data: 'avrDrivingDistance', title: 'Snitt Kördistans i mil' },
+                ],
+                "order": [[1, "asc"]],
+
+            });
+
+            $('thead th').each(function () {
+                $(this).addClass("stickyHeader");
+            })
+
+        });
     </script>
 }

@@ -58,13 +58,44 @@ namespace CargoSupport.Helpers
 
             if (matchingRecord == null)
             {
-                await dbConnection.InsertRecord<WhitelistModel>(Constants.MongoDb.WhitelistTable, new WhitelistModel { NameWithDomain = authModel.NameWithDomain, RoleLevel = authModel.RoleLevel });
+                await dbConnection.InsertRecord(Constants.MongoDb.WhitelistTable, new WhitelistModel { NameWithDomain = authModel.NameWithDomain, RoleLevel = authModel.RoleLevel });
                 return true;
             }
             else
             {
                 matchingRecord.RoleLevel = authModel.RoleLevel;
-                //await dbConnection.UpsertRecordById<WhitelistModel>(Constants.MongoDb.WhitelistTable, matchingRecord._Id, matchingRecord);
+                await dbConnection.UpsertWhitelistRecordById(Constants.MongoDb.WhitelistTable, matchingRecord);
+                return true;
+            }
+        }
+
+        public static async Task<bool> AddOrUpdateCarModel(CarModel carModel, ClaimsPrincipal userWithPermissionsToAdd)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, userWithPermissionsToAdd) == false)
+            {
+                return false;
+            }
+
+            if (carModel.Name.Trim() == "")
+            {
+                return false;
+            }
+
+            var dbConnection = new MongoDbHelper(Constants.MongoDb.DatabaseName);
+
+            var wlRecords = await dbConnection.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
+
+            var matchingRecord = wlRecords.FirstOrDefault(rec => rec.Name.Equals(carModel.Name));
+
+            if (matchingRecord == null)
+            {
+                await dbConnection.InsertRecord(Constants.MongoDb.CarTableName, new CarModel { Name = carModel.Name });
+                return true;
+            }
+            else
+            {
+                matchingRecord.Name = carModel.Name;
+                await dbConnection.UpsertCarRecordById(Constants.MongoDb.CarTableName, matchingRecord);
                 return true;
             }
         }

@@ -12,6 +12,8 @@ namespace CargoSupport.ViewModels.Public
     {
         public StorageViewModel(
             string _id,
+            TimeSpan pinStartTime,
+            TimeSpan pinStopTime,
             string routeName,
             string carNumberString,
             int portNumber,
@@ -24,6 +26,8 @@ namespace CargoSupport.ViewModels.Public
             List<PickingVerifyIntModel> numberOfBreadBoxes)
         {
             _Id = _id;
+            PinStartTimeString = pinStartTime.ToString(@"hh\:mm");
+            PinEndTimeString = pinStopTime.ToString(@"hh\:mm");
             RouteName = routeName;
             CarNumber = carNumberString;
             PortNumber = portNumber;
@@ -32,6 +36,7 @@ namespace CargoSupport.ViewModels.Public
 
             SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes, controlIsDone);
         }
+
         [Obsolete("Used only for api")]
         public StorageViewModel()
         {
@@ -86,6 +91,8 @@ namespace CargoSupport.ViewModels.Public
         }
 
         public string _Id { get; set; }
+        public string PinStartTimeString { get; set; }
+        public string PinEndTimeString { get; set; }
         public string RouteName { get; set; }
         public string CarNumber { get; set; }
         public int PortNumber { get; set; }

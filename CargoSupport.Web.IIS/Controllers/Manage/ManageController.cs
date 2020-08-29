@@ -95,5 +95,33 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 return View("Error", new ErrorViewModel { Message = "Åtgärden misslyckades" });
             }
         }
+
+        public async Task<IActionResult> AddOrUpdateCar()
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddOrUpdateCar(CarModel carModel)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            //return Json(new { status = "success", message = "customer created" });
+            if (await AddOrUpdateCarModel(carModel, HttpContext.User))
+            {
+                return View("../Home/Transport");
+            }
+            else
+            {
+                return View("Error", new ErrorViewModel { Message = "Åtgärden misslyckades" });
+            }
+        }
     }
 }

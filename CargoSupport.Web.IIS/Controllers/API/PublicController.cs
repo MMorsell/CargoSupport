@@ -11,6 +11,8 @@ using static CargoSupport.Helpers.AuthorizeHelper;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using CargoSupport.Models.QuinyxModels;
+using System.Diagnostics;
+using System.Collections.Concurrent;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -45,15 +47,18 @@ namespace CargoSupport.Web.Controllers.API
             {
                 //TODO: Implement return invalid date
             }
+            var carOptionsTask = _dbHelper.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
+            var driversThatWorksOnThisDateTask = _qnHelper.GetAllDriversSortedToArray(date, false);
+            var dataBaseResTask = ConvertToTransport(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
 
-            var dataBaseRes = ConvertToTransport(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
-            var driversThatWorksOnThisDate = _qnHelper.GetAllDriversSorted(date, false);
+            Task.WaitAll(carOptionsTask, driversThatWorksOnThisDateTask, dataBaseResTask);
 
             //return Ok(dataBaseRes.ToArray());
             return Ok(new ReturnModel
             {
-                data = dataBaseRes.ToArray(),
-                selectValues = driversThatWorksOnThisDate.ToArray()
+                data = dataBaseResTask.Result,
+                selectValues = driversThatWorksOnThisDateTask.Result,
+                carOptions = carOptionsTask.Result.ToArray()
             });
         }
 
@@ -61,6 +66,7 @@ namespace CargoSupport.Web.Controllers.API
         {
             public TransportViewModel[] data { get; set; }
             public QuinyxModel[] selectValues { get; set; }
+            public CarModel[] carOptions { get; set; }
         }
 
         [HttpGet]
@@ -78,7 +84,6 @@ namespace CargoSupport.Web.Controllers.API
                 //TODO: Implement return invalid date
             }
 
-            //var res = ConvertToPublic(await _dbHelper.GetAllRecords<DataModel>(Constants.MongoDb.OutputScreenTableName));
             var res = ConvertToPublic(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
             return Ok(res.ToArray());
         }
@@ -110,6 +115,8 @@ namespace CargoSupport.Web.Controllers.API
             {
                 returnModels.Add(new StorageViewModel(
                     allRoutes[i]._Id,
+                    allRoutes[i].PinRouteModel.ScheduledRouteStart.TimeOfDay,
+                    allRoutes[i].PinRouteModel.ScheduledRouteEnd.TimeOfDay,
                     allRoutes[i].PinRouteModel.RouteName,
                     allRoutes[i].CarModel,
                     allRoutes[i].PortNumber,
@@ -125,32 +132,36 @@ namespace CargoSupport.Web.Controllers.API
             return returnModels;
         }
 
-        private List<TransportViewModel> ConvertToTransport(List<DataModel> allRoutes)
+        private async Task<TransportViewModel[]> ConvertToTransport(List<DataModel> allRoutes)
         {
-            allRoutes = _qnHelper.AddNamesToData(allRoutes);
-            var returnModels = new List<TransportViewModel>();
-            for (int i = 0; i < allRoutes.Count; i++)
+            return await Task.Run(() =>
             {
-                returnModels.Add(new TransportViewModel(
-                    allRoutes[i]._Id,
-                    allRoutes[i].PinRouteModel.RouteName,
-                    allRoutes[i].Driver.ConvertToDriverViewModel(),
-                    allRoutes[i].CarModel,
-                    allRoutes[i].PortNumber,
-                    allRoutes[i].LoadingLevel,
-                    allRoutes[i].PreRideAnnotation,
-                    allRoutes[i].PostRideAnnotation,
-                    allRoutes[i].PinRouteModel.NumberOfCustomers,
-                    allRoutes[i].PinRouteModel.ScheduledRouteStart.TimeOfDay,
-                    allRoutes[i].PinRouteModel.ScheduledRouteEnd.TimeOfDay,
-                    allRoutes[i].NumberOfColdBoxes,
-                    allRoutes[i].RestPicking,
-                    allRoutes[i].NumberOfFrozenBoxes,
-                    allRoutes[i].NumberOfBreadBoxes,
-                    allRoutes[i].ControlIsDone
-                    ));
-            }
-            return returnModels;
+                allRoutes = _qnHelper.AddNamesToData(allRoutes);
+                var returnModels = new ConcurrentBag<TransportViewModel>();
+                Parallel.ForEach(allRoutes, route =>
+                {
+                    returnModels.Add(new TransportViewModel(
+                        route._Id,
+                        route.PinRouteModel.RouteName,
+                        route.Driver.ConvertToDriverViewModel(),
+                        route.CarModel,
+                        route.PortNumber,
+                        route.LoadingLevel,
+                        route.PreRideAnnotation,
+                        route.PostRideAnnotation,
+                        route.PinRouteModel.NumberOfCustomers,
+                        route.PinRouteModel.ScheduledRouteStart.TimeOfDay,
+                        route.PinRouteModel.ScheduledRouteEnd.TimeOfDay,
+                        route.NumberOfColdBoxes,
+                        route.RestPicking,
+                        route.NumberOfFrozenBoxes,
+                        route.NumberOfBreadBoxes,
+                        route.ControlIsDone
+                        ));
+                });
+
+                return returnModels.ToArray();
+            });
         }
 
         private List<TransportViewModel> ConvertToPublic(List<DataModel> allRoutes)
@@ -167,6 +178,8 @@ namespace CargoSupport.Web.Controllers.API
                     allRoutes[i].LoadingLevel,
                     allRoutes[i].PreRideAnnotation,
                     allRoutes[i].PinRouteModel.NumberOfCustomers,
+                    allRoutes[i].PinRouteModel.ScheduledRouteStart.TimeOfDay,
+                    allRoutes[i].PinRouteModel.ScheduledRouteEnd.TimeOfDay,
                     allRoutes[i].NumberOfColdBoxes,
                     allRoutes[i].RestPicking,
                     allRoutes[i].NumberOfFrozenBoxes,

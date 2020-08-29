@@ -1,9 +1,10 @@
-﻿//const baseHost = "http://81.235.179.124"
-const baseHost = "http://localhost:5557"
-const availableCars = ["101", "102", "103", "104", "105", "Egen", "Ej Satt"];
+﻿const availableCars = ["101", "102", "103", "104", "105", "Egen", "Ej Satt"];
 const availablePorts = [24, 26, 27, 29, 31];
 
 let ajaxDate = new Date();
+const timeFormat = 'YYYY-MM-DD';
+let fromDate = moment().subtract(7, 'd');
+let toDate = moment();
 
 function formatDate(d) {
     month = '' + (d.getMonth() + 1),
@@ -95,6 +96,10 @@ const convert_loadingLevel_toValue = function (data, type, full, meta) {
     }
 }
 
+const pinstart_render = function (data, type, full, meta) {
+    return '<p>' + data + '-' + full.pinEndTimeString + '</p > ';
+}
+
 const disabled_checkbox = function (data, type, full, meta) {
     var is_checked = data == true ? "checked" : "";
     return '<input type="checkbox" onclick="return false" class="checkbox" ' +
@@ -140,8 +145,6 @@ flatpickr('#calendar-from-table', {
     onChange: function (selectedDates, dateStr, instance) {
         ajaxDate = new Date(dateStr);
         reloadDatatableAjax();
-
-        //TODO Add post update
     }
 });
 
@@ -155,12 +158,55 @@ flatpickr('#calendar-from-table-tr', {
     onChange: function (selectedDates, dateStr, instance) {
         ajaxDate = new Date(dateStr);
         reloadDatatableAjax();
+    }
+});
 
-        //TODO Add post update
+/*
+ * Transport datepicker
+ */
+flatpickr('#calendar-from-table-tr', {
+    "locale": "sv",
+    "maxDate": new Date().fp_incr(3),
+    defaultDate: new Date(),
+    onChange: function (selectedDates, dateStr, instance) {
+        ajaxDate = new Date(dateStr);
+        reloadDatatableAjax();
+    }
+});
+
+/*
+ * vanilla datepicker from
+ */
+flatpickr('#calendar-from-vanilla', {
+    "locale": "sv",
+    defaultDate: new Date().fp_incr(-7),
+    onChange: function (selectedDates, dateStr, instance) {
+        fromDate = moment(dateStr);
+        reloadDatatableAjax();
+    }
+});
+
+/*
+ * vanilla datepicker to
+ */
+flatpickr('#calendar-to-vanilla', {
+    "locale": "sv",
+    defaultDate: new Date(),
+    onChange: function (selectedDates, dateStr, instance) {
+        toDate = moment(dateStr);
+        reloadDatatableAjax();
     }
 });
 
 function reloadDatatableAjax() {
     console.log("reloading ajax...");
     table.ajax.reload(null, false);
+}
+
+const input_kilos = function (data, type, full, meta) {
+    if (type === 'sort' || type === 'filter') {
+        return data;
+    }
+
+    return '<p>' + data + ' Kilo</p>'
 }
