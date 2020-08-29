@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using CargoSupport.Enums;
 using CargoSupport.Helpers;
+using CargoSupport.Hubs;
 using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
+using CargoSupport.Models.QuinyxModels;
 using CargoSupport.ViewModels;
 using CargoSupport.ViewModels.Public;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using static CargoSupport.Helpers.AuthorizeHelper;
 
@@ -19,8 +22,11 @@ namespace CargoSupport.Web.IIS.Controllers.API
     [ApiController]
     public class UpsertController : ControllerBase
     {
-        public UpsertController()
+
+        private readonly IHubContext<ChatHub> _chatHub;
+        public UpsertController(IHubContext<ChatHub> chatHub)
         {
+            _chatHub = chatHub;
         }
 
         [HttpPost]
@@ -45,14 +51,22 @@ namespace CargoSupport.Web.IIS.Controllers.API
             return Ok();
         }
 
-        private static async Task UpsertTransportProperties(TransportViewModel transportViewModel, MongoDbHelper dbConnection, DataModel existingRecord)
+        private async Task UpsertTransportProperties(TransportViewModel transportViewModel, MongoDbHelper dbConnection, DataModel existingRecord)
         {
             var update = false;
-            //existingRecord.Driver.Id = transportViewModel.Driver.Id;
-            //existingRecord.CarModel = transportViewModel.CarNumber;
-            if (transportViewModel.PortNumber != -1)
+            if (transportViewModel.Driver.Id != 0)
+            {
+                existingRecord.Driver = TryGetDriverInfo(transportViewModel.Driver.Id, existingRecord.DateOfRoute, existingRecord.Driver);
+                update = true;
+            }
+            else if (transportViewModel.PortNumber != -1)
             {
                 existingRecord.PortNumber = transportViewModel.PortNumber;
+                update = true;
+            }
+            else if (transportViewModel.CarNumber != null)
+            {
+                existingRecord.CarModel = transportViewModel.CarNumber;
                 update = true;
             }
             else if ((int)transportViewModel.LoadingLevel != -1)
@@ -74,7 +88,25 @@ namespace CargoSupport.Web.IIS.Controllers.API
             if (update)
             {
                 await dbConnection.UpsertDataRecordById(Constants.MongoDb.OutputScreenTableName, existingRecord);
+                await _chatHub.Clients.All.SendAsync("ReceiveMessage");
             }
+        }
+
+        private static QuinyxModel TryGetDriverInfo(int newDriverID, DateTime date, QuinyxModel fallBackDriver)
+        {
+            if (newDriverID != fallBackDriver.Id)
+            {
+                var qh = new QuinyxHelper();
+                var driversThatWorksOnThisDate = qh.GetAllDriversSorted(date);
+                var matchingDriver = driversThatWorksOnThisDate
+                    .FirstOrDefault(dr => dr.Id.Equals(newDriverID));
+
+                if (matchingDriver != null)
+                {
+                    return matchingDriver;
+                }
+            }
+            return fallBackDriver;
         }
 
         [HttpPost]

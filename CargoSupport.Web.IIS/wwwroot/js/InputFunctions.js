@@ -1,5 +1,7 @@
 ﻿//const baseHost = "http://81.235.179.124"
 const baseHost = "http://localhost:5557"
+const availableCars = ["101", "102", "103", "104", "105", "Egen", "Ej Satt"];
+const availablePorts = [24, 26, 27, 29, 31];
 
 let ajaxDate = new Date();
 
@@ -159,5 +161,6 @@ flatpickr('#calendar-from-table-tr', {
 });
 
 function reloadDatatableAjax() {
+    console.log("reloading ajax...");
     table.ajax.reload(null, false);
 }

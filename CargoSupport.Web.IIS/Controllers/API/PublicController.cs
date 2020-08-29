@@ -111,7 +111,7 @@ namespace CargoSupport.Web.Controllers.API
                 returnModels.Add(new StorageViewModel(
                     allRoutes[i]._Id,
                     allRoutes[i].PinRouteModel.RouteName,
-                    allRoutes[i].CarModel.GetValue(),
+                    allRoutes[i].CarModel,
                     allRoutes[i].PortNumber,
                     allRoutes[i].LoadingLevel,
                     allRoutes[i].PinRouteModel.NumberOfCustomers,
@@ -135,7 +135,7 @@ namespace CargoSupport.Web.Controllers.API
                     allRoutes[i]._Id,
                     allRoutes[i].PinRouteModel.RouteName,
                     allRoutes[i].Driver.ConvertToDriverViewModel(),
-                    allRoutes[i].CarModel.GetValue(),
+                    allRoutes[i].CarModel,
                     allRoutes[i].PortNumber,
                     allRoutes[i].LoadingLevel,
                     allRoutes[i].PreRideAnnotation,
@@ -162,7 +162,7 @@ namespace CargoSupport.Web.Controllers.API
                 returnModels.Add(new TransportViewModel(
                     allRoutes[i].PinRouteModel.RouteName,
                     allRoutes[i].Driver.ConvertToDriverViewModel(),
-                    allRoutes[i].CarModel.GetValue(),
+                    allRoutes[i].CarModel,
                     allRoutes[i].PortNumber,
                     allRoutes[i].LoadingLevel,
                     allRoutes[i].PreRideAnnotation,

@@ -4,14 +4,14 @@
     "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\TestingConsole\\TestingConsole.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj": {
+    "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web.IIS\\CargoSupport.Web.IIS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj",
-        "projectName": "CargoSupport.Web",
-        "projectPath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj",
+        "projectUniqueName": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web.IIS\\CargoSupport.Web.IIS.csproj",
+        "projectName": "CargoSupport.Web.IIS",
+        "projectPath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web.IIS\\CargoSupport.Web.IIS.csproj",
         "packagesPath": "C:\\Users\\Eraza\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\obj\\",
+        "outputPath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web.IIS\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"
@@ -46,14 +46,6 @@
               "target": "Package",
               "version": "[3.1.7, )"
             },
-            "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
-              "target": "Package",
-              "version": "[1.10.9, )"
-            },
-            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
-              "target": "Package",
-              "version": "[3.1.4, )"
-            },
             "MongoDB.Driver": {
               "target": "Package",
               "version": "[2.11.0, )"
@@ -81,7 +73,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.400\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
         }
       }
     },
@@ -112,8 +104,8 @@
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {
-              "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj": {
-                "projectPath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web\\CargoSupport.Web.csproj"
+              "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web.IIS\\CargoSupport.Web.IIS.csproj": {
+                "projectPath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\CargoSupport.Web.IIS\\CargoSupport.Web.IIS.csproj"
               }
             }
           }
@@ -144,7 +136,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.400\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
         }
       }
     }
