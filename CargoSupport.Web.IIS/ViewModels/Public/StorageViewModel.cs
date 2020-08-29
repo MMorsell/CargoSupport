@@ -17,11 +17,11 @@ namespace CargoSupport.ViewModels.Public
             int portNumber,
             LoadingLevel loadingLevel,
             double numberOfCustomers,
-            bool controlIsDone,
-            List<PickingVerifyModel> numberOfColdBoxes,
-            List<PickingVerifyModel> restPicking,
-            List<PickingVerifyModel> numberOfFrozenBoxes,
-            List<PickingVerifyModel> numberOfBreadBoxes)
+            List<PickingVerifyBooleanModel> controlIsDone,
+            List<PickingVerifyIntModel> numberOfColdBoxes,
+            List<PickingVerifyBooleanModel> restPicking,
+            List<PickingVerifyIntModel> numberOfFrozenBoxes,
+            List<PickingVerifyIntModel> numberOfBreadBoxes)
         {
             _Id = _id;
             RouteName = routeName;
@@ -29,29 +29,41 @@ namespace CargoSupport.ViewModels.Public
             PortNumber = portNumber;
             LoadingLevel = loadingLevel;
             NumberOfCustomers = numberOfCustomers;
-            ControlIsDone = controlIsDone;
 
-            SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes);
+            SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes, controlIsDone);
+        }
+        [Obsolete("Used only for api")]
+        public StorageViewModel()
+        {
         }
 
-        private void SetPickingValues(List<PickingVerifyModel> numberOfColdBoxes, List<PickingVerifyModel> restPicking, List<PickingVerifyModel> numberOfFrozenBoxes, List<PickingVerifyModel> numberOfBreadBoxes)
+        private void SetPickingValues(List<PickingVerifyIntModel> numberOfColdBoxes, List<PickingVerifyBooleanModel> restPicking, List<PickingVerifyIntModel> numberOfFrozenBoxes, List<PickingVerifyIntModel> numberOfBreadBoxes, List<PickingVerifyBooleanModel> controlIsDone)
         {
-            if (numberOfColdBoxes.Count > 0)
-            {
-                NumberOfColdBoxes = numberOfColdBoxes[0];
-            }
-            else
-            {
-                NumberOfColdBoxes = new PickingVerifyModel(0);
-            }
-
             if (restPicking.Count > 0)
             {
                 RestPicking = restPicking[0];
             }
             else
             {
-                RestPicking = new PickingVerifyModel(false);
+                RestPicking = new PickingVerifyBooleanModel(false);
+            }
+
+            if (controlIsDone.Count > 0)
+            {
+                ControlIsDone = controlIsDone[0];
+            }
+            else
+            {
+                ControlIsDone = new PickingVerifyBooleanModel(false);
+            }
+
+            if (numberOfColdBoxes.Count > 0)
+            {
+                NumberOfColdBoxes = numberOfColdBoxes[0];
+            }
+            else
+            {
+                NumberOfColdBoxes = new PickingVerifyIntModel(0);
             }
 
             if (numberOfFrozenBoxes.Count > 0)
@@ -60,7 +72,7 @@ namespace CargoSupport.ViewModels.Public
             }
             else
             {
-                NumberOfFrozenBoxes = new PickingVerifyModel(0);
+                NumberOfFrozenBoxes = new PickingVerifyIntModel(0);
             }
 
             if (numberOfBreadBoxes.Count > 0)
@@ -69,20 +81,20 @@ namespace CargoSupport.ViewModels.Public
             }
             else
             {
-                NumberOfBreadBoxes = new PickingVerifyModel(0);
+                NumberOfBreadBoxes = new PickingVerifyIntModel(0);
             }
         }
 
-        public string _Id { get; private set; }
-        public string RouteName { get; private set; }
-        public string CarNumber { get; private set; }
-        public int PortNumber { get; private set; }
+        public string _Id { get; set; }
+        public string RouteName { get; set; }
+        public string CarNumber { get; set; }
+        public int PortNumber { get; set; }
         public LoadingLevel LoadingLevel { get; set; }
-        public double NumberOfCustomers { get; private set; }
-        public PickingVerifyModel NumberOfColdBoxes { get; set; }
-        public PickingVerifyModel RestPicking { get; set; }
-        public PickingVerifyModel NumberOfFrozenBoxes { get; set; }
-        public PickingVerifyModel NumberOfBreadBoxes { get; set; }
-        public bool ControlIsDone { get; set; }
+        public double NumberOfCustomers { get; set; }
+        public PickingVerifyIntModel NumberOfColdBoxes { get; set; }
+        public PickingVerifyBooleanModel RestPicking { get; set; }
+        public PickingVerifyIntModel NumberOfFrozenBoxes { get; set; }
+        public PickingVerifyIntModel NumberOfBreadBoxes { get; set; }
+        public PickingVerifyBooleanModel ControlIsDone { get; set; }
     }
 }

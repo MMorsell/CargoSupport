@@ -12,7 +12,7 @@ namespace CargoSupport.ViewModels.Public
     {
         //TidFrys = tidFrys.ToString(@"hh\:mm");
 
-        public TransportViewModel(string _id, string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingIsDone, string preRideAnnotation, string postRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyModel> numberOfColdBoxes, List<PickingVerifyModel> restPicking, List<PickingVerifyModel> numberOfFrozenBoxes, List<PickingVerifyModel> numberOfBreadBoxes, bool controlIsDone)
+        public TransportViewModel(string _id, string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingIsDone, string preRideAnnotation, string postRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyIntModel> numberOfColdBoxes, List<PickingVerifyBooleanModel> restPicking, List<PickingVerifyIntModel> numberOfFrozenBoxes, List<PickingVerifyIntModel> numberOfBreadBoxes, List<PickingVerifyBooleanModel> controlIsDone)
         {
             _Id = _id;
             RouteName = routeName;
@@ -25,11 +25,10 @@ namespace CargoSupport.ViewModels.Public
             NumberOfCustomers = numberOfCustomers;
             PinStartTimeString = pinStartTime.ToString(@"hh\:mm");
             PinEndTimeString = pinStopTime.ToString(@"hh\:mm");
-            ControlIsDone = controlIsDone;
-            SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes);
+            SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes, controlIsDone);
         }
 
-        public TransportViewModel(string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingLevel, string preRideAnnotation, double numberOfCustomers, List<PickingVerifyModel> numberOfColdBoxes, List<PickingVerifyModel> restPicking, List<PickingVerifyModel> numberOfFrozenBoxes, List<PickingVerifyModel> numberOfBreadBoxes, bool controlIsDone)
+        public TransportViewModel(string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingLevel, string preRideAnnotation, double numberOfCustomers, List<PickingVerifyIntModel> numberOfColdBoxes, List<PickingVerifyBooleanModel> restPicking, List<PickingVerifyIntModel> numberOfFrozenBoxes, List<PickingVerifyIntModel> numberOfBreadBoxes, List<PickingVerifyBooleanModel> controlIsDone)
         {
             RouteName = routeName;
             Driver = driverModel;
@@ -38,16 +37,15 @@ namespace CargoSupport.ViewModels.Public
             LoadingLevel = loadingLevel;
             PreRideAnnotation = preRideAnnotation;
             NumberOfCustomers = numberOfCustomers;
-            ControlIsDone = controlIsDone;
-            SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes);
+            SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes, controlIsDone);
         }
 
-        [Obsolete]
+        [Obsolete("Used only for api")]
         public TransportViewModel()
         {
         }
 
-        private void SetPickingValues(List<PickingVerifyModel> numberOfColdBoxes, List<PickingVerifyModel> restPicking, List<PickingVerifyModel> numberOfFrozenBoxes, List<PickingVerifyModel> numberOfBreadBoxes)
+        private void SetPickingValues(List<PickingVerifyIntModel> numberOfColdBoxes, List<PickingVerifyBooleanModel> restPicking, List<PickingVerifyIntModel> numberOfFrozenBoxes, List<PickingVerifyIntModel> numberOfBreadBoxes, List<PickingVerifyBooleanModel> controlIsDone)
         {
             if (numberOfColdBoxes.Count > 0)
             {
@@ -60,11 +58,20 @@ namespace CargoSupport.ViewModels.Public
 
             if (restPicking.Count > 0)
             {
-                RestPlock = (bool)restPicking[0].Value;
+                RestPlock = restPicking[0].Value;
             }
             else
             {
                 RestPlock = false;
+            }
+
+            if (controlIsDone.Count > 0)
+            {
+                ControlIsDone = controlIsDone[0].Value;
+            }
+            else
+            {
+                ControlIsDone = false;
             }
 
             if (numberOfFrozenBoxes.Count > 0)

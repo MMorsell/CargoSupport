@@ -116,7 +116,7 @@ const renderEmptyIfZero = function (data, type, full, meta) {
         return '<p></p>'
     }
     else {
-        return '<p>"' + data + '"</p>';
+        return '<p>' + data + '</p>';
     }
 }
 
@@ -125,7 +125,7 @@ const hidden_IntIfNull = function (data, type, full, meta) {
         return '<p>Ej ifyllt</p>';
     }
     else {
-        return '<p> +"' + data + '"  </p>';
+        return '<p>' + data + '</p>';
     }
 }
 

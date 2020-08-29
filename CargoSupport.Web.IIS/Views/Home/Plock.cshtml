@@ -28,11 +28,11 @@
             let tempOldVal = thisReference.options[thisReference.selectedIndex].value
             var dataRef = table.row($(thisReference).parents('tr')).data();
 
-            var reference = prevValues.find(x => x.id === dataRef.id);
+            var reference = prevValues.find(x => x._id === dataRef._id);
 
             if (reference == null) {
                 prevValues.push(
-                    { id: dataRef.id, oldVal: tempOldVal }
+                    { id: dataRef._id, oldVal: tempOldVal }
                 );
             }
             else {
@@ -43,14 +43,23 @@
 
         function proptForSignatureInt(thisReference) {
             var dataRef = table.row($(thisReference).parents('tr')).data();
-            var updatedValue = thisReference.options[thisReference.selectedIndex].value;
-            var personSignature = prompt("Signatur", "");
+            var personSignature = prompt("Signatur krävs", "");
 
             if (personSignature == null) {
-                var reference = prevValues.find(x => x.id === dataRef.id);
+                var reference = prevValues.find(x => x._id === dataRef._id);
 
                 if (reference == null) {
-                    debugger;
+                    thisReference.value = 99;
+                }
+                else {
+                    thisReference.value = reference.oldVal;
+                }
+            }
+            else if (personSignature.trim() === "") {
+                alert("Tom signatur godkänns ej")
+                var reference = prevValues.find(x => x._id === dataRef._id);
+
+                if (reference == null) {
                     thisReference.value = 99;
                 }
                 else {
@@ -58,94 +67,63 @@
                 }
             }
             else {
-                //TODO Add post update
+                updateRow(thisReference, personSignature);
             }
         }
 
         function proptForSignatureBool(thisReference) {
-            var dataRef = table.row($(thisReference).parents('tr')).data();
-            var updatedValue = thisReference.checked;
-            var personSignature = prompt("Signatur", "");
+            var personSignature = prompt("Signatur krävs", "");
 
             if (personSignature == null) {
-                thisReference.checked = !updatedValue;
+                thisReference.checked = !thisReference.checked;
+            } else if (personSignature.trim() === "") {
+                alert("Tom signatur godkänns ej")
+                thisReference.checked = !thisReference.checked;
             }
             else {
-                //TODO Add post update
+                updateRow(thisReference, personSignature);
             }
         }
 
-        function updateRow(thisRef) {
-
-            //TODO Add functional post update
-            //var dataRef = table.row($(thisRef).parents('tr')).data();
-
-            //var object = {
-            //    numberOfCustomers: dataRef.numberOfCustomers,
-            //    tid: dataRef.tid,
-            //    numberOfColdBoxes: dataRef.numberOfColdBoxes,
-            //    restPlock: dataRef.restPlock,
-            //    tidFrys: dataRef.tidFrys,
-            //    numberOfFrozenBoxes: dataRef.numberOfFrozenBoxes,
-            //    estimatedRouteStart: dataRef.estimatedRouteStart
-            //};
-
-            //var object = {
-            //    Public_Transport: nestledObject
-            //};
-            postUpdate(object);
-        }
-
-        function updateRow(thisRef) {
+        function updateRow(thisRef, signature) {
             var dataRef = table.row($(thisRef).parents('tr')).data();
             /*
-             * Updatetypes
-             * driver: driver_select
-             * preRideAnnotation: preRideInput
-             * postRideAnnotation: postRideInput
-             * portNumber: port_selectBox
-             * carNumber: carNumber_selectBox
-             * loadingLevel: convert_loadingLevel_toSelectbox
+              numberOfColdBoxes: numberOfColdBoxes_input
+              restPicking: restPicking_input
+              numberOfFrozenBoxes: numberOfFrozenBoxes_input
+              numberOfBreadBoxes: numberOfBreadBoxes_input
+              controlIsDone: controlIsDone_input
              */
 
             var object = {
                 _Id: dataRef._Id,
-                routeName: dataRef.routeName,
-                preRideAnnotation: null,
-                postRideAnnotation: null,
-                portNumber: -1,
-                carNumber: null,
-                loadingLevel: -1,
-                driver: {}
+                numberOfColdBoxes: {},
+                restPicking: {},
+                numberOfFrozenBoxes: {},
+                numberOfBreadBoxes: {},
+                controlIsDone: {},
             };
-
             switch (thisRef.id) {
-                case 'driver_select':
-                    object.driver.id = parseInt(thisRef.value);
+                case 'numberOfColdBoxes_input':
+                    object.numberOfColdBoxes.Value = parseInt(thisRef.value);
+                    object.numberOfColdBoxes.Signature = signature;
                     break;
-                case 'preRideInput':
-                    object.preRideAnnotation = thisRef.value;
+                case 'restPicking_input':
+                    object.restPicking.Value = thisRef.checked;
+                    object.restPicking.Signature = signature;
                     break;
-                case 'postRideInput':
-                    object.postRideAnnotation = thisRef.value;
+                case 'numberOfFrozenBoxes_input':
+                    object.numberOfFrozenBoxes.Value = parseInt(thisRef.value);
+                    object.numberOfFrozenBoxes.Signature = signature;
                     break;
-                case 'port_selectBox':
-                    object.portNumber = parseInt(thisRef.value);
+                case 'numberOfBreadBoxes_input':
+                    object.numberOfBreadBoxes.Value = parseInt(thisRef.value);
+                    object.numberOfBreadBoxes.Signature = signature;
                     break;
-                case 'carNumber_selectBox':
-                    object.carNumber = thisRef.value;
+                case 'controlIsDone_input':
+                    object.controlIsDone.Value = thisRef.checked;
+                    object.controlIsDone.Signature = signature;
                     break;
-                case 'convert_loadingLevel_toSelectbox':
-                    switch (thisRef.value) {
-                        case 'Ej påbörjad': object.loadingLevel = 0;
-                            break;
-                        case 'Återanvända': object.loadingLevel = 1;
-                            break;
-                        case 'Påbörjad': object.loadingLevel = 2;
-                            break;
-                        case 'Klar': object.loadingLevel = 3;
-                            break;
-                    }
             }
             postUpdate(JSON.stringify(object));
         }
@@ -155,7 +133,7 @@
             console.log('Submitting form...');
             $.ajax({
                 type: 'POST',
-                url: baseHost + '/api/Upsert/UpsertTransport',
+                url: baseHost + '/api/Upsert/UpsertStorage',
                 //dataType: 'json',
                 contentType: dataType,
                 data: jsonData,
@@ -163,32 +141,67 @@
                     debugger;
                 },
                 success: function (result) {
-                    console.log('Data received: ');
-                    console.log(result);
                 }
             });
         }
 
-        const simple_checkbox = function (data, type, full, meta) {
+        const restPicking_input = function (data, type, full, meta) {
             var is_checked = data == true ? "checked" : "";
-            return '<input type="checkbox" onChange=proptForSignatureBool(this) class="checkbox" ' +
+            return '<input id="restPicking_input" type="checkbox" onChange=proptForSignatureBool(this) class="checkbox" ' +
                 is_checked + ' />';
         }
 
-        const simple_textInput = function (data, type, full, meta) {
-            return '<input type="text" onclick=updateRow(this) class="form-control" value="' +
-                data + '"  />';
-        }
-        const simple_intInput = function (data, type, full, meta) {
-            return '<input type="number" onChange=updateRow(this) class="form-control" value="' +
-                data + '"  />';
+        const controlIsDone_input = function (data, type, full, meta) {
+            var is_checked = data == true ? "checked" : "";
+            return '<input id="controlIsDone_input" type="checkbox" onChange=proptForSignatureBool(this) class="checkbox" ' +
+                is_checked + ' />';
         }
 
-        const itemIncrementInput = function (data, type, full, meta) {
+        const numberOfBreadBoxes_input = function (data, type, full, meta) {
 
             var selectBox = [];
             selectBox.push(
-                '<div class="selectpicker show-tick"><select onmouseover="saveHoverVal(this)" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
+                '<div><select class="form-control" id="numberOfBreadBoxes_input" onmouseover="saveHoverVal(this)" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
+            );
+
+            for (i = 0; i < 100; i++) {
+                if (i === data) {
+                    selectBox.push('<option selected>' + i + '</option>')
+                } else {
+                    selectBox.push('<option>' + i + '</option>')
+                }
+            }
+            selectBox.push(
+                '</select>'
+            );
+            return selectBox.join("");
+        }
+
+        const numberOfFrozenBoxes_input = function (data, type, full, meta) {
+
+            var selectBox = [];
+            selectBox.push(
+                '<div><select class="form-control" id="numberOfFrozenBoxes_input" onmouseover="saveHoverVal(this)" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
+            );
+
+            for (i = 0; i < 100; i++) {
+                if (i === data) {
+                    selectBox.push('<option selected>' + i + '</option>')
+                } else {
+                    selectBox.push('<option>' + i + '</option>')
+                }
+            }
+            selectBox.push(
+                '</select>'
+            );
+            return selectBox.join("");
+        }
+
+        const numberOfColdBoxes_input = function (data, type, full, meta) {
+
+            var selectBox = [];
+            selectBox.push(
+                '<div><select class="form-control" id="numberOfColdBoxes_input" onmouseover="saveHoverVal(this)" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
             );
 
             for (i = 0; i < 100; i++) {
@@ -224,11 +237,11 @@
                     { data: 'portNumber', title: 'Port', },
                     { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toValue },
                     { data: 'numberOfCustomers', title: 'Kunder' },
-                    { data: 'numberOfColdBoxes.value', title: 'Lådor', render: itemIncrementInput },
-                    { data: 'restPicking.value', title: 'Restplock', render: simple_checkbox },
-                    { data: 'numberOfFrozenBoxes.value', title: 'Frys', render: itemIncrementInput },
-                    { data: 'numberOfBreadBoxes.value', title: 'Bröd', render: itemIncrementInput },
-                    { data: 'controlIsDone', title: 'Kontroll', render: simple_checkbox },
+                    { data: 'numberOfColdBoxes.value', title: 'Lådor', render: numberOfColdBoxes_input },
+                    { data: 'restPicking.value', title: 'Restplock', render: restPicking_input },
+                    { data: 'numberOfFrozenBoxes.value', title: 'Frys', render: numberOfFrozenBoxes_input },
+                    { data: 'numberOfBreadBoxes.value', title: 'Bröd', render: numberOfBreadBoxes_input },
+                    { data: 'controlIsDone.value', title: 'Kontroll', render: controlIsDone_input },
                 ],
                 "order": [[1, "asc"]],
 

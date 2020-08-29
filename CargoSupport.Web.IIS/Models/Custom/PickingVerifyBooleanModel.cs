@@ -5,27 +5,21 @@ using System.Threading.Tasks;
 
 namespace CargoSupport.Models
 {
-    public class PickingVerifyModel
+    public class PickingVerifyBooleanModel
     {
-        public PickingVerifyModel()
+        public PickingVerifyBooleanModel()
         {
             _timestamp = DateTime.Now;
         }
 
-        public PickingVerifyModel(int input)
-        {
-            Value = input;
-            _timestamp = DateTime.Now;
-        }
-
-        public PickingVerifyModel(bool input)
+        public PickingVerifyBooleanModel(bool input)
         {
             Value = input;
             _timestamp = DateTime.Now;
         }
 
-        private DateTime _timestamp;
-        public object Value { get; set; }
+        public DateTime _timestamp;
+        public bool Value { get; set; } = false;
         public string Signature { get; set; }
     }
 }

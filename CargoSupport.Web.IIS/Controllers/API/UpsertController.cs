@@ -117,39 +117,55 @@ namespace CargoSupport.Web.IIS.Controllers.API
                 return Unauthorized();
             }
 
+            var dbConnection = new MongoDbHelper(Constants.MongoDb.DatabaseName);
+
+            var existingRecord = await dbConnection.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, storageViewModel._Id);
+
+            if (existingRecord == null)
+            {
+                return NotFound();
+            }
+
+            await UpsertStorageProperties(storageViewModel, dbConnection, existingRecord);
+
             return Ok();
         }
 
-        private static async Task UpsertStorage(TransportViewModel transportViewModel, MongoDbHelper dbConnection, DataModel existingRecord)
+        private async Task UpsertStorageProperties(StorageViewModel storageViewModel, MongoDbHelper dbConnection, DataModel existingRecord)
         {
-            //var update = false;
-            ////existingRecord.Driver.Id = transportViewModel.Driver.Id;
-            ////existingRecord.CarModel = transportViewModel.CarNumber;
-            //if (transportViewModel.PortNumber != -1)
-            //{
-            //    existingRecord.PortNumber = transportViewModel.PortNumber;
-            //    update = true;
-            //}
-            //else if ((int)transportViewModel.LoadingLevel != -1)
-            //{
-            //    existingRecord.LoadingLevel = transportViewModel.LoadingLevel;
-            //    update = true;
-            //}
-            //else if (transportViewModel.PreRideAnnotation != "")
-            //{
-            //    existingRecord.PreRideAnnotation = transportViewModel.PreRideAnnotation;
-            //    update = true;
-            //}
-            //else if (transportViewModel.PostRideAnnotation != "")
-            //{
-            //    existingRecord.PostRideAnnotation = transportViewModel.PostRideAnnotation;
-            //    update = true;
-            //}
+            var update = false;
+            if (storageViewModel.NumberOfColdBoxes.Signature != null)
+            {
+                existingRecord.NumberOfColdBoxes.Insert(0, storageViewModel.NumberOfColdBoxes);
+                update = true;
+            }
+            else if (storageViewModel.NumberOfFrozenBoxes.Signature != null)
+            {
+                existingRecord.NumberOfFrozenBoxes.Insert(0, storageViewModel.NumberOfFrozenBoxes);
+                update = true;
+            }
+            else if (storageViewModel.NumberOfBreadBoxes.Signature != null)
+            {
+                existingRecord.NumberOfBreadBoxes.Insert(0, storageViewModel.NumberOfBreadBoxes);
+                update = true;
+            }
+            else if (storageViewModel.RestPicking.Signature != null)
+            {
+                existingRecord.RestPicking.Insert(0, storageViewModel.RestPicking);
+                update = true;
+            }
+            else if (storageViewModel.ControlIsDone.Signature != null)
+            {
+                existingRecord.ControlIsDone.Insert(0, storageViewModel.ControlIsDone);
+                update = true;
+            }
 
-            //if (update)
-            //{
-            //    await dbConnection.UpsertRecordByNativeGuid(Constants.MongoDb.OutputScreenTableName, existingRecord.Id, existingRecord);
-            //}
+
+            if (update)
+            {
+                await dbConnection.UpsertDataRecordById(Constants.MongoDb.OutputScreenTableName, existingRecord);
+                await _chatHub.Clients.All.SendAsync("ReceiveMessage");
+            }
         }
     }
 }

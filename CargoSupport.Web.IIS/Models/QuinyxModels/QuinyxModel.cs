@@ -52,8 +52,7 @@ namespace CargoSupport.Models.QuinyxModels
             int active = 1;
             if (ExtendedInformationModel != null)
             {
-                //fullName = $"{ExtendedInformationModel.GivenName} {ExtendedInformationModel.FamilyName}";
-                fullName = $"Martin Mörsell";
+                fullName = $"{ExtendedInformationModel.GivenName} {ExtendedInformationModel.FamilyName}";
                 active = ExtendedInformationModel.Active;
             }
             return new DriverViewModel(begTime, endTime)
