@@ -53,12 +53,11 @@ namespace CargoSupport.Web.Controllers.API
 
             Task.WaitAll(carOptionsTask, driversThatWorksOnThisDateTask, dataBaseResTask);
 
-            //return Ok(dataBaseRes.ToArray());
             return Ok(new ReturnModel
             {
                 data = dataBaseResTask.Result,
                 selectValues = driversThatWorksOnThisDateTask.Result,
-                carOptions = carOptionsTask.Result.ToArray()
+                carOptions = carOptionsTask.Result.Where(car => car.CanBeSelected).ToArray()
             });
         }
 
@@ -142,6 +141,7 @@ namespace CargoSupport.Web.Controllers.API
                 {
                     returnModels.Add(new TransportViewModel(
                         route._Id,
+                        route.PinRouteModel.Weight,
                         route.PinRouteModel.RouteName,
                         route.Driver.ConvertToDriverViewModel(),
                         route.CarModel,

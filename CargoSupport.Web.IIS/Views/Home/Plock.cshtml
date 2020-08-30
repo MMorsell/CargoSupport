@@ -26,47 +26,49 @@
 
         let prevValues = [];
 
-        function saveHoverVal(thisReference) {
-            let tempOldVal = thisReference.options[thisReference.selectedIndex].value
-            var dataRef = table.row($(thisReference).parents('tr')).data();
+        //function saveHoverVal(thisReference) {
+        //    let tempOldVal = thisReference.options[thisReference.selectedIndex].value
+        //    var dataRef = table.row($(thisReference).parents('tr')).data();
 
-            var reference = prevValues.find(x => x._id === dataRef._id);
+        //    var reference = prevValues.find(x => x._id === dataRef._id);
 
-            if (reference == null) {
-                prevValues.push(
-                    { id: dataRef._id, oldVal: tempOldVal }
-                );
-            }
-            else {
-                reference.oldVal = tempOldVal;
-            }
+        //    if (reference == null) {
+        //        prevValues.push(
+        //            { id: dataRef._id, oldVal: tempOldVal }
+        //        );
+        //    }
+        //    else {
+        //        reference.oldVal = tempOldVal;
+        //    }
 
-        }
+        //}
 
         function proptForSignatureInt(thisReference) {
             var dataRef = table.row($(thisReference).parents('tr')).data();
-            var personSignature = prompt("Signatur krävs", "");
+            var personSignature = prompt("Signatur krävs, om du väljer 'Cancel' återställs värdet utan förändring", "");
 
             if (personSignature == null) {
-                var reference = prevValues.find(x => x._id === dataRef._id);
+                reloadAjax();
+                //var reference = prevValues.find(x => x._id === dataRef._id);
 
-                if (reference == null) {
-                    thisReference.value = 99;
-                }
-                else {
-                    thisReference.value = reference.oldVal;
-                }
+                //if (reference == null) {
+                //    thisReference.value = 99;
+                //}
+                //else {
+                //    thisReference.value = reference.oldVal;
+                //}
             }
             else if (personSignature.trim() === "") {
                 alert("Tom signatur godkänns ej")
-                var reference = prevValues.find(x => x._id === dataRef._id);
+                //var reference = prevValues.find(x => x._id === dataRef._id);
 
-                if (reference == null) {
-                    thisReference.value = 99;
-                }
-                else {
-                    thisReference.value = reference.oldVal;
-                }
+                //if (reference == null) {
+                //    thisReference.value = 99;
+                //}
+                //else {
+                //    thisReference.value = reference.oldVal;
+                //}
+                reloadAjax();
             }
             else {
                 updateRow(thisReference, personSignature);
@@ -74,13 +76,15 @@
         }
 
         function proptForSignatureBool(thisReference) {
-            var personSignature = prompt("Signatur krävs", "");
+            var personSignature = prompt("Signatur krävs, om du väljer 'Cancel' återställs värdet utan förändring", "");
 
             if (personSignature == null) {
-                thisReference.checked = !thisReference.checked;
+                reloadAjax();
+                //thisReference.checked = !thisReference.checked;
             } else if (personSignature.trim() === "") {
                 alert("Tom signatur godkänns ej")
-                thisReference.checked = !thisReference.checked;
+                reloadAjax();
+                //thisReference.checked = !thisReference.checked;
             }
             else {
                 updateRow(thisReference, personSignature);
@@ -163,8 +167,11 @@
 
             var selectBox = [];
             selectBox.push(
-                '<div><select class="form-control" id="numberOfBreadBoxes_input" onmouseover="saveHoverVal(this)" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
+                '<div><select class="form-control" id="numberOfBreadBoxes_input" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
             );
+            //selectBox.push(
+            //    '<div><select class="form-control" id="numberOfBreadBoxes_input" onmouseover="saveHoverVal(this)" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
+            //);
 
             for (i = 0; i < 100; i++) {
                 if (i === data) {
@@ -183,8 +190,11 @@
 
             var selectBox = [];
             selectBox.push(
-                '<div><select class="form-control" id="numberOfFrozenBoxes_input" onmouseover="saveHoverVal(this)" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
+                '<div><select class="form-control" id="numberOfFrozenBoxes_input" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
             );
+            //selectBox.push(
+            //    '<div><select class="form-control" id="numberOfFrozenBoxes_input" onmouseover="saveHoverVal(this)" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
+            //);
 
             for (i = 0; i < 100; i++) {
                 if (i === data) {
@@ -203,8 +213,11 @@
 
             var selectBox = [];
             selectBox.push(
-                '<div><select class="form-control" id="numberOfColdBoxes_input" onmouseover="saveHoverVal(this)" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
+                '<div><select class="form-control" id="numberOfColdBoxes_input" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
             );
+            //selectBox.push(
+            //    '<div><select class="form-control" id="numberOfColdBoxes_input" onmouseover="saveHoverVal(this)" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
+            //);
 
             for (i = 0; i < 100; i++) {
                 if (i === data) {

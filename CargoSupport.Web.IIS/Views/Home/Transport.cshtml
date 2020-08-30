@@ -152,10 +152,10 @@
             const avaialableCars = table.ajax.json().carOptions;
             for (i = 0; i < avaialableCars.length; i++) {
                 if (avaialableCars[i].name === data) {
-                    selectBox.push('<option value="' + avaialableCars[i].name + '" selected>' + avaialableCars[i].name + '</option>')
+                    selectBox.push('<option value="' + avaialableCars[i].name + '" selected>' + avaialableCars[i].name + ' - ' + avaialableCars[i].maxWeight + 'kg</option>')
                 }
                 else {
-                    selectBox.push('<option value="' + avaialableCars[i].name + '">' + avaialableCars[i].name + '</option>')
+                    selectBox.push('<option value="' + avaialableCars[i].name + '">' + avaialableCars[i].name + ' - ' + avaialableCars[i].maxWeight + 'kg</option>')
                 }
             }
 

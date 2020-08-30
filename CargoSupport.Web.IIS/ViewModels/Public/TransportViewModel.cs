@@ -12,9 +12,10 @@ namespace CargoSupport.ViewModels.Public
     {
         //TidFrys = tidFrys.ToString(@"hh\:mm");
 
-        public TransportViewModel(string _id, string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingIsDone, string preRideAnnotation, string postRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyIntModel> numberOfColdBoxes, List<PickingVerifyBooleanModel> restPicking, List<PickingVerifyIntModel> numberOfFrozenBoxes, List<PickingVerifyIntModel> numberOfBreadBoxes, List<PickingVerifyBooleanModel> controlIsDone)
+        public TransportViewModel(string _id, double kilos, string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingIsDone, string preRideAnnotation, string postRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyIntModel> numberOfColdBoxes, List<PickingVerifyBooleanModel> restPicking, List<PickingVerifyIntModel> numberOfFrozenBoxes, List<PickingVerifyIntModel> numberOfBreadBoxes, List<PickingVerifyBooleanModel> controlIsDone)
         {
             _Id = _id;
+            Kilos = kilos;
             RouteName = routeName;
             Driver = driverModel;
             CarNumber = carNumberString;
@@ -111,5 +112,6 @@ namespace CargoSupport.ViewModels.Public
         public int NumberOfFrozenBoxes { get; set; }
         public int NumberOfBreadBoxes { get; set; }
         public bool ControlIsDone { get; set; }
+        public double Kilos { get; set; }
     }
 }

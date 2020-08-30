@@ -14,5 +14,7 @@ namespace CargoSupport.Models.DatabaseModels
         public string _Id { get; set; }
 
         public string Name { get; set; }
+        public int MaxWeight { get; set; }
+        public bool CanBeSelected { get; set; }
     }
 }

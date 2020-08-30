@@ -89,7 +89,7 @@ namespace CargoSupport.Helpers
 
             if (matchingRecord == null)
             {
-                await dbConnection.InsertRecord(Constants.MongoDb.CarTableName, new CarModel { Name = carModel.Name });
+                await dbConnection.InsertRecord(Constants.MongoDb.CarTableName, carModel);
                 return true;
             }
             else

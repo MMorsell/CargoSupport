@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CargoSupport.ViewModels.Analyze;
 using System.Collections.Concurrent;
+using CargoSupport.Models.PinModels;
 
 namespace CargoSupport.Helpers
 {
@@ -28,6 +29,93 @@ namespace CargoSupport.Helpers
             {
                 return QuinyxRole.Other;
             }
+        }
+
+        public static TodayGraphsViewModel ConvertTodaysDataToGraphModels(List<DataModel> routesOfToday)
+        {
+            /*
+             * Get Valid data:
+             */
+
+            var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
+            var todayGraphsModel = new TodayGraphsViewModel();
+            foreach (var route in routesOfToday)
+            {
+                allCustomerWhereDeliveryHasBeenDone.AddRange(route.PinRouteModel.Customers.Where(customer => customer.PinCustomerDeliveryInfo.time_handled != null));
+            }
+            if (allCustomerWhereDeliveryHasBeenDone.Count > 0)
+            {
+                //Number of deliveries validated and done
+                todayGraphsModel.NumberOfValidDeliveries = allCustomerWhereDeliveryHasBeenDone.Count;
+                //Number left to be delivered
+                todayGraphsModel.NumberOfValidDeliveriesLeft = routesOfToday.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
+
+                //Number of deliveries made within 5 minutes of each customer time slot
+                todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInTimeWindowPlusMinus5(customer)).Count();
+
+                //Number of deliveries made withing 15 minutes of each customers estimated time
+                todayGraphsModel.CustomersWithinPrognosis = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInPhasePlusMinus15Minutes(customer)).Count();
+
+                //Number of customer deliveries made before time slot - 5 minutes
+                todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer)).Count();
+
+                //Number of deliveries made before estimated time +-0 minutes
+                todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer)).Count();
+
+                if (todayGraphsModel.NumberOfValidDeliveries > 0)
+                {
+                    //Percentages deliveries withing 5 minutes of each customer time slot
+                    todayGraphsModel.PercentageWithing5MinOfTimeSlot = Math.Round((todayGraphsModel.CustomersWithinTimeSlot / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
+                    //Percentages deliveries withing 15 minutes of each customers estimated time
+                    todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = Math.Round((todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
+                }
+
+                todayGraphsModel.LabelTitle = routesOfToday[0].DateOfRoute.ToString(@"yyyy-MM-dd");
+            }
+            else
+            {
+                todayGraphsModel.LabelTitle = "No data on this day";
+            }
+            return todayGraphsModel;
+        }
+
+        private static bool CustomerIsInTimeWindowPlusMinus5(PinCustomerModel customerModel)
+        {
+            //Inom Tidsfönser -Hur många procent kunder inom tidsfönster - lägg på 5 minuter - time_handled ska vara inom detta
+            var timeSpan_ActualDeliveryTime = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_handled.Split(' ')[1]);
+            var timeSpan_WindowsStart = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.timewindow_start).Add(new TimeSpan(0, 0, -5, 0, 0));
+            var timeSpan_WindowsEnd = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.timewindow_end).Add(new TimeSpan(0, 0, 5, 0, 0));
+
+            var result = (timeSpan_ActualDeliveryTime > timeSpan_WindowsStart && timeSpan_ActualDeliveryTime < timeSpan_WindowsEnd);
+            return result;
+        }
+
+        private static bool CustomerIsInPhasePlusMinus15Minutes(PinCustomerModel customerModel)
+        {
+            var timeSpan_ActualDeliveryTime = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_handled.Split(' ')[1]);
+            var timeSpan_WindowsStart = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_estimated.Split(' ')[1]).Add(new TimeSpan(0, 0, -15, 0, 0));
+            var timeSpan_WindowsEnd = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_estimated.Split(' ')[1]).Add(new TimeSpan(0, 0, 15, 0, 0));
+
+            var result = (timeSpan_ActualDeliveryTime > timeSpan_WindowsStart && timeSpan_ActualDeliveryTime < timeSpan_WindowsEnd);
+            return result;
+        }
+
+        private static bool DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(PinCustomerModel customerModel)
+        {
+            var timeSpan_ActualDeliveryTime = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_handled.Split(' ')[1]);
+            var timeSpan_WindowsStart = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.timewindow_start).Add(new TimeSpan(0, 0, -5, 0, 0));
+
+            var result = (timeSpan_ActualDeliveryTime < timeSpan_WindowsStart);
+            return result;
+        }
+
+        private static bool DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(PinCustomerModel customerModel)
+        {
+            var timeSpan_ActualDeliveryTime = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_handled.Split(' ')[1]);
+            var timeSpan_WindowsStart = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_estimated.Split(' ')[1]).Add(new TimeSpan(0, 0, -15, 0, 0));
+
+            var result = (timeSpan_ActualDeliveryTime < timeSpan_WindowsStart);
+            return result;
         }
 
         public static List<SlimViewModel> ConvertDataModelsToSlimViewModels(List<DataModel> dataModels)

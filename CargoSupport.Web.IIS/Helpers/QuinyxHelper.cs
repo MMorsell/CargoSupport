@@ -11,6 +11,7 @@ using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Extensions;
 using CargoSupport.ViewModels;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace CargoSupport.Helpers
 {
@@ -28,7 +29,7 @@ namespace CargoSupport.Helpers
         {
             return await Task.Run(() =>
             {
-                return GetDrivers(date, date, clearNames).OrderBy(e => e.begTime).ThenBy(e => e.endTime).ToArray();
+                return GetDrivers(date, date, clearNames).OrderBy(e => e.ExtendedInformationModel.GivenName).ToArray();
             });
         }
 
@@ -85,23 +86,39 @@ namespace CargoSupport.Helpers
                 using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
                 {
                     XDocument doc = XDocument.Load(rd);
+                    var allItems = doc.Descendants().Where(x => x.Name.LocalName == "item");
 
-                    result = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new QuinyxModel
+                    foreach (var item in allItems)
                     {
-                        Id = (int)y.Elements().Where(z => z.Name.LocalName == "persId").FirstOrDefault(),
-                        BadgeNo = (string)y.Elements().Where(z => z.Name.LocalName == "badgeNo").FirstOrDefault(),
-                        begTimeString = (string)y.Elements().Where(z => z.Name.LocalName == "begTime").FirstOrDefault(),
-                        endTimeString = (string)y.Elements().Where(z => z.Name.LocalName == "endTime").FirstOrDefault(),
-                        CategoryId = (int)y.Elements().Where(z => z.Name.LocalName == "categoryId").FirstOrDefault(),
-                        Section = (int)y.Elements().Where(z => z.Name.LocalName == "section").FirstOrDefault(),
-                        SectionName = (string)y.Elements().Where(z => z.Name.LocalName == "sectionName").FirstOrDefault(),
-                        hours = (decimal)y.Elements().Where(z => z.Name.LocalName == "hours").FirstOrDefault(),
-                        CostCentre = (int)y.Elements().Where(z => z.Name.LocalName == "costCentre").FirstOrDefault(),
-                        ManagerId = (int)y.Elements().Where(z => z.Name.LocalName == "managerId").FirstOrDefault(),
-                    }).ToList();
+                        var quinyxModel = new QuinyxModel();
+
+                        var rawId = item.Elements().Where(z => z.Name.LocalName == "persId").FirstOrDefault();
+                        if (rawId == null)
+                        {
+                            quinyxModel.Id = 0;
+                        }
+                        else
+                        {
+                            quinyxModel.Id = (int)rawId;
+                        }
+
+                        if (quinyxModel.Id != 0)
+                        {
+                            quinyxModel.BadgeNo = (string)item.Elements().Where(z => z.Name.LocalName == "badgeNo").FirstOrDefault();
+                            quinyxModel.begTimeString = (string)item.Elements().Where(z => z.Name.LocalName == "begTime").FirstOrDefault();
+                            quinyxModel.endTimeString = (string)item.Elements().Where(z => z.Name.LocalName == "endTime").FirstOrDefault();
+                            quinyxModel.CategoryId = (int)item.Elements().Where(z => z.Name.LocalName == "categoryId").FirstOrDefault();
+                            quinyxModel.Section = (int)item.Elements().Where(z => z.Name.LocalName == "section").FirstOrDefault();
+                            quinyxModel.SectionName = (string)item.Elements().Where(z => z.Name.LocalName == "sectionName").FirstOrDefault();
+                            quinyxModel.hours = (decimal)item.Elements().Where(z => z.Name.LocalName == "hours").FirstOrDefault();
+                            quinyxModel.CostCentre = (int)item.Elements().Where(z => z.Name.LocalName == "costCentre").FirstOrDefault();
+                            quinyxModel.ManagerId = (int)item.Elements().Where(z => z.Name.LocalName == "managerId").FirstOrDefault();
+                            result.Add(quinyxModel);
+                        }
+                    }
                 }
 
-                result = result.Select(res => res).Where(res => res.Id != 0).ToList();
+                result = result.ToList().Select(res => res).Where(res => res.Id != 0).ToList();
 
                 result = GetExtraInformationForDrivers(result);
 

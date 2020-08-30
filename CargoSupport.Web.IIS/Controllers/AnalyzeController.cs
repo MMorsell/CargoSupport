@@ -93,5 +93,44 @@ namespace CargoSupport.Web.IIS.Controllers
             var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToSlimViewModels(analyzeModels);
             return Ok(res);
         }
+
+        public async Task<ActionResult> TodayGraphs()
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            return View();
+        }
+
+        [HttpGet]
+        [Route("api/[controller]/GetTodayGraphs")]
+        public async Task<ActionResult> GetTodayGraphs(string fromDate/*, string toDate*/)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            DateTime.TryParse(fromDate, out DateTime from);
+
+            if (from.ToString(@"yyyy-MM-dd") != fromDate)
+            {
+                //TODO: Implement return invalid date
+            }
+
+            //DateTime.TryParse(toDate, out DateTime to);
+
+            //if (to.ToString(@"yyyy-MM-dd") != toDate)
+            //{
+            //    //TODO: Implement return invalid date
+            //}
+
+            List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, from);
+
+            var res = CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModels(analyzeModels);
+            return Ok(res);
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace CargoSupport.Models.PinModels
     public class PinRouteModel
     {
         public string ParentOrderId { get; set; }
+        public string ParentOrderName { get; set; }
 
         [JsonProperty("id")]
         public int RouteId { get; set; }

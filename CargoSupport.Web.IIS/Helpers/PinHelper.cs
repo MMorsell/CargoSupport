@@ -38,6 +38,7 @@ namespace CargoSupport.Helpers
 
             Parallel.ForEach(routeResult, (route) =>
             {
+                route.ParentOrderName = orderRecord.name;
                 route.ParentOrderId = orderRecord.id;
                 route.CalculateProperties();
             });
@@ -61,19 +62,19 @@ namespace CargoSupport.Helpers
 
         private async Task PopulateAllRoutesWithDriversAndSaveToDatabase(List<DataModel> allRoutesForToday, DateTime dateToGetDriversFrom)
         {
-            allRoutesForToday = allRoutesForToday.OrderBy(r => r.PinRouteModel.ScheduledRouteStart).ToList();
-            List<QuinyxModel> allDriversForToday = await _quinyxHelper.GetAllDriversSorted(dateToGetDriversFrom);
+            //allRoutesForToday = allRoutesForToday.OrderBy(r => r.PinRouteModel.ScheduledRouteStart).ToList();
+            //List<QuinyxModel> allDriversForToday = await _quinyxHelper.GetAllDriversSorted(dateToGetDriversFrom);
 
             for (int i = 0; i < allRoutesForToday.Count; i++)
             {
-                if (i < allDriversForToday.Count)
-                {
-                    allRoutesForToday[i].Driver = allDriversForToday[i];
-                }
-                else
-                {
-                    allRoutesForToday[i].Driver = new QuinyxModel();
-                }
+                //if (i < allDriversForToday.Count)
+                //{
+                //    allRoutesForToday[i].Driver = allDriversForToday[i];
+                //}
+                //else
+                //{
+                allRoutesForToday[i].Driver = new QuinyxModel();
+                //}
             }
 
             await _dbHelper.InsertMultipleRecords(Constants.MongoDb.OutputScreenTableName, allRoutesForToday);

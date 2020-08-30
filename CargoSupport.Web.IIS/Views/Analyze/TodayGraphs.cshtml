@@ -1,0 +1,206 @@
+﻿@{
+    ViewData["Title"] = "Statistik för dagen";
+}
+
+<div class="container-flow">
+    <div class="row">
+        <h6>Visa data</h6>
+        <div>
+            <div style="padding-left: 20px;" class="group">
+                <label class="input-label">Från</label>
+                <input type="text" id="calendar-from-graphs-dashboard">
+                <span class="bar"></span>
+            </div>
+            @*<div style="padding-left: 30px;" class="group">
+                    <label class="input-label">Till</label>
+                    <input type="text" id="calendar-to">
+                    <span class="bar"></span>
+                </div>*@
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-8">
+            <canvas id="mainDataBar"></canvas>
+        </div>
+        <div class="col-4">
+            <canvas id="percentageWithing5MinOfTimeSlot"></canvas>
+            <canvas id="percentageWithing15MinOfCustomerEstimatedTime"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+    <script>
+        let data = {
+            "labelTitle": "",
+            "numberOfValidDeliveries": 0,
+            "numberOfValidDeliveriesLeft": 0,
+            "customersWithinTimeSlot": 0,
+            "customersWithinPrognosis": 0,
+            "customersBeforeTimeSlot": 0,
+            "customersBeforeEstimatedTime": 0,
+            "percentageWithing5MinOfTimeSlot": 0,
+            "percentageWithing15MinOfCustomerEstimatedTime": 0
+        };
+
+        function reloadGraphs() {
+
+            window.mainChart.data.datasets[0].data = [data.numberOfValidDeliveries,
+            data.numberOfValidDeliveriesLeft,
+            data.customersWithinTimeSlot,
+            data.customersWithinPrognosis,
+            data.customersBeforeTimeSlot,
+            data.customersBeforeEstimatedTime];
+            window.mainChart.data.datasets[0].label = data.labelTitle;
+
+            window.percTimeSlot.data.datasets[0].data = [data.percentageWithing5MinOfTimeSlot, 100 - data.percentageWithing5MinOfTimeSlot];
+            window.percEstTime.data.datasets[0].data = [data.percentageWithing15MinOfCustomerEstimatedTime, 100 - data.percentageWithing15MinOfCustomerEstimatedTime];
+
+            window.mainChart.update();
+            window.percTimeSlot.update();
+            window.percEstTime.update();
+        }
+
+        function getData() {
+            $.ajax({
+                type: "GET",
+                url: "/api/Analyze/GetTodayGraphs",
+                data: {
+                    "fromDate": function () { return toDate.format(timeFormat) }
+                },
+                success: function (responseData) {
+                    data = responseData;
+                    reloadGraphs();
+                }
+            });
+        }
+
+        window.onload = function () {
+            getData();
+
+            var ctx1 = document.getElementById('mainDataBar').getContext('2d');
+            window.mainChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: [data.numberOfValidDeliveries,
+                        data.numberOfValidDeliveriesLeft,
+                        data.customersWithinTimeSlot,
+                        data.customersWithinPrognosis,
+                        data.customersBeforeTimeSlot,
+                        data.customersBeforeEstimatedTime],
+                        fill: false,
+                        borderColor: [
+                            "rgb(255, 159, 64)",
+                            "rgb(255, 99, 132)",
+                            "rgb(54, 162, 235)",
+                            "rgb(153, 102, 255)",
+                            "rgb(255, 205, 86)",
+                            "rgb(255, 99, 132)"],
+                        borderWidth: 1,
+                        backgroundColor: [
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 99, 132, 0.2)",
+                            "rgba(54, 162, 235, 0.2)",
+                            "rgba(153, 102, 255, 0.2)",
+                            "rgba(255, 205, 86, 0.2)",
+                            "rgba(255, 99, 132, 0.2)",
+                        ],
+                        label: ''
+                    },
+                    ],
+                    labels: [
+                        "Antal leveranser",
+                        "Olevererade leveranser",
+                        "Leveranser inom tidsfönster +-5",
+                        "Leveranser inom beräknad leveranstid +-15",
+                        "Leveranser före tidsfönster -5",
+                        "Leveranser före beräknad tid -15",
+                    ]
+                },
+                options: {
+                    plugins: {
+                        labels: {
+                            render: 'value',
+                            fontSize: 20,
+                            position: 'outside',
+                            textMargin: 10,
+                        }
+                    }
+                }
+            });
+
+            var ctx2 = document.getElementById('percentageWithing15MinOfCustomerEstimatedTime').getContext('2d');
+            window.percEstTime = new Chart(ctx2, {
+                type: 'pie',
+
+                data: {
+                    datasets: [{
+                        data: [data.percentageWithing15MinOfCustomerEstimatedTime, 100 - data.percentageWithing15MinOfCustomerEstimatedTime],
+                        fill: false,
+
+                        borderColor: ["rgb(75, 192, 192)", "rgb(255, 99, 132)"],
+                        borderWidth: 1,
+                        backgroundColor: [
+                            "rgba(75, 192, 192, 0.2)",
+                            "rgba(255, 99, 132, 0.2)",
+                        ],
+                        label: 'Leverans beräknad leveranstid +- 15 minuter'
+                    }],
+                    labels: [
+                        "Inom beräknad leveranstid +- 15 minuter",
+                        "Ej Inom beräknad leveranstid +- 15 minuter",
+                    ]
+                },
+
+                options: {
+                    plugins: {
+                        labels: {
+                            render: 'percentage',
+                            fontSize: 20,
+                            position: 'outside',
+                            textMargin: 10,
+                        }
+                    }
+                }
+            });
+
+            var ctx3 = document.getElementById('percentageWithing5MinOfTimeSlot').getContext('2d');
+            window.percTimeSlot = new Chart(ctx3, {
+                type: 'pie',
+
+                data: {
+                    datasets: [{
+                        data: [data.percentageWithing5MinOfTimeSlot, 100 - data.percentageWithing5MinOfTimeSlot],
+                        fill: false,
+
+                        borderColor: ["rgb(75, 192, 192)", "rgb(255, 99, 132)"],
+                        borderWidth: 1,
+                        backgroundColor: [
+                            "rgba(75, 192, 192, 0.2)",
+                            "rgba(255, 99, 132, 0.2)",
+                        ],
+                        label: 'Leveranser inom tidsfönster +- 5 minuter'
+                    }],
+                    labels: [
+                        "Inom Tidsfönster +- 5 minuter",
+                        "Ej Inom Tidsfönster +- 5 minuter",
+                    ]
+                },
+                options: {
+                    plugins: {
+                        labels: {
+                            render: 'percentage',
+                            fontSize: 20,
+                            position: 'outside',
+                            textMargin: 10,
+                        }
+                    }
+                }
+            });
+        };
+    </script>
+}

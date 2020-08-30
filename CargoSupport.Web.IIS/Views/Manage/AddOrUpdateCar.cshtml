@@ -14,6 +14,17 @@
             <td>
                 @Html.TextBoxFor(m => m.Name)
             </td>
+            <br />
+            <td>Vikt som kan lastas</td>
+            <td>
+                @Html.TextBoxFor(m => m.MaxWeight)
+            </td>
+            <br />
+
+            <td>Påställd/Kan användas</td>
+            <td>
+                @Html.EditorFor(m => m.CanBeSelected)
+            </td>
         </tr>
 
         <tr>

@@ -97,7 +97,7 @@ const convert_loadingLevel_toValue = function (data, type, full, meta) {
 }
 
 const pinstart_render = function (data, type, full, meta) {
-    return '<p>' + data + '-' + full.pinEndTimeString + '</p > ';
+    return '<p>' + data + '-' + full.pinEndTimeString + '<br>' + full.kilos + ' Kilo</p> ';
 }
 
 const disabled_checkbox = function (data, type, full, meta) {
@@ -195,6 +195,19 @@ flatpickr('#calendar-to-vanilla', {
     onChange: function (selectedDates, dateStr, instance) {
         toDate = moment(dateStr);
         reloadDatatableAjax();
+    }
+});
+
+/*
+ * Datepicker for graph dashboard
+ */
+flatpickr('#calendar-from-graphs-dashboard', {
+    "locale": "sv",
+    "maxDate": new Date(),
+    defaultDate: new Date(),
+    onChange: function (selectedDates, dateStr, instance) {
+        toDate = moment(dateStr, timeFormat);
+        getData();
     }
 });
 

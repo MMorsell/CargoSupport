@@ -1,5 +1,7 @@
 ﻿using CargoSupport.Helpers;
+using CargoSupport.Models.DatabaseModels;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TestingConsole
@@ -8,6 +10,13 @@ namespace TestingConsole
     {
         private static void Main(string[] args)
         {
+            var _dbHelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
+
+            DateTime.TryParse("2020-08-29", out DateTime from);
+
+            List<DataModel> analyzeModels = _dbHelper.GetAllRecordsByDate(CargoSupport.Constants.MongoDb.OutputScreenTableName, from).Result;
+
+            CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModels(analyzeModels);
             //var qh = new CargoSupport.Helpers.QuinyxHelper();
 
             //var res = qh.GetAllDriversFromADate(DateTime.Now).ToList();
@@ -17,7 +26,6 @@ namespace TestingConsole
             //    Console.WriteLine($"{r.GivenName} - {r.begTimeString}");
             //}
 
-            //var _dbhelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
             //var ph = new PinHelper();
             //var _qnHelper = new QuinyxHelper();
 
