@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30330.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CargoSupport.Web", "CargoSupport.Web\CargoSupport.Web.csproj", "{55C3CBA0-02C4-4AE1-A61B-CA8809757668}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestingConsole", "TestingConsole\TestingConsole.csproj", "{4115C2F5-1DC3-4EAE-BA76-E2DCCD1A4051}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoSupport.Web.IIS", "CargoSupport.Web.IIS\CargoSupport.Web.IIS.csproj", "{186FE0AD-6B82-45B0-82FF-C6114A283DCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CargoSupport.Web.IIS", "CargoSupport.Web.IIS\CargoSupport.Web.IIS.csproj", "{186FE0AD-6B82-45B0-82FF-C6114A283DCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{55C3CBA0-02C4-4AE1-A61B-CA8809757668}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{55C3CBA0-02C4-4AE1-A61B-CA8809757668}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{55C3CBA0-02C4-4AE1-A61B-CA8809757668}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{55C3CBA0-02C4-4AE1-A61B-CA8809757668}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4115C2F5-1DC3-4EAE-BA76-E2DCCD1A4051}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4115C2F5-1DC3-4EAE-BA76-E2DCCD1A4051}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4115C2F5-1DC3-4EAE-BA76-E2DCCD1A4051}.Release|Any CPU.ActiveCfg = Release|Any CPU
