@@ -11,11 +11,11 @@
                 <input type="text" id="calendar-from-graphs-dashboard">
                 <span class="bar"></span>
             </div>
-            @*<div style="padding-left: 30px;" class="group">
-                    <label class="input-label">Till</label>
-                    <input type="text" id="calendar-to">
-                    <span class="bar"></span>
-                </div>*@
+            <div style="padding-left: 30px;" class="group">
+                <label class="input-label">Till</label>
+                <input type="text" id="calendar-to-graphs-dashboard">
+                <span class="bar"></span>
+            </div>
         </div>
     </div>
     <div class="row ">
@@ -34,6 +34,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
     <script>
+        fromDate = moment();
+        toDate = moment();
         let data = {
             "labelTitle": "",
             "numberOfValidDeliveries": 0,
@@ -46,22 +48,120 @@
             "percentageWithing15MinOfCustomerEstimatedTime": 0
         };
 
-        function reloadGraphs() {
-
-            window.mainChart.data.datasets[0].data = [data.numberOfValidDeliveries,
-            data.numberOfValidDeliveriesLeft,
-            data.customersWithinTimeSlot,
-            data.customersWithinPrognosis,
-            data.customersBeforeTimeSlot,
-            data.customersBeforeEstimatedTime];
-            window.mainChart.data.datasets[0].label = data.labelTitle;
-
-            window.percTimeSlot.data.datasets[0].data = [data.percentageWithing5MinOfTimeSlot, 100 - data.percentageWithing5MinOfTimeSlot];
-            window.percEstTime.data.datasets[0].data = [data.percentageWithing15MinOfCustomerEstimatedTime, 100 - data.percentageWithing15MinOfCustomerEstimatedTime];
+        function reloadGraphs(array) {
+            debugger;
+            generateMainDatasetFromApiResponse(array);
+            generateMainDatasetFromApiResponsePieGraphOne(array);
+            generateMainDatasetFromApiResponsePieGraphTwo(array);
 
             window.mainChart.update();
             window.percTimeSlot.update();
             window.percEstTime.update();
+        }
+
+        function generateMainDatasetFromApiResponse(array) {
+            /*
+             * Removes all old datasets
+             */
+            while (window.mainChart.data.datasets.length > 0) {
+                window.mainChart.data.datasets.pop()
+            }
+
+            /*
+             * Generates new datasets based on returned data and pushes the changes
+             */
+            array.forEach(dataRow => {
+                var newDataset = {
+                    label: dataRow.labelTitle,
+                    backgroundColor: [
+                        "rgba(255, 159, 64, 0.2)",
+                        "rgba(255, 99, 132, 0.2)",
+                        "rgba(54, 162, 235, 0.2)",
+                        "rgba(153, 102, 255, 0.2)",
+                        "rgba(255, 205, 86, 0.2)",
+                        "rgba(255, 99, 132, 0.2)",
+                    ],
+                    data: [
+                        dataRow.numberOfValidDeliveries,
+                        dataRow.numberOfValidDeliveriesLeft,
+                        dataRow.customersWithinTimeSlot,
+                        dataRow.customersWithinPrognosis,
+                        dataRow.customersBeforeTimeSlot,
+                        dataRow.customersBeforeEstimatedTime
+                    ],
+                    fill: false,
+                    borderColor: [
+                        "rgb(255, 159, 64)",
+                        "rgb(255, 99, 132)",
+                        "rgb(54, 162, 235)",
+                        "rgb(153, 102, 255)",
+                        "rgb(255, 205, 86)",
+                        "rgb(255, 99, 132)"],
+                    borderWidth: 1,
+                }
+
+                window.mainChart.data.datasets.push(newDataset);
+            });
+        }
+
+        function generateMainDatasetFromApiResponsePieGraphOne(array) {
+            /*
+             * Removes all old datasets
+             */
+            while (window.percTimeSlot.data.datasets.length > 0) {
+                window.percTimeSlot.data.datasets.pop()
+            }
+            /*
+             * Generates new datasets based on returned data and pushes the changes
+             */
+            array.forEach(dataRow => {
+                var newDataset = {
+                    label: dataRow.labelTitle,
+                    backgroundColor: [
+                        "rgba(75, 192, 192, 0.2)",
+                        "rgba(255, 99, 132, 0.2)",
+                    ],
+                    data: [
+                        dataRow.percentageWithing5MinOfTimeSlot,
+                        100 - dataRow.percentageWithing5MinOfTimeSlot
+                    ],
+                    fill: false,
+                    borderColor: ["rgb(75, 192, 192)", "rgb(255, 99, 132)"],
+                    borderWidth: 1,
+                }
+
+                window.percTimeSlot.data.datasets.push(newDataset);
+            });
+        }
+
+        function generateMainDatasetFromApiResponsePieGraphTwo(array) {
+            /*
+             * Removes all old datasets
+             */
+            while (window.percEstTime.data.datasets.length > 0) {
+                window.percEstTime.data.datasets.pop()
+            }
+            /*
+             * Generates new datasets based on returned data and pushes the changes
+             */
+            array.forEach(dataRow => {
+                var newDataset = {
+                    label: dataRow.labelTitle,
+                    backgroundColor: [
+                        "rgba(75, 192, 192, 0.2)",
+                        "rgba(255, 99, 132, 0.2)",
+                    ],
+                    data: [
+                        dataRow.percentageWithing15MinOfCustomerEstimatedTime,
+                        100 - dataRow.percentageWithing15MinOfCustomerEstimatedTime
+                    ],
+                    fill: false,
+                    borderColor: ["rgb(75, 192, 192)", "rgb(255, 99, 132)"],
+                    borderWidth: 1,
+                }
+
+                window.percEstTime.data.datasets.push(newDataset);
+            });
         }
 
         function getData() {
@@ -69,11 +169,12 @@
                 type: "GET",
                 url: "/api/Analyze/GetTodayGraphs",
                 data: {
-                    "fromDate": function () { return toDate.format(timeFormat) }
+                    "fromDate": function () { return fromDate.format(timeFormat) },
+                    "toDate": function () { return toDate.format(timeFormat) }
                 },
                 success: function (responseData) {
                     data = responseData;
-                    reloadGraphs();
+                    reloadGraphs(responseData);
                 }
             });
         }
@@ -86,29 +187,7 @@
                 type: 'bar',
                 data: {
                     datasets: [{
-                        data: [data.numberOfValidDeliveries,
-                        data.numberOfValidDeliveriesLeft,
-                        data.customersWithinTimeSlot,
-                        data.customersWithinPrognosis,
-                        data.customersBeforeTimeSlot,
-                        data.customersBeforeEstimatedTime],
-                        fill: false,
-                        borderColor: [
-                            "rgb(255, 159, 64)",
-                            "rgb(255, 99, 132)",
-                            "rgb(54, 162, 235)",
-                            "rgb(153, 102, 255)",
-                            "rgb(255, 205, 86)",
-                            "rgb(255, 99, 132)"],
-                        borderWidth: 1,
-                        backgroundColor: [
-                            "rgba(255, 159, 64, 0.2)",
-                            "rgba(255, 99, 132, 0.2)",
-                            "rgba(54, 162, 235, 0.2)",
-                            "rgba(153, 102, 255, 0.2)",
-                            "rgba(255, 205, 86, 0.2)",
-                            "rgba(255, 99, 132, 0.2)",
-                        ],
+                        data: [0, 0, 0, 0, 0, 0],
                         label: ''
                     },
                     ],
@@ -139,7 +218,8 @@
 
                 data: {
                     datasets: [{
-                        data: [data.percentageWithing15MinOfCustomerEstimatedTime, 100 - data.percentageWithing15MinOfCustomerEstimatedTime],
+                        data: [0, 0],
+                        //data: [data.percentageWithing15MinOfCustomerEstimatedTime, 100 - data.percentageWithing15MinOfCustomerEstimatedTime],
                         fill: false,
 
                         borderColor: ["rgb(75, 192, 192)", "rgb(255, 99, 132)"],
@@ -174,6 +254,7 @@
 
                 data: {
                     datasets: [{
+                        data: [0, 0],
                         data: [data.percentageWithing5MinOfTimeSlot, 100 - data.percentageWithing5MinOfTimeSlot],
                         fill: false,
 

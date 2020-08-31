@@ -95,23 +95,21 @@ namespace CargoSupport.Helpers
 
         public async Task<List<DataModel>> GetAllRecordsByDate(string tableName, DateTime date)
         {
-            var maxTime = date.Add(DateTime.MaxValue.TimeOfDay);
-            var minTime = date.Add(DateTime.MinValue.TimeOfDay);
             var collection = _database.GetCollection<DataModel>(tableName);
 
             var filterBuilder = Builders<DataModel>.Filter;
-            var filter = filterBuilder.Where(x => x.DateOfRoute < maxTime && x.DateOfRoute > minTime);
+            var filter = filterBuilder.Where(x => x.DateOfRoute == date);
             return await collection.FindAsync(filter).Result.ToListAsync();
         }
 
         public async Task<List<DataModel>> GetAllRecordsBetweenDates(string tableName, DateTime from, DateTime to)
         {
-            var maxTime = to.Add(DateTime.MaxValue.TimeOfDay);
-            var minTime = from.Add(DateTime.MinValue.TimeOfDay);
+            var maxDate = to.AddDays(1);
+            var minDate = from.AddDays(-1);
             var collection = _database.GetCollection<DataModel>(tableName);
 
             var filterBuilder = Builders<DataModel>.Filter;
-            var filter = filterBuilder.Where(x => x.DateOfRoute < maxTime && x.DateOfRoute > minTime);
+            var filter = filterBuilder.Where(x => x.DateOfRoute < maxDate && x.DateOfRoute > minDate);
             return await collection.FindAsync(filter).Result.ToListAsync();
         }
 
@@ -122,19 +120,6 @@ namespace CargoSupport.Helpers
 
             return result;
         }
-
-        //public async Task UpsertRecord<T>(string tableName, Guid guid, T record)
-        //{
-        //    var collection = _database.GetCollection<T>(tableName);
-
-        //    await collection.ReplaceOneAsync(
-        //        new BsonDocument("Id", guid),
-        //        record,
-        //        new ReplaceOptions
-        //        {
-        //            IsUpsert = true,
-        //        });
-        //}
 
         public async Task UpsertMultiplePinRouteModelRecords(string tableName, List<DataModel> pinRouteModels)
         {

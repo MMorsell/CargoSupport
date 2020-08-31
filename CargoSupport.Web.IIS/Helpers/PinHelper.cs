@@ -54,7 +54,7 @@ namespace CargoSupport.Helpers
                 dbModelCollection.Add(new DataModel
                 {
                     PinRouteModel = pinRouteModels[i],
-                    DateOfRoute = pinRouteModels[i].ScheduledRouteStart
+                    DateOfRoute = pinRouteModels[i].ScheduledRouteStart.Date
                 });
             }
             await PopulateAllRoutesWithDriversAndSaveToDatabase(dbModelCollection, dbModelCollection[0].DateOfRoute);

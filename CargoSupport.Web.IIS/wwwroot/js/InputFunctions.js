@@ -206,6 +206,18 @@ flatpickr('#calendar-from-graphs-dashboard', {
     "maxDate": new Date(),
     defaultDate: new Date(),
     onChange: function (selectedDates, dateStr, instance) {
+        fromDate = moment(dateStr, timeFormat);
+        getData();
+    }
+});
+/*
+ * Datepicker to graph dashboard
+ */
+flatpickr('#calendar-to-graphs-dashboard', {
+    "locale": "sv",
+    "maxDate": new Date(),
+    defaultDate: new Date(),
+    onChange: function (selectedDates, dateStr, instance) {
         toDate = moment(dateStr, timeFormat);
         getData();
     }

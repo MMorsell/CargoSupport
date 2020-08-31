@@ -106,7 +106,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
         [HttpGet]
         [Route("api/[controller]/GetTodayGraphs")]
-        public async Task<ActionResult> GetTodayGraphs(string fromDate/*, string toDate*/)
+        public async Task<ActionResult> GetTodayGraphs(string fromDate, string toDate)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
@@ -120,14 +120,14 @@ namespace CargoSupport.Web.IIS.Controllers
                 //TODO: Implement return invalid date
             }
 
-            //DateTime.TryParse(toDate, out DateTime to);
+            DateTime.TryParse(toDate, out DateTime to);
 
-            //if (to.ToString(@"yyyy-MM-dd") != toDate)
-            //{
-            //    //TODO: Implement return invalid date
-            //}
+            if (to.ToString(@"yyyy-MM-dd") != toDate)
+            {
+                //TODO: Implement return invalid date
+            }
 
-            List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, from);
+            List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
 
             var res = CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModels(analyzeModels);
             return Ok(res);

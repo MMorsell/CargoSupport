@@ -31,52 +31,70 @@ namespace CargoSupport.Helpers
             }
         }
 
-        public static TodayGraphsViewModel ConvertTodaysDataToGraphModels(List<DataModel> routesOfToday)
+        public static TodayGraphsViewModel[] ConvertTodaysDataToGraphModels(List<DataModel> routesOfToday)
         {
+            var resultModels = new List<TodayGraphsViewModel>();
+
+            var groupedData = routesOfToday.GroupBy(data => data.DateOfRoute);
             /*
              * Get Valid data:
              */
 
-            var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
-            var todayGraphsModel = new TodayGraphsViewModel();
-            foreach (var route in routesOfToday)
+            foreach (var group in groupedData)
             {
-                allCustomerWhereDeliveryHasBeenDone.AddRange(route.PinRouteModel.Customers.Where(customer => customer.PinCustomerDeliveryInfo.time_handled != null));
-            }
-            if (allCustomerWhereDeliveryHasBeenDone.Count > 0)
-            {
-                //Number of deliveries validated and done
-                todayGraphsModel.NumberOfValidDeliveries = allCustomerWhereDeliveryHasBeenDone.Count;
-                //Number left to be delivered
-                todayGraphsModel.NumberOfValidDeliveriesLeft = routesOfToday.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
+                var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
+                var todayGraphsModel = new TodayGraphsViewModel();
 
-                //Number of deliveries made within 5 minutes of each customer time slot
-                todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInTimeWindowPlusMinus5(customer)).Count();
-
-                //Number of deliveries made withing 15 minutes of each customers estimated time
-                todayGraphsModel.CustomersWithinPrognosis = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInPhasePlusMinus15Minutes(customer)).Count();
-
-                //Number of customer deliveries made before time slot - 5 minutes
-                todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer)).Count();
-
-                //Number of deliveries made before estimated time +-0 minutes
-                todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer)).Count();
-
-                if (todayGraphsModel.NumberOfValidDeliveries > 0)
+                foreach (var route in group)
                 {
-                    //Percentages deliveries withing 5 minutes of each customer time slot
-                    todayGraphsModel.PercentageWithing5MinOfTimeSlot = Math.Round((todayGraphsModel.CustomersWithinTimeSlot / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
-                    //Percentages deliveries withing 15 minutes of each customers estimated time
-                    todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = Math.Round((todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
+                    allCustomerWhereDeliveryHasBeenDone.AddRange(route.PinRouteModel.Customers.Where(customer => customer.PinCustomerDeliveryInfo.time_handled != null));
+                }
+                if (allCustomerWhereDeliveryHasBeenDone.Count > 0)
+                {
+                    //Number of deliveries validated and done
+                    todayGraphsModel.NumberOfValidDeliveries = allCustomerWhereDeliveryHasBeenDone.Count;
+                    //Number left to be delivered
+                    todayGraphsModel.NumberOfValidDeliveriesLeft = routesOfToday.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
+
+                    //Number of deliveries made within 5 minutes of each customer time slot
+                    todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInTimeWindowPlusMinus5(customer)).Count();
+
+                    //Number of deliveries made withing 15 minutes of each customers estimated time
+                    todayGraphsModel.CustomersWithinPrognosis = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInPhasePlusMinus15Minutes(customer)).Count();
+
+                    //Number of customer deliveries made before time slot - 5 minutes
+                    todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer)).Count();
+
+                    //Number of deliveries made before estimated time +-0 minutes
+                    todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer)).Count();
+
+                    if (todayGraphsModel.NumberOfValidDeliveries > 0)
+                    {
+                        //Percentages deliveries withing 5 minutes of each customer time slot
+                        todayGraphsModel.PercentageWithing5MinOfTimeSlot = Math.Round((todayGraphsModel.CustomersWithinTimeSlot / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
+                        //Percentages deliveries withing 15 minutes of each customers estimated time
+                        todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = Math.Round((todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
+                    }
+
+                    todayGraphsModel.LabelTitle = group.ToList()[0].DateOfRoute.ToString(@"yyyy-MM-dd");
+                }
+                else
+                {
+                    todayGraphsModel.NumberOfValidDeliveries = 0;
+                    todayGraphsModel.NumberOfValidDeliveriesLeft = 0;
+                    todayGraphsModel.CustomersWithinTimeSlot = 0;
+                    todayGraphsModel.CustomersWithinPrognosis = 0;
+                    todayGraphsModel.CustomersBeforeTimeSlot = 0;
+                    todayGraphsModel.CustomersBeforeEstimatedTime = 0;
+                    todayGraphsModel.PercentageWithing5MinOfTimeSlot = 0;
+                    todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = 0;
+                    todayGraphsModel.LabelTitle = "No data on this day";
                 }
 
-                todayGraphsModel.LabelTitle = routesOfToday[0].DateOfRoute.ToString(@"yyyy-MM-dd");
+                resultModels.Add(todayGraphsModel);
             }
-            else
-            {
-                todayGraphsModel.LabelTitle = "No data on this day";
-            }
-            return todayGraphsModel;
+
+            return resultModels.ToArray();
         }
 
         private static bool CustomerIsInTimeWindowPlusMinus5(PinCustomerModel customerModel)
@@ -131,20 +149,23 @@ namespace CargoSupport.Helpers
                 try
                 {
                     var groupToList = group.ToList();
-                    returnList.Add(new SlimViewModel()
+                    if (groupToList[0].Driver.Id != -1)
                     {
-                        AvrCustomers = Math.Round(group.Sum(data => data.PinRouteModel.NumberOfCustomers) / group.Count(), 0),
-                        AvrDrivingDistance = Math.Round(
-                                (
-                                (group.Sum(data => data.PinRouteModel.DistanceInMeters)
-                                / group.Count())
-                                / 10000 /*To get result in swedish miles*/
-                                )
-                                , 0),
-                        AvrWeight = Math.Round(group.Sum(data => data.PinRouteModel.Weight) / group.Count(), 0),
-                        DriverFullName = groupToList[0].Driver.GetDriverName(),
-                        QuinyxId = groupToList[0].Driver.Id
-                    });
+                        returnList.Add(new SlimViewModel()
+                        {
+                            AvrCustomers = Math.Round(group.Sum(data => data.PinRouteModel.NumberOfCustomers) / group.Count(), 0),
+                            AvrDrivingDistance = Math.Round(
+                                    (
+                                    (group.Sum(data => data.PinRouteModel.DistanceInMeters)
+                                    / group.Count())
+                                    / 10000 /*To get result in swedish miles*/
+                                    )
+                                    , 0),
+                            AvrWeight = Math.Round(group.Sum(data => data.PinRouteModel.Weight) / group.Count(), 0),
+                            DriverFullName = groupToList[0].Driver.GetDriverName(),
+                            QuinyxId = groupToList[0].Driver.Id
+                        });
+                    }
                 }
                 catch (Exception)
                 {
