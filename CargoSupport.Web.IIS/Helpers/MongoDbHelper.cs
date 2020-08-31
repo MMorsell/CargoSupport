@@ -104,8 +104,9 @@ namespace CargoSupport.Helpers
 
         public async Task<List<DataModel>> GetAllRecordsBetweenDates(string tableName, DateTime from, DateTime to)
         {
-            var maxDate = to.AddDays(1);
-            var minDate = from.AddDays(-1);
+            //Bug?
+            var maxDate = to.AddDays(2);
+            var minDate = from;
             var collection = _database.GetCollection<DataModel>(tableName);
 
             var filterBuilder = Builders<DataModel>.Filter;
