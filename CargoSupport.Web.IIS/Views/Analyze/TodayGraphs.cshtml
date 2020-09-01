@@ -49,23 +49,14 @@
         };
 
         function reloadGraphs(array) {
-            debugger;
             generateMainDatasetFromApiResponse(array);
             generateMainDatasetFromApiResponsePieGraphOne(array);
             generateMainDatasetFromApiResponsePieGraphTwo(array);
-
-            window.mainChart.update();
-            window.percTimeSlot.update();
-            window.percEstTime.update();
         }
 
         function generateMainDatasetFromApiResponse(array) {
-            /*
-             * Removes all old datasets
-             */
-            while (window.mainChart.data.datasets.length > 0) {
-                window.mainChart.data.datasets.pop()
-            }
+
+            deleteAllDatasetsOnChart(window.mainChart);
 
             /*
              * Generates new datasets based on returned data and pushes the changes
@@ -102,15 +93,14 @@
 
                 window.mainChart.data.datasets.push(newDataset);
             });
+
+            updateChartReference(window.mainChart);
         }
 
         function generateMainDatasetFromApiResponsePieGraphOne(array) {
-            /*
-             * Removes all old datasets
-             */
-            while (window.percTimeSlot.data.datasets.length > 0) {
-                window.percTimeSlot.data.datasets.pop()
-            }
+
+            deleteAllDatasetsOnChart(window.percTimeSlot);
+
             /*
              * Generates new datasets based on returned data and pushes the changes
              */
@@ -132,15 +122,14 @@
 
                 window.percTimeSlot.data.datasets.push(newDataset);
             });
+
+            updateChartReference(window.percTimeSlot);
         }
 
         function generateMainDatasetFromApiResponsePieGraphTwo(array) {
-            /*
-             * Removes all old datasets
-             */
-            while (window.percEstTime.data.datasets.length > 0) {
-                window.percEstTime.data.datasets.pop()
-            }
+
+            deleteAllDatasetsOnChart(window.percEstTime);
+
             /*
              * Generates new datasets based on returned data and pushes the changes
              */
@@ -162,6 +151,8 @@
 
                 window.percEstTime.data.datasets.push(newDataset);
             });
+
+            updateChartReference(window.percEstTime);
         }
 
         function getData() {

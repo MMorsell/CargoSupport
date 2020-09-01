@@ -235,3 +235,10 @@ const input_kilos = function (data, type, full, meta) {
 
     return '<p>' + data + ' Kilo</p>'
 }
+
+function getRandomColor() {
+    var r = Math.floor(Math.random() * 255);
+    var g = Math.floor(Math.random() * 255);
+    var b = Math.floor(Math.random() * 255);
+    return "rgb(" + r + "," + g + "," + b + ")";
+};

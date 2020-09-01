@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "Statistik för dagen";
+}
+
+<div class="container-flow">
+    <div class="row">
+        <h6>Visa data</h6>
+        <div>
+            <div style="padding-left: 20px;" class="group">
+                <label class="input-label">Från</label>
+                <input type="text" id="calendar-from-graphs-dashboard">
+                <span class="bar"></span>
+            </div>
+            <div style="padding-left: 30px;" class="group">
+                <label class="input-label">Till</label>
+                <input type="text" id="calendar-to-graphs-dashboard">
+                <span class="bar"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-8">
+            <canvas id="mainDataBar"></canvas>
+        </div>
+        <div class="col-4">
+            <canvas id="percentageWithing5MinOfTimeSlot"></canvas>
+            <canvas id="percentageWithing15MinOfCustomerEstimatedTime"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script>
+        fromDate = moment().subtract(7, 'd');
+        toDate = moment();
+        let data = [
+            {
+                "carName": "ahhaha",
+                "distanceInSwedishMiles": 300
+            }];
+
+        function generateMainDatasetFromApiResponse() {
+            /*
+             * Removes all old datasets
+             */
+            while (window.myBarChart.data.datasets.length > 0) {
+                window.myBarChart.data.datasets.pop()
+            }
+
+            /*
+             * Generates new datasets based on returned data and pushes the changes
+             */
+            data.forEach(dataRow => {
+                var newDataset = {
+                    label: dataRow.carName,
+                    backgroundColor: [
+                        getRandomColor(),
+                    ],
+                    data: [
+                        dataRow.distanceInSwedishMiles
+                    ],
+                    fill: false,
+                }
+
+                window.myBarChart.data.datasets.push(newDataset);
+            });
+
+            window.myBarChart.update()
+        }
+
+        function getData() {
+            $.ajax({
+                type: "GET",
+                url: "/api/Analyze/GetCarStats",
+                data: {
+                    "fromDate": function () { return fromDate.format(timeFormat) },
+                    "toDate": function () { return toDate.format(timeFormat) }
+                },
+                success: function (responseData) {
+                    data = responseData;
+                    generateMainDatasetFromApiResponse(responseData);
+                }
+            });
+        }
+
+        window.onload = function () {
+
+            var ctx = document.getElementById('mainDataBar').getContext('2d');
+            window.myBarChart = new Chart(ctx, {
+                type: 'horizontalBar',
+                data: {
+                    datasets: [{
+                        data: [0],
+                        fill: false,
+                        backgroundColor: [
+                            "rgba(255, 159, 64, 0.2)",
+                        ],
+                        label: ''
+                    },
+                    ],
+                    labels: [
+                        "Kördistans i mil",
+                    ]
+                },
+                options: {
+                    plugins: {
+
+                    }
+                }
+            });
+
+            getData();
+        };
+    </script>
+}

@@ -31,6 +31,43 @@ namespace CargoSupport.Helpers
             }
         }
 
+        public class CarStatisticsModel
+        {
+            public string CarName { get; set; }
+            public double DistanceInSwedishMiles { get; set; }
+        }
+
+        public static CarStatisticsModel[] ConvertDataToCarStatisticsModel(List<DataModel> routesOfToday)
+        {
+            var resultModels = new List<CarStatisticsModel>();
+
+            var groupedData = routesOfToday.GroupBy(data => data.CarModel);
+            /*
+             * Get Valid data:
+             */
+
+            foreach (var group in groupedData)
+            {
+                var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
+                var listedGroup = group.ToList();
+                if (listedGroup[0].CarModel != "Ej Satt")
+                {
+                    var carModel = new CarStatisticsModel
+                    {
+                        CarName = group.ToList()[0].CarModel,
+                        DistanceInSwedishMiles = Math.Round(
+                        (group.Sum(
+                            dataRow => dataRow.PinRouteModel.DistanceInMeters) / 1000)
+                        )
+                    };
+
+                    resultModels.Add(carModel);
+                }
+            }
+
+            return resultModels.ToArray();
+        }
+
         public static TodayGraphsViewModel[] ConvertTodaysDataToGraphModels(List<DataModel> routesOfToday)
         {
             var resultModels = new List<TodayGraphsViewModel>();

@@ -38,7 +38,8 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
             if (anyExistingIdOfRouteInDatabase != 0)
             {
-                return View("Error", new ErrorViewModel { Message = $"Åtgärden misslyckades eftersom någon av orderns rutter redan fanns i systemet: ruttid:'{anyExistingIdOfRouteInDatabase}' hittades" });
+                return BadRequest($"This order has already been downloaded from Pin");
+                //return View("Error", new ErrorViewModel { Message = $"Åtgärden misslyckades eftersom någon av orderns rutter redan fanns i systemet: ruttid:'{anyExistingIdOfRouteInDatabase}' hittades" });
             }
             await ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes);
 

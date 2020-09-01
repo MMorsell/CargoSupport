@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CargoSupport.Enums;
@@ -79,14 +80,14 @@ namespace CargoSupport.Web.IIS.Controllers
 
             if (from.ToString(@"yyyy-MM-dd") != fromDate)
             {
-                //TODO: Implement return invalid date
+                return BadRequest($"fromDate is not valid, expecting 2020-01-01, recieved: '{fromDate}'");
             }
 
             DateTime.TryParse(toDate, out DateTime to);
 
             if (to.ToString(@"yyyy-MM-dd") != toDate)
             {
-                //TODO: Implement return invalid date
+                return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
             }
 
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
@@ -117,19 +118,58 @@ namespace CargoSupport.Web.IIS.Controllers
 
             if (from.ToString(@"yyyy-MM-dd") != fromDate)
             {
-                //TODO: Implement return invalid date
+                return BadRequest($"fromDate is not valid, expecting 2020-01-01, recieved: '{fromDate}'");
             }
 
             DateTime.TryParse(toDate, out DateTime to);
 
             if (to.ToString(@"yyyy-MM-dd") != toDate)
             {
-                //TODO: Implement return invalid date
+                return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
             }
 
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
 
             var res = CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModels(analyzeModels);
+            return Ok(res);
+        }
+
+        public async Task<ActionResult> CarStats()
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            return View();
+        }
+
+        [HttpGet]
+        [Route("api/[controller]/GetCarStats")]
+        public async Task<ActionResult> GetCarStats(string fromDate, string toDate)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            DateTime.TryParse(fromDate, out DateTime from);
+
+            if (from.ToString(@"yyyy-MM-dd") != fromDate)
+            {
+                return BadRequest($"fromDate is not valid, expecting 2020-01-01, recieved: '{fromDate}'");
+            }
+
+            DateTime.TryParse(toDate, out DateTime to);
+
+            if (to.ToString(@"yyyy-MM-dd") != toDate)
+            {
+                return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
+            }
+
+            List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+
+            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataToCarStatisticsModel(analyzeModels);
             return Ok(res);
         }
     }

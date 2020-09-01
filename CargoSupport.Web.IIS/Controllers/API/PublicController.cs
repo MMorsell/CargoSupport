@@ -45,8 +45,9 @@ namespace CargoSupport.Web.Controllers.API
 
             if (date.ToString(@"yyyy-MM-dd") != dateString)
             {
-                //TODO: Implement return invalid date
+                return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
             }
+
             var carOptionsTask = _dbHelper.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
             var driversThatWorksOnThisDateTask = _qnHelper.GetAllDriversSortedToArray(date, false);
             var dataBaseResTask = ConvertToTransport(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
@@ -80,7 +81,7 @@ namespace CargoSupport.Web.Controllers.API
 
             if (date.ToString(@"yyyy-MM-dd") != dateString)
             {
-                //TODO: Implement return invalid date
+                return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
             }
 
             var res = ConvertToPublic(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
@@ -99,7 +100,7 @@ namespace CargoSupport.Web.Controllers.API
 
             if (date.ToString(@"yyyy-MM-dd") != dateString)
             {
-                //TODO: Implement return invalid date
+                return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
             }
 
             var res = ConvertToStorage(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
