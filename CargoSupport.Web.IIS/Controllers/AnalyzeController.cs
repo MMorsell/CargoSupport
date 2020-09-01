@@ -48,7 +48,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
             if (id <= 0)
             {
-                return Unauthorized();
+                return BadRequest();
             }
 
             List<DataModel> allRoutes = await _dbHelper.GetAllRecordsByDriverId(Constants.MongoDb.OutputScreenTableName, id);
@@ -170,6 +170,50 @@ namespace CargoSupport.Web.IIS.Controllers
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
 
             var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataToCarStatisticsModel(analyzeModels);
+            return Ok(res);
+        }
+
+        public async Task<ActionResult> AllBosses()
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            return View();
+        }
+
+        [HttpGet]
+        [Route("api/[controller]/GetUnderBoss")]
+        public async Task<ActionResult> GetUnderBoss(int bossId, string fromDate, string toDate)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            DateTime.TryParse(fromDate, out DateTime from);
+
+            if (from.ToString(@"yyyy-MM-dd") != fromDate)
+            {
+                return BadRequest($"fromDate is not valid, expecting 2020-01-01, recieved: '{fromDate}'");
+            }
+
+            DateTime.TryParse(toDate, out DateTime to);
+
+            if (to.ToString(@"yyyy-MM-dd") != toDate)
+            {
+                return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
+            }
+
+            var allDriversUnderBoss = _qh.GetAllDriversWithBossId(bossId);
+
+            var matchingRecordsInDatabase = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+
+            _qh.AddNamesToData(matchingRecordsInDatabase);
+
+            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsInDatabase);
+
             return Ok(res);
         }
     }

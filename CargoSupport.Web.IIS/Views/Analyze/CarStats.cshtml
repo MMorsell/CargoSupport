@@ -33,15 +33,11 @@
 {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
     <script>
+        const mainApiEndpoint = carStats;
         fromDate = moment().subtract(7, 'd');
         toDate = moment();
-        let data = [
-            {
-                "carName": "ahhaha",
-                "distanceInSwedishMiles": 300
-            }];
 
-        function generateMainDatasetFromApiResponse() {
+        function reloadGraphs(returnData) {
             /*
              * Removes all old datasets
              */
@@ -52,7 +48,7 @@
             /*
              * Generates new datasets based on returned data and pushes the changes
              */
-            data.forEach(dataRow => {
+            returnData.forEach(dataRow => {
                 var newDataset = {
                     label: dataRow.carName,
                     backgroundColor: [
@@ -70,23 +66,7 @@
             window.myBarChart.update()
         }
 
-        function getData() {
-            $.ajax({
-                type: "GET",
-                url: "/api/Analyze/GetCarStats",
-                data: {
-                    "fromDate": function () { return fromDate.format(timeFormat) },
-                    "toDate": function () { return toDate.format(timeFormat) }
-                },
-                success: function (responseData) {
-                    data = responseData;
-                    generateMainDatasetFromApiResponse(responseData);
-                }
-            });
-        }
-
         window.onload = function () {
-
             var ctx = document.getElementById('mainDataBar').getContext('2d');
             window.myBarChart = new Chart(ctx, {
                 type: 'horizontalBar',
@@ -111,7 +91,7 @@
                 }
             });
 
-            getData();
+            getDataBetweenDates(carStats);
         };
     </script>
 }

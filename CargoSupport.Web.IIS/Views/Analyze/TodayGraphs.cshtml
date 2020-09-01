@@ -34,34 +34,24 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
     <script>
+        const mainApiEndpoint = todayGraphs;
         fromDate = moment();
         toDate = moment();
-        let data = {
-            "labelTitle": "",
-            "numberOfValidDeliveries": 0,
-            "numberOfValidDeliveriesLeft": 0,
-            "customersWithinTimeSlot": 0,
-            "customersWithinPrognosis": 0,
-            "customersBeforeTimeSlot": 0,
-            "customersBeforeEstimatedTime": 0,
-            "percentageWithing5MinOfTimeSlot": 0,
-            "percentageWithing15MinOfCustomerEstimatedTime": 0
-        };
 
-        function reloadGraphs(array) {
-            generateMainDatasetFromApiResponse(array);
-            generateMainDatasetFromApiResponsePieGraphOne(array);
-            generateMainDatasetFromApiResponsePieGraphTwo(array);
+        function reloadGraphs(returnData) {
+            generateMainDatasetFromApiResponse(returnData);
+            generateMainDatasetFromApiResponsePieGraphOne(returnData);
+            generateMainDatasetFromApiResponsePieGraphTwo(returnData);
         }
 
-        function generateMainDatasetFromApiResponse(array) {
+        function generateMainDatasetFromApiResponse(returnData) {
 
             deleteAllDatasetsOnChart(window.mainChart);
 
             /*
              * Generates new datasets based on returned data and pushes the changes
              */
-            array.forEach(dataRow => {
+            returnData.forEach(dataRow => {
                 var newDataset = {
                     label: dataRow.labelTitle,
                     backgroundColor: [
@@ -97,14 +87,14 @@
             updateChartReference(window.mainChart);
         }
 
-        function generateMainDatasetFromApiResponsePieGraphOne(array) {
+        function generateMainDatasetFromApiResponsePieGraphOne(returnData) {
 
             deleteAllDatasetsOnChart(window.percTimeSlot);
 
             /*
              * Generates new datasets based on returned data and pushes the changes
              */
-            array.forEach(dataRow => {
+            returnData.forEach(dataRow => {
                 var newDataset = {
                     label: dataRow.labelTitle,
                     backgroundColor: [
@@ -126,14 +116,14 @@
             updateChartReference(window.percTimeSlot);
         }
 
-        function generateMainDatasetFromApiResponsePieGraphTwo(array) {
+        function generateMainDatasetFromApiResponsePieGraphTwo(returnData) {
 
             deleteAllDatasetsOnChart(window.percEstTime);
 
             /*
              * Generates new datasets based on returned data and pushes the changes
              */
-            array.forEach(dataRow => {
+            returnData.forEach(dataRow => {
                 var newDataset = {
                     label: dataRow.labelTitle,
                     backgroundColor: [
@@ -155,23 +145,8 @@
             updateChartReference(window.percEstTime);
         }
 
-        function getData() {
-            $.ajax({
-                type: "GET",
-                url: "/api/Analyze/GetTodayGraphs",
-                data: {
-                    "fromDate": function () { return fromDate.format(timeFormat) },
-                    "toDate": function () { return toDate.format(timeFormat) }
-                },
-                success: function (responseData) {
-                    data = responseData;
-                    reloadGraphs(responseData);
-                }
-            });
-        }
-
         window.onload = function () {
-            getData();
+            getDataBetweenDates(todayGraphs);
 
             var ctx1 = document.getElementById('mainDataBar').getContext('2d');
             window.mainChart = new Chart(ctx1, {
@@ -210,7 +185,6 @@
                 data: {
                     datasets: [{
                         data: [0, 0],
-                        //data: [data.percentageWithing15MinOfCustomerEstimatedTime, 100 - data.percentageWithing15MinOfCustomerEstimatedTime],
                         fill: false,
 
                         borderColor: ["rgb(75, 192, 192)", "rgb(255, 99, 132)"],
@@ -246,7 +220,6 @@
                 data: {
                     datasets: [{
                         data: [0, 0],
-                        data: [data.percentageWithing5MinOfTimeSlot, 100 - data.percentageWithing5MinOfTimeSlot],
                         fill: false,
 
                         borderColor: ["rgb(75, 192, 192)", "rgb(255, 99, 132)"],

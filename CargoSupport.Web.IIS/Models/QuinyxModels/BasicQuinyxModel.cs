@@ -16,5 +16,6 @@ namespace CargoSupport.Models.QuinyxModels
         public string FamilyName { get; set; }
         public string FullName => $"{GivenName} {FamilyName}";
         public int Active { get; set; }
+        public int StaffCat { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CargoSupport.Models.DatabaseModels;
+﻿using CargoSupport.Extensions;
+using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
 using CargoSupport.Models.QuinyxModels;
 using CargoSupport.ViewModels.Public;
@@ -84,6 +85,17 @@ namespace CargoSupport.Helpers
             return result;
         }
 
+        public async Task<List<DataModel>> GetAllRecordsByDateAndDriverId(string tableName, int driverId, DateTime from, DateTime to)
+        {
+            DateTime minDate = from.SetHour(0).SetMinute(0);
+            DateTime maxDate = to.SetHour(23).SetMinute(59);
+            var collection = _database.GetCollection<DataModel>(tableName);
+
+            var filterBuilder = Builders<DataModel>.Filter;
+            var filter = filterBuilder.Where(x => x.Driver.Id.Equals(driverId) && x.DateOfRoute <= maxDate && x.DateOfRoute >= minDate);
+            return await collection.FindAsync(filter).Result.ToListAsync();
+        }
+
         public async Task<List<DataModel>> GetAllRecordsByDriverId(string tableName, int driverId)
         {
             var collection = _database.GetCollection<DataModel>(tableName);
@@ -95,22 +107,24 @@ namespace CargoSupport.Helpers
 
         public async Task<List<DataModel>> GetAllRecordsByDate(string tableName, DateTime date)
         {
+            DateTime minDate = date.SetHour(0).SetMinute(0);
+            DateTime maxDate = date.SetHour(23).SetMinute(59);
             var collection = _database.GetCollection<DataModel>(tableName);
 
             var filterBuilder = Builders<DataModel>.Filter;
-            var filter = filterBuilder.Where(x => x.DateOfRoute == date);
-            return await collection.FindAsync(filter).Result.ToListAsync();
+            var filter = filterBuilder.Where(x => x.DateOfRoute >= minDate && x.DateOfRoute <= maxDate);
+            var res = await collection.FindAsync(filter).Result.ToListAsync();
+            return res;
         }
 
         public async Task<List<DataModel>> GetAllRecordsBetweenDates(string tableName, DateTime from, DateTime to)
         {
-            //Bug?
-            var maxDate = to.AddDays(2);
-            var minDate = from;
+            DateTime minDate = from.SetHour(0).SetMinute(0);
+            DateTime maxDate = to.SetHour(23).SetMinute(59);
             var collection = _database.GetCollection<DataModel>(tableName);
 
             var filterBuilder = Builders<DataModel>.Filter;
-            var filter = filterBuilder.Where(x => x.DateOfRoute < maxDate && x.DateOfRoute > minDate);
+            var filter = filterBuilder.Where(x => x.DateOfRoute <= maxDate && x.DateOfRoute >= minDate);
             return await collection.FindAsync(filter).Result.ToListAsync();
         }
 

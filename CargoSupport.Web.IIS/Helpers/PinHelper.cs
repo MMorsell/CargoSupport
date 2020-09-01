@@ -54,7 +54,8 @@ namespace CargoSupport.Helpers
                 dbModelCollection.Add(new DataModel
                 {
                     PinRouteModel = pinRouteModels[i],
-                    DateOfRoute = pinRouteModels[i].ScheduledRouteStart.Date
+                    //BE AWARE: Mongodb save removes timezone so it is needed to add two hours since the time is set to 00:00 in .Date therefore records move one day back
+                    DateOfRoute = pinRouteModels[i].ScheduledRouteStart
                 });
             }
             await PopulateAllRoutesWithDriversAndSaveToDatabase(dbModelCollection, dbModelCollection[0].DateOfRoute);
