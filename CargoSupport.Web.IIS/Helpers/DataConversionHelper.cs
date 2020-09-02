@@ -52,13 +52,13 @@ namespace CargoSupport.Helpers
                 var listedGroup = group.ToList();
                 if (listedGroup[0].CarModel != "Ej Satt")
                 {
+                    var distanceInSwedishMeters = group.Sum(
+                            dataRow => dataRow.PinRouteModel.DistanceInMeters);
+
                     var carModel = new CarStatisticsModel
                     {
                         CarName = group.ToList()[0].CarModel,
-                        DistanceInSwedishMiles = Math.Round(
-                        (group.Sum(
-                            dataRow => dataRow.PinRouteModel.DistanceInMeters) / 1000)
-                        )
+                        DistanceInSwedishMiles = distanceInSwedishMeters / 10000
                     };
 
                     resultModels.Add(carModel);
@@ -174,7 +174,7 @@ namespace CargoSupport.Helpers
                     //Number of deliveries validated and done
                     todayGraphsModel.NumberOfValidDeliveries = allCustomerWhereDeliveryHasBeenDone.Count;
                     //Number left to be delivered
-                    todayGraphsModel.NumberOfValidDeliveriesLeft = routesOfToday.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
+                    todayGraphsModel.NumberOfValidDeliveriesLeft = group.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
 
                     //Number of deliveries made within 5 minutes of each customer time slot
                     todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInTimeWindowPlusMinus5(customer)).Count();
@@ -342,7 +342,7 @@ namespace CargoSupport.Helpers
                     customerDataTempList.Add(new xy
                     {
                         x = dataRow.DateOfRoute.ToString(@"yyyy-MM-dd"),
-                        y = Math.Round((dataRow.PinRouteModel.DistanceInMeters / 1000), 1),
+                        y = Math.Round((dataRow.PinRouteModel.DistanceInMeters / 10000), 1),
                     });
                 });
                 return customerDataTempList.OrderBy(row => row.x).ToArray();

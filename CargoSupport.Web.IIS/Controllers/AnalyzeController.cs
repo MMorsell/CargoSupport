@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CargoSupport.Enums;
 using CargoSupport.Helpers;
@@ -185,7 +186,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
         [HttpGet]
         [Route("api/[controller]/GetUnderBoss")]
-        public async Task<ActionResult> GetUnderBoss(int bossId, string fromDate, string toDate)
+        public async Task<ActionResult> GetUnderBoss(string reportingTo, string fromDate, string toDate)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
@@ -206,15 +207,26 @@ namespace CargoSupport.Web.IIS.Controllers
                 return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
             }
 
-            var allDriversUnderBoss = _qh.GetAllDriversWithBossId(bossId);
+            //1104 - oliwer
+            //900001 - Firas
+
+            //9999999992 - Konsulter
+
+            //9006 - Kari
+
+            //9001 - Carl
+
+            //9007 - Christian
+
+            var allDriversUnderBoss = _qh.GetAllDriversWithReportingTo(reportingTo);
 
             var matchingRecordsInDatabase = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
 
             _qh.AddNamesToData(matchingRecordsInDatabase);
 
-            var ressadas = matchingRecordsInDatabase.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.StaffCat == bossId).ToList();
+            var ressadas = matchingRecordsInDatabase.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.ReportingTo == reportingTo).ToList();
 
-            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsInDatabase);
+            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(ressadas);
 
             return Ok(res);
         }

@@ -53,11 +53,11 @@ namespace CargoSupport.Helpers
             return result;
         }
 
-        public List<int> GetAllDriversWithBossId(int bossId)
+        public List<int> GetAllDriversWithReportingTo(string reportingTo)
         {
             var allDriversUnsorted = GetNonSchedualedDrivers();
 
-            var validDriver = allDriversUnsorted.Where(driver => driver.StaffCat == bossId && driver.Active == 1);
+            var validDriver = allDriversUnsorted.Where(driver => driver.ReportingTo == reportingTo && driver.Active == 1);
 
             return validDriver.Select(driver => driver.Id).ToList();
         }
@@ -203,7 +203,7 @@ namespace CargoSupport.Helpers
                         GivenName = (string)y.Elements().Where(z => z.Name.LocalName == "givenName").FirstOrDefault(),
                         FamilyName = (string)y.Elements().Where(z => z.Name.LocalName == "familyName").FirstOrDefault(),
                         Active = (int)y.Elements().Where(z => z.Name.LocalName == "active").FirstOrDefault(),
-                        StaffCat = (int)y.Elements().Where(z => z.Name.LocalName == "staffCat").FirstOrDefault(),
+                        ReportingTo = (string)y.Elements().Where(z => z.Name.LocalName == "reportingTo").FirstOrDefault(),
                     }).ToList();
                 }
             }
