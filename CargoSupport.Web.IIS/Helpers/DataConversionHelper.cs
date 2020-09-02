@@ -68,11 +68,19 @@ namespace CargoSupport.Helpers
             return resultModels.ToArray();
         }
 
-        public static TodayGraphsViewModel[] ConvertTodaysDataToGraphModels(List<DataModel> routesOfToday)
+        public static TodayGraphsViewModel[] ConvertTodaysDataToGraphModels(List<DataModel> routesOfToday, bool splitRouteName)
         {
             var resultModels = new List<TodayGraphsViewModel>();
 
-            var groupedData = routesOfToday.GroupBy(data => data.DateOfRoute.Date);
+            IEnumerable<IGrouping<object, DataModel>> groupedData;
+            if (splitRouteName)
+            {
+                groupedData = routesOfToday.GroupBy(data => data.PinRouteModel.ParentOrderId);
+            }
+            else
+            {
+                groupedData = routesOfToday.GroupBy(data => data.DateOfRoute.Date.ToLongDateString());
+            }
             /*
              * Get Valid data:
              */
@@ -91,7 +99,7 @@ namespace CargoSupport.Helpers
                     //Number of deliveries validated and done
                     todayGraphsModel.NumberOfValidDeliveries = allCustomerWhereDeliveryHasBeenDone.Count;
                     //Number left to be delivered
-                    todayGraphsModel.NumberOfValidDeliveriesLeft = routesOfToday.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
+                    todayGraphsModel.NumberOfValidDeliveriesLeft = group.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
 
                     //Number of deliveries made within 5 minutes of each customer time slot
                     todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInTimeWindowPlusMinus5(customer)).Count();
@@ -108,12 +116,21 @@ namespace CargoSupport.Helpers
                     if (todayGraphsModel.NumberOfValidDeliveries > 0)
                     {
                         //Percentages deliveries withing 5 minutes of each customer time slot
-                        todayGraphsModel.PercentageWithing5MinOfTimeSlot = Math.Round((todayGraphsModel.CustomersWithinTimeSlot / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
+                        var conversion = (todayGraphsModel.CustomersWithinTimeSlot / todayGraphsModel.NumberOfValidDeliveries);
+                        todayGraphsModel.PercentageWithing5MinOfTimeSlot = Math.Round(conversion, 4) * 100;
                         //Percentages deliveries withing 15 minutes of each customers estimated time
-                        todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = Math.Round((todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
+                        conversion = (todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries);
+                        todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = Math.Round(conversion, 4) * 100;
                     }
 
-                    todayGraphsModel.LabelTitle = group.ToList()[0].DateOfRoute.ToString(@"yyyy-MM-dd");
+                    if (splitRouteName)
+                    {
+                        todayGraphsModel.LabelTitle = group.ToList()[0].PinRouteModel.ParentOrderName;
+                    }
+                    else
+                    {
+                        todayGraphsModel.LabelTitle = group.ToList()[0].DateOfRoute.ToString(@"yyyy-MM-dd");
+                    }
                 }
                 else
                 {
@@ -131,7 +148,7 @@ namespace CargoSupport.Helpers
                 resultModels.Add(todayGraphsModel);
             }
 
-            return resultModels.ToArray();
+            return resultModels.OrderBy(d => d.LabelTitle).ToArray();
         }
 
         public static DriverDeliveryStatsViewModel[] ConvertDataModelsToMultipleDriverTableData(List<DataModel> routesOfToday)

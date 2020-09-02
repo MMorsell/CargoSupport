@@ -107,7 +107,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
         [HttpGet]
         [Route("api/[controller]/GetTodayGraphs")]
-        public async Task<ActionResult> GetTodayGraphs(string fromDate, string toDate)
+        public async Task<ActionResult> GetTodayGraphs(string fromDate, string toDate, bool splitData)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
@@ -130,7 +130,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
 
-            var res = CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModels(analyzeModels);
+            var res = CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModels(analyzeModels, splitData);
             return Ok(res);
         }
 
@@ -211,6 +211,8 @@ namespace CargoSupport.Web.IIS.Controllers
             var matchingRecordsInDatabase = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
 
             _qh.AddNamesToData(matchingRecordsInDatabase);
+
+            var ressadas = matchingRecordsInDatabase.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.StaffCat == bossId).ToList();
 
             var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsInDatabase);
 
