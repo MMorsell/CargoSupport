@@ -96,6 +96,7 @@ namespace CargoSupport.Helpers
                 }
                 if (allCustomerWhereDeliveryHasBeenDone.Count > 0)
                 {
+                    var listOfGroup = group.ToList();
                     //Number of deliveries validated and done
                     todayGraphsModel.NumberOfValidDeliveries = allCustomerWhereDeliveryHasBeenDone.Count;
                     //Number left to be delivered
@@ -113,6 +114,18 @@ namespace CargoSupport.Helpers
                     //Number of deliveries made before estimated time +-0 minutes
                     todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer)).Count();
 
+                    var allHoursDedicatedOnRoutes = group.Sum(route => (double)route.Driver.hours);
+                    if (allHoursDedicatedOnRoutes <= 0)
+                    {
+                        //Failsafe if no driver exist on any route
+                        todayGraphsModel.CustomersDividedByWorkHours = 0;
+                    }
+                    else
+                    {
+                        //Number of customers per work time of the drivers of all routes (does NOT include worktime for the whole force)
+                        todayGraphsModel.CustomersDividedByWorkHours = todayGraphsModel.NumberOfValidDeliveries / allHoursDedicatedOnRoutes;
+                    }
+
                     if (todayGraphsModel.NumberOfValidDeliveries > 0)
                     {
                         //Percentages deliveries withing 5 minutes of each customer time slot
@@ -125,11 +138,11 @@ namespace CargoSupport.Helpers
 
                     if (splitRouteName)
                     {
-                        todayGraphsModel.LabelTitle = group.ToList()[0].PinRouteModel.ParentOrderName;
+                        todayGraphsModel.LabelTitle = listOfGroup[0].PinRouteModel.ParentOrderName;
                     }
                     else
                     {
-                        todayGraphsModel.LabelTitle = group.ToList()[0].DateOfRoute.ToString(@"yyyy-MM-dd");
+                        todayGraphsModel.LabelTitle = listOfGroup[0].DateOfRoute.ToString(@"yyyy-MM-dd");
                     }
                 }
                 else

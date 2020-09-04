@@ -33,26 +33,6 @@ namespace CargoSupport.Helpers
             });
         }
 
-        public List<DriverViewModel> GetAllActiveDriversWithSchedual(DateTime date)
-        {
-            List<DriverViewModel> schedualed = ConvertQuinyxModelToDriverViewModel(GetAllDriversSorted(date, false).Result);
-            List<DriverViewModel> allActiveDrivers = GetAllDrivers();
-
-            List<DriverViewModel> result = new List<DriverViewModel>();
-
-            foreach (var activeDriver in allActiveDrivers)
-            {
-                if (schedualed.FirstOrDefault(dr => dr.Id.Equals(activeDriver.Id)) != null)
-                {
-                    result.Add(activeDriver);
-                }
-            }
-            result.AddRange(schedualed);
-            result = result.OrderBy(e => e.BegTime).ThenBy(e => e.EndTime).ToList();
-
-            return result;
-        }
-
         public List<int> GetAllDriversWithReportingTo(string reportingTo)
         {
             var allDriversUnsorted = GetNonSchedualedDrivers();
@@ -60,20 +40,6 @@ namespace CargoSupport.Helpers
             var validDriver = allDriversUnsorted.Where(driver => driver.ReportingTo == reportingTo && driver.Active == 1);
 
             return validDriver.Select(driver => driver.Id).ToList();
-        }
-
-        private List<DriverViewModel> ConvertQuinyxModelToDriverViewModel(List<QuinyxModel> modelList)
-        {
-            var returnList = new List<DriverViewModel>();
-            for (int i = 0; i < modelList.Count; i++)
-            {
-                returnList.Add(new DriverViewModel(modelList[i].begTime, modelList[i].endTime)
-                {
-                    Active = 1,
-                    FullName = modelList[i].GetDriverName(),
-                });
-            }
-            return returnList;
         }
 
         public List<QuinyxModel> GetDrivers(DateTime from, DateTime to, bool clearNames = true)

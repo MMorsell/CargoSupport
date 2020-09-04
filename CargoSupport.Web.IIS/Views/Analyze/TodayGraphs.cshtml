@@ -78,7 +78,8 @@
                         dataRow.customersWithinTimeSlot,
                         dataRow.customersWithinPrognosis,
                         dataRow.customersBeforeTimeSlot,
-                        dataRow.customersBeforeEstimatedTime
+                        dataRow.customersBeforeEstimatedTime,
+                        dataRow.customersDividedByWorkHours,
                     ],
                     fill: false,
                     borderColor: [
@@ -213,12 +214,13 @@
                     },
                     ],
                     labels: [
-                        "Antal leveranser",
+                        "Antal levererade leveranser",
                         "Olevererade leveranser",
                         "Leveranser inom tidsfönster +-5",
                         "Leveranser inom beräknad leveranstid +-15",
                         "Leveranser före tidsfönster -5",
                         "Leveranser före beräknad tid -15",
+                        "Leveranser/timmar (Endast turtimmar inräknat)",
                     ]
                 },
                 options: {

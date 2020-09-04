@@ -16,5 +16,6 @@ namespace CargoSupport.ViewModels.Analyze
         public double CustomersBeforeEstimatedTime { get; set; }
         public double PercentageWithing5MinOfTimeSlot { get; set; }
         public double PercentageWithing15MinOfCustomerEstimatedTime { get; set; }
+        public double CustomersDividedByWorkHours { get; set; }
     }
 }
