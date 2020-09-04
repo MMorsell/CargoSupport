@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Threading.Tasks;
 using CargoSupport.Enums;
 using CargoSupport.Helpers;
 using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
+using CargoSupport.ViewModels.Manange;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static CargoSupport.Helpers.AuthorizeHelper;
@@ -67,62 +69,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             await _ph.UpdateExistingRecordsIfThereIsOne(routes);
 
             return View("../Home/Transport");
-        }
-
-        public async Task<IActionResult> AddOrUpdateUser()
-        {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
-            {
-                return Unauthorized();
-            }
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> AddOrUpdateUser(WhitelistModel authModel)
-        {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
-            {
-                return Unauthorized();
-            }
-
-            //return Json(new { status = "success", message = "customer created" });
-            if (await AddOrUpdateUserRoleLevel(authModel, HttpContext.User))
-            {
-                return View("../Home/Transport");
-            }
-            else
-            {
-                return View("Error", new ErrorViewModel { Message = "Åtgärden misslyckades" });
-            }
-        }
-
-        public async Task<IActionResult> AddOrUpdateCar()
-        {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
-            {
-                return Unauthorized();
-            }
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> AddOrUpdateCar(CarModel carModel)
-        {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
-            {
-                return Unauthorized();
-            }
-
-            //return Json(new { status = "success", message = "customer created" });
-            if (await AddOrUpdateCarModel(carModel, HttpContext.User))
-            {
-                return View("../Home/Transport");
-            }
-            else
-            {
-                return View("Error", new ErrorViewModel { Message = "Åtgärden misslyckades" });
-            }
         }
     }
 }

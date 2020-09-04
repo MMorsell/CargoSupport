@@ -52,19 +52,16 @@ namespace CargoSupport.Helpers
 
             var dbConnection = new MongoDbHelper(Constants.MongoDb.DatabaseName);
 
-            var wlRecords = await dbConnection.GetAllRecords<WhitelistModel>(Constants.MongoDb.WhitelistTable);
-
-            var matchingRecord = wlRecords.FirstOrDefault(rec => rec.NameWithDomain.Equals(authModel.NameWithDomain));
+            var matchingRecord = await dbConnection.GetRecordById<WhitelistModel>(Constants.MongoDb.WhitelistTable, authModel._Id);
 
             if (matchingRecord == null)
             {
-                await dbConnection.InsertRecord(Constants.MongoDb.WhitelistTable, new WhitelistModel { NameWithDomain = authModel.NameWithDomain, RoleLevel = authModel.RoleLevel });
+                await dbConnection.InsertRecord(Constants.MongoDb.WhitelistTable, authModel);
                 return true;
             }
             else
             {
-                matchingRecord.RoleLevel = authModel.RoleLevel;
-                await dbConnection.UpsertWhitelistRecordById(Constants.MongoDb.WhitelistTable, matchingRecord);
+                await dbConnection.UpsertWhitelistRecordById(Constants.MongoDb.WhitelistTable, authModel);
                 return true;
             }
         }
@@ -83,9 +80,7 @@ namespace CargoSupport.Helpers
 
             var dbConnection = new MongoDbHelper(Constants.MongoDb.DatabaseName);
 
-            var wlRecords = await dbConnection.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
-
-            var matchingRecord = wlRecords.FirstOrDefault(rec => rec.Name.Equals(carModel.Name));
+            var matchingRecord = await dbConnection.GetRecordById<CarModel>(Constants.MongoDb.CarTableName, carModel._Id);
 
             if (matchingRecord == null)
             {
@@ -94,8 +89,7 @@ namespace CargoSupport.Helpers
             }
             else
             {
-                matchingRecord.Name = carModel.Name;
-                await dbConnection.UpsertCarRecordById(Constants.MongoDb.CarTableName, matchingRecord);
+                await dbConnection.UpsertCarRecordById(Constants.MongoDb.CarTableName, carModel);
                 return true;
             }
         }

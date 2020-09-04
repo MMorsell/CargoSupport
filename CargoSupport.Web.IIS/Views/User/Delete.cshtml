@@ -1,0 +1,24 @@
+﻿@model CargoSupport.Models.DatabaseModels.WhitelistModel;
+@{
+    ViewData["Title"] = "Ta bort användare";
+}
+
+<h2>Vill du verkligen ta bort denna användare?</h2>
+<form method="post" enctype="multipart/form-data" asp-action="Delete">
+    <table>
+        <tr>
+            <td><input hidden asp-for="@Model._Id" type="text" /></td>
+        </tr>
+        <tr>
+            <td>Namn med domän</td>
+            <td><input disabled asp-for="@Model.NameWithDomain" type="text" /></td>
+        </tr>
+        <tr>
+            <td>Behörighetsnivå</td>
+            <td><select disabled asp-for="@Model.RoleLevel" asp-items="Html.GetEnumSelectList<CargoSupport.Enums.RoleLevel>()"></select></td>
+        </tr>
+        <tr>
+            <td><input class="btn btn-outline-danger" type="submit" value="Bekräfta borttagning" /></td>
+        </tr>
+    </table>
+</form>

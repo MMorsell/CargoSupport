@@ -152,10 +152,10 @@ namespace CargoSupport.Helpers
             }
         }
 
-        public async Task DeleteRecord<T>(string tableName, Guid guid)
+        public async Task DeleteRecord<T>(string tableName, string id)
         {
             var collection = _database.GetCollection<T>(tableName);
-            var filter = Builders<T>.Filter.Eq("_Id", guid);
+            var filter = Builders<T>.Filter.Eq("_Id", id);
             await collection.DeleteOneAsync(filter);
         }
 

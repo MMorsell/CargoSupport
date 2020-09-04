@@ -1,0 +1,28 @@
+﻿@model CargoSupport.Models.DatabaseModels.CarModel;
+@{
+    ViewData["Title"] = "Redigera bil";
+}
+
+<form method="post" enctype="multipart/form-data" asp-action="Edit">
+    <table>
+        <tr>
+            <td><input hidden asp-for="@Model._Id" type="text" /></td>
+        </tr>
+        <tr>
+            <td>Bilens namn eller nummer</td>
+            <td><input asp-for="@Model.Name" type="text" /></td>
+        </tr>
+        <tr>
+            <td>Maxvikt för bilen</td>
+            <td><input asp-for="@Model.MaxWeight" type="number" /></td>
+        </tr>
+        <tr>
+            <td>Påställd/Kan användas</td>
+            <td><input asp-for="@Model.CanBeSelected" /></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input class="btn btn-outline-success" type="submit" value="Spara" /></td>
+        </tr>
+    </table>
+</form>

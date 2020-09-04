@@ -1,0 +1,21 @@
+﻿@model CargoSupport.Models.DatabaseModels.WhitelistModel;
+@{
+    ViewData["Title"] = "Skapa ny användare";
+}
+
+<form method="post" enctype="multipart/form-data" asp-action="Create">
+    <table>
+        <tr>
+            <td>Namn med domän</td>
+            <td><input asp-for="@Model.NameWithDomain" type="text" /></td>
+        </tr>
+        <tr>
+            <td>Behörighetsnivå</td>
+            <td><select asp-for="@Model.RoleLevel" asp-items="Html.GetEnumSelectList<CargoSupport.Enums.RoleLevel>()"></select></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input class="btn btn-outline-success" type="submit" value="Spara" /></td>
+        </tr>
+    </table>
+</form>

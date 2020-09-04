@@ -12,11 +12,11 @@ namespace TestingConsole
         {
             var _dbHelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
 
-            DateTime.TryParse("2020-08-29", out DateTime from);
+            //DateTime.TryParse("2020-08-29", out DateTime from);
 
-            List<DataModel> analyzeModels = _dbHelper.GetAllRecordsByDate(CargoSupport.Constants.MongoDb.OutputScreenTableName, from).Result;
+            //List<DataModel> analyzeModels = _dbHelper.GetAllRecordsByDate(CargoSupport.Constants.MongoDb.OutputScreenTableName, from).Result;
 
-            CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModels(analyzeModels);
+            //CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModels(analyzeModels);
             //var qh = new CargoSupport.Helpers.QuinyxHelper();
 
             //var res = qh.GetAllDriversFromADate(DateTime.Now).ToList();
