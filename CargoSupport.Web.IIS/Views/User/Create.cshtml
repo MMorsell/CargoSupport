@@ -11,7 +11,7 @@
         </tr>
         <tr>
             <td>Behörighetsnivå</td>
-            <td><select asp-for="@Model.RoleLevel" asp-items="Html.GetEnumSelectList<CargoSupport.Enums.RoleLevel>()"></select></td>
+            <td><select class="selectpicker show-tick" asp-for="@Model.RoleLevel" asp-items="Html.GetEnumSelectList<CargoSupport.Enums.RoleLevel>()"></select></td>
         </tr>
         <tr>
             <td></td>

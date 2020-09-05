@@ -309,7 +309,7 @@ namespace CargoSupport.Helpers
             return returnList.ToList();
         }
 
-        public static FullViewModel ConvertDataModelsToFullViewModel(List<DataModel> dataModels)
+        public static async Task<FullViewModel> ConvertDataModelsToFullViewModel(List<DataModel> dataModels)
         {
             var returnModel = new FullViewModel();
             Task<SlimViewModel> convertSlimTask = GetSlimInformation(dataModels);
@@ -318,7 +318,7 @@ namespace CargoSupport.Helpers
             Task<xy[]> convertDistanceTask = ConvertToDistanceByData(dataModels);
             Task<xy[]> convertCustomerTask = ConvertToCustomerByData(dataModels);
 
-            Task.WaitAll(convertTask, convertSlimTask, convertKiloTask, convertDistanceTask, convertCustomerTask);
+            await Task.WhenAll(convertTask, convertSlimTask, convertKiloTask, convertDistanceTask, convertCustomerTask);
 
             returnModel.SlimViewModel = convertSlimTask.Result;
             returnModel.CustomerPositionData = convertTask.Result;

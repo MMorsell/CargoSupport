@@ -53,7 +53,7 @@ namespace CargoSupport.Web.IIS.Controllers
             }
 
             List<DataModel> allRoutes = await _dbHelper.GetAllRecordsByDriverId(Constants.MongoDb.OutputScreenTableName, id);
-            var analyzeModels = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToFullViewModel(allRoutes);
+            var analyzeModels = await CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToFullViewModel(allRoutes);
             ViewBag.DataTable = JsonSerializer.Serialize(analyzeModels);
             return View(allRoutes);
         }

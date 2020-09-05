@@ -12,6 +12,8 @@ using CargoSupport.Extensions;
 using CargoSupport.ViewModels;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.Diagnostics;
+using RestSharp;
 
 namespace CargoSupport.Helpers
 {
@@ -19,18 +21,26 @@ namespace CargoSupport.Helpers
     {
         public async Task<List<QuinyxModel>> GetAllDriversSorted(DateTime date, bool clearNames = true)
         {
-            return await Task.Run(() =>
-            {
-                return GetDrivers(date, date, clearNames).OrderBy(e => e.begTime).ThenBy(e => e.endTime).ToList();
-            });
+            var getDriversTask = GetDrivers(date, date);
+
+            var getExtrainformationTask = GetExtraInformationForDrivers();
+
+            await Task.WhenAll(getDriversTask, getExtrainformationTask);
+
+            var combinedResult = CombineQuinyxModelWithExtendedModel(getDriversTask.Result, getExtrainformationTask.Result, false);
+            return combinedResult.OrderBy(e => e.ExtendedInformationModel.GivenName).ToList();
         }
 
         public async Task<QuinyxModel[]> GetAllDriversSortedToArray(DateTime date, bool clearNames = true)
         {
-            return await Task.Run(() =>
-            {
-                return GetDrivers(date, date, clearNames).OrderBy(e => e.ExtendedInformationModel.GivenName).ToArray();
-            });
+            var getDriversTask = GetDrivers(date, date);
+
+            var getExtrainformationTask = GetExtraInformationForDrivers();
+
+            await Task.WhenAll(getDriversTask, getExtrainformationTask);
+
+            var combinedResult = CombineQuinyxModelWithExtendedModel(getDriversTask.Result, getExtrainformationTask.Result, false);
+            return combinedResult.OrderBy(e => e.ExtendedInformationModel.GivenName).ToArray();
         }
 
         public List<int> GetAllDriversWithReportingTo(string reportingTo)
@@ -42,105 +52,88 @@ namespace CargoSupport.Helpers
             return validDriver.Select(driver => driver.Id).ToList();
         }
 
-        public List<QuinyxModel> GetDrivers(DateTime from, DateTime to, bool clearNames = true)
+        public async Task<List<QuinyxModel>> GetDrivers(DateTime from, DateTime to)
         {
-            XmlDocument soapEnvelopeXml = CreateSoapEnvelope(from, to);
-            HttpWebRequest webRequest = CreateWebRequest(Constants.SoapApi.Connection);
-            InsertSoapEnvelopeIntoWebRequest(soapEnvelopeXml, webRequest);
-
-            // begin async call to web request.
-            IAsyncResult asyncResult = webRequest.BeginGetResponse(null, null);
-
-            // suspend this thread until call is complete. You might want to
-            // do something usefull here like update your UI.
-            asyncResult.AsyncWaitHandle.WaitOne();
-            // get the response from the completed web request.
-            var result = new List<QuinyxModel>();
-            using (WebResponse webResponse = webRequest.EndGetResponse(asyncResult))
+            var client = new RestClient(Constants.SoapApi.Connection)
             {
-                using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
+                Timeout = -1
+            };
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Content-Type", "text/xml");
+            request.AddHeader("Cookie", "QWFMSESSION=jORrEC6wSGb0GXeKtAnki0Hz93vnIpPk");
+            request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{Constants.SoapApi.GetApiKey()}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            var result = new List<QuinyxModel>();
+            XDocument doc2 = XDocument.Parse(response.Content);
+            var allItems2 = doc2.Descendants().Where(x => x.Name.LocalName == "item");
+
+            foreach (var item in allItems2)
+            {
+                var quinyxModel = new QuinyxModel();
+
+                var rawId = item.Elements().Where(z => z.Name.LocalName == "persId").FirstOrDefault();
+                if (rawId == null)
                 {
-                    XDocument doc = XDocument.Load(rd);
-                    var allItems = doc.Descendants().Where(x => x.Name.LocalName == "item");
-
-                    foreach (var item in allItems)
-                    {
-                        var quinyxModel = new QuinyxModel();
-
-                        var rawId = item.Elements().Where(z => z.Name.LocalName == "persId").FirstOrDefault();
-                        if (rawId == null)
-                        {
-                            quinyxModel.Id = 0;
-                        }
-                        else
-                        {
-                            quinyxModel.Id = (int)rawId;
-                        }
-
-                        if (quinyxModel.Id != 0)
-                        {
-                            quinyxModel.BadgeNo = (string)item.Elements().Where(z => z.Name.LocalName == "badgeNo").FirstOrDefault();
-                            quinyxModel.begTimeString = (string)item.Elements().Where(z => z.Name.LocalName == "begTime").FirstOrDefault();
-                            quinyxModel.endTimeString = (string)item.Elements().Where(z => z.Name.LocalName == "endTime").FirstOrDefault();
-                            quinyxModel.CategoryId = (int)item.Elements().Where(z => z.Name.LocalName == "categoryId").FirstOrDefault();
-                            quinyxModel.Section = (int)item.Elements().Where(z => z.Name.LocalName == "section").FirstOrDefault();
-                            quinyxModel.SectionName = (string)item.Elements().Where(z => z.Name.LocalName == "sectionName").FirstOrDefault();
-                            quinyxModel.hours = (decimal)item.Elements().Where(z => z.Name.LocalName == "hours").FirstOrDefault();
-                            quinyxModel.CostCentre = (int)item.Elements().Where(z => z.Name.LocalName == "costCentre").FirstOrDefault();
-                            quinyxModel.ManagerId = (int)item.Elements().Where(z => z.Name.LocalName == "managerId").FirstOrDefault();
-                            result.Add(quinyxModel);
-                        }
-                    }
+                    quinyxModel.Id = 0;
+                }
+                else
+                {
+                    quinyxModel.Id = (int)rawId;
                 }
 
-                result = result.ToList().Select(res => res).Where(res => res.Id != 0).ToList();
-
-                result = GetExtraInformationForDrivers(result);
-
-                //Remove non-drivers
-                for (int i = result.Count - 1; i >= 0; i--)
+                if (quinyxModel.Id != 0)
                 {
-                    if (result[i].ExtendedInformationModel.Active == 0 ||
-                        CargoSupport.Helpers.DataConversionHelper.GetQuinyxEnum(result[i].CategoryId) != QuinyxRole.Driver)
-                    {
-                        result.RemoveAt(i);
-                    }
+                    quinyxModel.BadgeNo = (string)item.Elements().Where(z => z.Name.LocalName == "badgeNo").FirstOrDefault();
+                    quinyxModel.begTimeString = (string)item.Elements().Where(z => z.Name.LocalName == "begTime").FirstOrDefault();
+                    quinyxModel.endTimeString = (string)item.Elements().Where(z => z.Name.LocalName == "endTime").FirstOrDefault();
+                    quinyxModel.CategoryId = (int)item.Elements().Where(z => z.Name.LocalName == "categoryId").FirstOrDefault();
+                    quinyxModel.Section = (int)item.Elements().Where(z => z.Name.LocalName == "section").FirstOrDefault();
+                    quinyxModel.SectionName = (string)item.Elements().Where(z => z.Name.LocalName == "sectionName").FirstOrDefault();
+                    quinyxModel.hours = (decimal)item.Elements().Where(z => z.Name.LocalName == "hours").FirstOrDefault();
+                    quinyxModel.CostCentre = (int)item.Elements().Where(z => z.Name.LocalName == "costCentre").FirstOrDefault();
+                    quinyxModel.ManagerId = (int)item.Elements().Where(z => z.Name.LocalName == "managerId").FirstOrDefault();
+                    result.Add(quinyxModel);
                 }
-
-                for (int i = 0; i < result.Count; i++)
-                {
-                    TimeSpan.TryParse(result[i].begTimeString, out TimeSpan begTime);
-                    TimeSpan.TryParse(result[i].endTimeString, out TimeSpan endTime);
-
-                    result[i].begTime = begTime;
-                    result[i].endTime = endTime;
-                    if (clearNames)
-                    {
-                        result[i].ExtendedInformationModel.GivenName = "";
-                        result[i].ExtendedInformationModel.FamilyName = "";
-                    }
-                }
-                return result;
             }
+            return result.ToList().Select(res => res).Where(res => res.Id != 0).ToList();
         }
 
-        public BasicQuinyxModel[] GetAllDriversFromADate(DateTime date)
+        private List<QuinyxModel> CombineQuinyxModelWithExtendedModel(List<QuinyxModel> quinyxResult, List<ExtendedInformationModel> extendedResult, bool clearNames = true)
         {
-            List<BasicQuinyxModel> schedualedDrivers = GetAllDriversSorted(date, false).Result.ConvertQuinyxModelToBasic();
-            List<BasicQuinyxModel> allExtendedInformationDrivers = GetNonSchedualedDrivers();
-
-            foreach (var schedModel in schedualedDrivers)
+            //Remove non-drivers
+            for (int i = quinyxResult.Count - 1; i >= 0; i--)
             {
-                var existingModelInExtended = allExtendedInformationDrivers.FirstOrDefault(
-                    mod => mod.Id.Equals(schedModel.Id));
-
-                if (existingModelInExtended != null)
+                if (quinyxResult[i].ExtendedInformationModel.Active == 0 ||
+                    CargoSupport.Helpers.DataConversionHelper.GetQuinyxEnum(quinyxResult[i].CategoryId) != QuinyxRole.Driver)
                 {
-                    allExtendedInformationDrivers.Remove(existingModelInExtended);
+                    quinyxResult.RemoveAt(i);
+                }
+
+                TimeSpan.TryParse(quinyxResult[i].begTimeString, out TimeSpan begTime);
+                TimeSpan.TryParse(quinyxResult[i].endTimeString, out TimeSpan endTime);
+
+                quinyxResult[i].begTime = begTime;
+                quinyxResult[i].endTime = endTime;
+            }
+
+            //Attatch correct extendedModel with quinyxResult
+            foreach (var driver in quinyxResult)
+            {
+                var extendedInfo = extendedResult.FirstOrDefault(info => info.Id.Equals(driver.Id));
+
+                if (extendedInfo != null)
+                {
+                    driver.ExtendedInformationModel = extendedInfo;
+                    if (clearNames)
+                    {
+                        driver.ExtendedInformationModel.GivenName = "";
+                        driver.ExtendedInformationModel.FamilyName = "";
+                    }
                 }
             }
 
-            return schedualedDrivers.Union(allExtendedInformationDrivers).OrderBy(res => res.begTime).ThenBy(res => res.endTime).ToArray();
+            return quinyxResult;
         }
 
         private static List<BasicQuinyxModel> GetNonSchedualedDrivers()
@@ -221,50 +214,34 @@ namespace CargoSupport.Helpers
             return Data;
         }
 
-        public List<QuinyxModel> GetExtraInformationForDrivers(List<QuinyxModel> Drivers)
+        public async Task<List<ExtendedInformationModel>> GetExtraInformationForDrivers()
         {
-            XmlDocument soapEnvelopeXml = CreateSoapGetAllDriversEnvelope();
-            HttpWebRequest webRequest = CreateWebRequest(CargoSupport.Constants.SoapApi.Connection);
-            InsertSoapEnvelopeIntoWebRequest(soapEnvelopeXml, webRequest);
+            var client = new RestClient(Constants.SoapApi.Connection)
+            {
+                Timeout = -1
+            };
 
-            // begin async call to web request.
-            IAsyncResult asyncResult = webRequest.BeginGetResponse(null, null);
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Content-Type", "text/xml");
+            request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
+            request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{Constants.SoapApi.GetApiKey()}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
+            IRestResponse response = await client.ExecuteAsync(request);
 
-            // suspend this thread until call is complete. You might want to
-            // do something usefull here like update your UI.
-            asyncResult.AsyncWaitHandle.WaitOne();
-
-            // get the response from the completed web request.
+            XDocument doc = XDocument.Parse(response.Content);
             var extendedInformation = new List<ExtendedInformationModel>();
-            using (WebResponse webResponse = webRequest.EndGetResponse(asyncResult))
+
+            extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
             {
-                using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
-                {
-                    XDocument doc = XDocument.Load(rd);
-                    extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
-                    {
-                        Id = (int)y.Elements().Where(z => z.Name.LocalName == "id").FirstOrDefault(),
-                        GivenName = (string)y.Elements().Where(z => z.Name.LocalName == "givenName").FirstOrDefault(),
-                        FamilyName = (string)y.Elements().Where(z => z.Name.LocalName == "familyName").FirstOrDefault(),
-                        StaffCat = (int)y.Elements().Where(z => z.Name.LocalName == "staffCat").FirstOrDefault(),
-                        StaffCatName = (string)y.Elements().Where(z => z.Name.LocalName == "staffCatName").FirstOrDefault(),
-                        ReportingTo = (string)y.Elements().Where(z => z.Name.LocalName == "reportingTo").FirstOrDefault(),
-                        Active = (int)y.Elements().Where(z => z.Name.LocalName == "active").FirstOrDefault(),
-                    }).ToList();
-                }
-            }
+                Id = (int)y.Elements().Where(z => z.Name.LocalName == "id").FirstOrDefault(),
+                GivenName = (string)y.Elements().Where(z => z.Name.LocalName == "givenName").FirstOrDefault(),
+                FamilyName = (string)y.Elements().Where(z => z.Name.LocalName == "familyName").FirstOrDefault(),
+                StaffCat = (int)y.Elements().Where(z => z.Name.LocalName == "staffCat").FirstOrDefault(),
+                StaffCatName = (string)y.Elements().Where(z => z.Name.LocalName == "staffCatName").FirstOrDefault(),
+                ReportingTo = (string)y.Elements().Where(z => z.Name.LocalName == "reportingTo").FirstOrDefault(),
+                Active = (int)y.Elements().Where(z => z.Name.LocalName == "active").FirstOrDefault(),
+            }).ToList();
 
-            foreach (var driver in Drivers)
-            {
-                var extendedInfo = extendedInformation.FirstOrDefault(info => info.Id.Equals(driver.Id));
-
-                if (extendedInfo != null)
-                {
-                    driver.ExtendedInformationModel = extendedInfo;
-                }
-            }
-
-            return Drivers;
+            return extendedInformation;
         }
 
         public List<DriverViewModel> GetAllDrivers()

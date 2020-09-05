@@ -36,6 +36,8 @@ namespace CargoSupport.Web.Controllers.API
         [HttpGet]
         public async Task<ActionResult> GetTransport(string dateString)
         {
+            var sw = new Stopwatch();
+            sw.Start();
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
                 return Unauthorized();
@@ -47,13 +49,25 @@ namespace CargoSupport.Web.Controllers.API
             {
                 return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
             }
-
             var carOptionsTask = _dbHelper.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
+
+            await Task.WhenAll(carOptionsTask);
+            sw.Stop();
+            var ela1 = sw.Elapsed;
+            sw.Start();
             var driversThatWorksOnThisDateTask = _qnHelper.GetAllDriversSortedToArray(date, false);
+            await Task.WhenAll(driversThatWorksOnThisDateTask);
+            sw.Stop();
+            var ela2 = sw.Elapsed;
+            sw.Start();
             var dataBaseResTask = ConvertToTransport(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
+            await Task.WhenAll(dataBaseResTask);
+            var ela3 = sw.Elapsed;
+            sw.Stop();
+            sw.Start();
 
-            Task.WaitAll(carOptionsTask, driversThatWorksOnThisDateTask, dataBaseResTask);
-
+            await Task.WhenAll(carOptionsTask, driversThatWorksOnThisDateTask, dataBaseResTask);
+            sw.Stop();
             return Ok(new ReturnModel
             {
                 data = dataBaseResTask.Result,

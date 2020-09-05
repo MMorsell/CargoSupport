@@ -15,7 +15,7 @@
         </tr>
         <tr>
             <td>Behörighetsnivå</td>
-            <td><select disabled asp-for="@Model.RoleLevel" asp-items="Html.GetEnumSelectList<CargoSupport.Enums.RoleLevel>()"></select></td>
+            <td><select class="selectpicker show-tick" disabled asp-for="@Model.RoleLevel" asp-items="Html.GetEnumSelectList<CargoSupport.Enums.RoleLevel>()"></select></td>
         </tr>
         <tr>
             <td><input class="btn btn-outline-danger" type="submit" value="Bekräfta borttagning" /></td>

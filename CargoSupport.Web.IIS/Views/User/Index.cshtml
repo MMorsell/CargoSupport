@@ -16,7 +16,7 @@
     {
         <tr>
             <td><input disabled asp-for="@user.NameWithDomain" type="text" /></td>
-            <td><select disabled asp-for="@user.RoleLevel" asp-items="Html.GetEnumSelectList<CargoSupport.Enums.RoleLevel>()"></select></td>
+            <td><select class="selectpicker show-tick" disabled asp-for="@user.RoleLevel" asp-items="Html.GetEnumSelectList<CargoSupport.Enums.RoleLevel>()"></select></td>
             <td><a asp-action="Edit" asp-route-id="@user._Id" class="btn btn-outline-warning">Redigera</a></td>
             <td><a asp-action="Delete" asp-route-id="@user._Id" class="btn btn-outline-danger">Ta bort</a></td>
         </tr>
