@@ -269,11 +269,11 @@ namespace CargoSupport.Helpers
             return result;
         }
 
-        public static List<SlimViewModel> ConvertDataModelsToSlimViewModels(List<DataModel> dataModels)
+        public static async Task<List<SlimViewModel>> ConvertDataModelsToSlimViewModels(List<DataModel> dataModels)
         {
             var returnList = new ConcurrentBag<SlimViewModel>();
             var qh = new QuinyxHelper();
-            var dataModelsWithNames = qh.AddNamesToData(dataModels);
+            var dataModelsWithNames = await qh.AddNamesToData(dataModels);
 
             var groupedModels = dataModelsWithNames.GroupBy(data => data.Driver.Id);
 
@@ -381,31 +381,28 @@ namespace CargoSupport.Helpers
 
         private static async Task<SlimViewModel> GetSlimInformation(List<DataModel> dataModels)
         {
-            return await Task.Run(() =>
+            var qh = new QuinyxHelper();
+            /*
+             * Only sending one datarow since the name is the same for all rows
+             */
+            var singleDataModelWithDriverDetails = await qh.AddNamesToData(new List<DataModel>() { dataModels[0] });
+
+            var returnModel = new SlimViewModel()
             {
-                var qh = new QuinyxHelper();
-                /*
-                 * Only sending one datarow since the name is the same for all rows
-                 */
-                var singleDataModelWithDriverDetails = qh.AddNamesToData(new List<DataModel>() { dataModels[0] });
+                AvrCustomers = dataModels.Sum(data => data.PinRouteModel.NumberOfCustomers) / dataModels.Count,
+                AvrDrivingDistance = Math.Round(
+                        (
+                        (dataModels.Sum(data => data.PinRouteModel.DistanceInMeters)
+                        / dataModels.Count)
+                        / 10000 /*To get result in swedish miles*/
+                        )
+                        , 1),
+                AvrWeight = dataModels.Sum(data => data.PinRouteModel.Weight) / dataModels.Count(),
+                DriverFullName = singleDataModelWithDriverDetails[0].Driver.GetDriverName(),
+                QuinyxId = singleDataModelWithDriverDetails[0].Driver.Id
+            };
 
-                var returnModel = new SlimViewModel()
-                {
-                    AvrCustomers = dataModels.Sum(data => data.PinRouteModel.NumberOfCustomers) / dataModels.Count,
-                    AvrDrivingDistance = Math.Round(
-                            (
-                            (dataModels.Sum(data => data.PinRouteModel.DistanceInMeters)
-                            / dataModels.Count)
-                            / 10000 /*To get result in swedish miles*/
-                            )
-                            , 1),
-                    AvrWeight = dataModels.Sum(data => data.PinRouteModel.Weight) / dataModels.Count(),
-                    DriverFullName = singleDataModelWithDriverDetails[0].Driver.GetDriverName(),
-                    QuinyxId = singleDataModelWithDriverDetails[0].Driver.Id
-                };
-
-                return returnModel;
-            });
+            return returnModel;
         }
 
         private static async Task<xyz[]> ConvertToCustomerPositionData(List<DataModel> dataModels)

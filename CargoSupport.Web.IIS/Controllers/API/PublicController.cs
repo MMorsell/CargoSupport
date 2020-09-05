@@ -36,8 +36,6 @@ namespace CargoSupport.Web.Controllers.API
         [HttpGet]
         public async Task<ActionResult> GetTransport(string dateString)
         {
-            var sw = new Stopwatch();
-            sw.Start();
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
                 return Unauthorized();
@@ -49,25 +47,12 @@ namespace CargoSupport.Web.Controllers.API
             {
                 return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
             }
-            var carOptionsTask = _dbHelper.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
 
-            await Task.WhenAll(carOptionsTask);
-            sw.Stop();
-            var ela1 = sw.Elapsed;
-            sw.Start();
+            var carOptionsTask = _dbHelper.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
             var driversThatWorksOnThisDateTask = _qnHelper.GetAllDriversSortedToArray(date, false);
-            await Task.WhenAll(driversThatWorksOnThisDateTask);
-            sw.Stop();
-            var ela2 = sw.Elapsed;
-            sw.Start();
             var dataBaseResTask = ConvertToTransport(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
-            await Task.WhenAll(dataBaseResTask);
-            var ela3 = sw.Elapsed;
-            sw.Stop();
-            sw.Start();
 
             await Task.WhenAll(carOptionsTask, driversThatWorksOnThisDateTask, dataBaseResTask);
-            sw.Stop();
             return Ok(new ReturnModel
             {
                 data = dataBaseResTask.Result,
@@ -99,7 +84,7 @@ namespace CargoSupport.Web.Controllers.API
             }
 
             var res = ConvertToPublic(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
-            return Ok(res.ToArray());
+            return Ok(res.Result.ToArray());
         }
 
         [HttpGet]
@@ -118,12 +103,12 @@ namespace CargoSupport.Web.Controllers.API
             }
 
             var res = ConvertToStorage(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
-            return Ok(res.ToArray());
+            return Ok(res.Result.ToArray());
         }
 
-        private List<StorageViewModel> ConvertToStorage(List<DataModel> allRoutes)
+        private async Task<List<StorageViewModel>> ConvertToStorage(List<DataModel> allRoutes)
         {
-            allRoutes = _qnHelper.AddNamesToData(allRoutes);
+            allRoutes = await _qnHelper.AddNamesToData(allRoutes);
             var returnModels = new List<StorageViewModel>();
             for (int i = 0; i < allRoutes.Count; i++)
             {
@@ -148,40 +133,37 @@ namespace CargoSupport.Web.Controllers.API
 
         private async Task<TransportViewModel[]> ConvertToTransport(List<DataModel> allRoutes)
         {
-            return await Task.Run(() =>
+            allRoutes = await _qnHelper.AddNamesToData(allRoutes);
+            var returnModels = new ConcurrentBag<TransportViewModel>();
+            Parallel.ForEach(allRoutes, route =>
             {
-                allRoutes = _qnHelper.AddNamesToData(allRoutes);
-                var returnModels = new ConcurrentBag<TransportViewModel>();
-                Parallel.ForEach(allRoutes, route =>
-                {
-                    returnModels.Add(new TransportViewModel(
-                        route._Id,
-                        route.PinRouteModel.Weight,
-                        route.PinRouteModel.RouteName,
-                        route.Driver.ConvertToDriverViewModel(),
-                        route.CarModel,
-                        route.PortNumber,
-                        route.LoadingLevel,
-                        route.PreRideAnnotation,
-                        route.PostRideAnnotation,
-                        route.PinRouteModel.NumberOfCustomers,
-                        route.PinRouteModel.ScheduledRouteStart.TimeOfDay,
-                        route.PinRouteModel.ScheduledRouteEnd.TimeOfDay,
-                        route.NumberOfColdBoxes,
-                        route.RestPicking,
-                        route.NumberOfFrozenBoxes,
-                        route.NumberOfBreadBoxes,
-                        route.ControlIsDone
-                        ));
-                });
-
-                return returnModels.ToArray();
+                returnModels.Add(new TransportViewModel(
+                    route._Id,
+                    route.PinRouteModel.Weight,
+                    route.PinRouteModel.RouteName,
+                    route.Driver.ConvertToDriverViewModel(),
+                    route.CarModel,
+                    route.PortNumber,
+                    route.LoadingLevel,
+                    route.PreRideAnnotation,
+                    route.PostRideAnnotation,
+                    route.PinRouteModel.NumberOfCustomers,
+                    route.PinRouteModel.ScheduledRouteStart.TimeOfDay,
+                    route.PinRouteModel.ScheduledRouteEnd.TimeOfDay,
+                    route.NumberOfColdBoxes,
+                    route.RestPicking,
+                    route.NumberOfFrozenBoxes,
+                    route.NumberOfBreadBoxes,
+                    route.ControlIsDone
+                    ));
             });
+
+            return returnModels.ToArray();
         }
 
-        private List<TransportViewModel> ConvertToPublic(List<DataModel> allRoutes)
+        private async Task<List<TransportViewModel>> ConvertToPublic(List<DataModel> allRoutes)
         {
-            allRoutes = _qnHelper.AddNamesToData(allRoutes);
+            allRoutes = await _qnHelper.AddNamesToData(allRoutes);
             var returnModels = new List<TransportViewModel>();
             for (int i = 0; i < allRoutes.Count; i++)
             {

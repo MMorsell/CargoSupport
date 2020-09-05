@@ -92,7 +92,7 @@ namespace CargoSupport.Web.IIS.Controllers
             }
 
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
-            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToSlimViewModels(analyzeModels);
+            var res = await CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToSlimViewModels(analyzeModels);
             return Ok(res);
         }
 
@@ -220,11 +220,12 @@ namespace CargoSupport.Web.IIS.Controllers
 
             var allDriversUnderBoss = _qh.GetAllDriversWithReportingTo(reportingTo);
 
-            var matchingRecordsInDatabase = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            var matchingRecordsInDatabase = _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            await Task.WhenAll(allDriversUnderBoss, matchingRecordsInDatabase);
 
-            _qh.AddNamesToData(matchingRecordsInDatabase);
+            await _qh.AddNamesToData(matchingRecordsInDatabase.Result);
 
-            var ressadas = matchingRecordsInDatabase.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.ReportingTo == reportingTo).ToList();
+            var ressadas = matchingRecordsInDatabase.Result.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.ReportingTo == reportingTo).ToList();
 
             var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(ressadas);
 
