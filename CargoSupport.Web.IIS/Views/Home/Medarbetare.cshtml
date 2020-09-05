@@ -3,6 +3,12 @@
     ViewData["Title"] = "Home Page";
 }
 <div class="container-fluid">
+    <div style="float: right;">
+        <h3 style="display: inline-block;">Status</h3>
+        <img id="errorSymbol" style="display:none" src="~/img/svg/errorSymbol.svg" />
+        <img id="onlineSymbom" style="display:none" src="~/img/svg/onlineSymbol.svg" />
+        <div id="connectStatus" style="display:none" class="lds-facebook"><div style="display: inline-block;"></div><div style="display: inline-block;"></div><div style="display: inline-block;"></div></div>
+    </div>
     <h6>Datum</h6>
     <div>
         <div style="padding-left: 20px;" class="group">
@@ -28,7 +34,24 @@
                     "data": {
                         "dateString": function () { return formatDate(ajaxDate) }
                     },
-                    "dataSrc": ""
+                    "dataSrc": "",
+                    "complete": function (responseReference, responseText) {
+                        if (responseText === "error") {
+                            toggleConnectStatus('error');
+                        }
+                        else {
+                            toggleConnectStatus('ok');
+                        }
+                    },
+                    "error": function (responseReference, responseText) {
+                        if (responseText === "error") {
+                            toggleConnectStatus('error');
+                        }
+                        else {
+                            toggleConnectStatus('ok');
+                        }
+
+                    },
                 },
                 columns: [
                     { data: 'routeName', title: 'Turnamn' },

@@ -4,6 +4,12 @@
 }
 
 <div class="container-fluid">
+    <div style="float: right;">
+        <h3 style="display: inline-block;">Status</h3>
+        <img id="errorSymbol" style="display:none" src="~/img/svg/errorSymbol.svg" />
+        <img id="onlineSymbom" style="display:none" src="~/img/svg/onlineSymbol.svg" />
+        <div id="connectStatus" style="display:none" class="lds-facebook"><div style="display: inline-block;"></div><div style="display: inline-block;"></div><div style="display: inline-block;"></div></div>
+    </div>
     <h6>Datum</h6>
     <div>
         <div style="padding-left: 20px;" class="group">
@@ -84,13 +90,13 @@
             $.ajax({
                 type: 'POST',
                 url: '/api/Upsert/UpsertTransport',
-                //dataType: 'json',
                 contentType: dataType,
                 data: jsonData,
                 error: function (jqXHR, exception) {
-                    debugger;
+                    toggleConnectStatus('error');
                 },
                 success: function (result) {
+                    toggleConnectStatus('ok');
                 }
             });
         }
@@ -216,9 +222,23 @@
                         "dateString": function () { return formatDate(ajaxDate) }
                     },
                     "dataSrc": "data",
-                    //"complete": function (responseReference, responseText) {
-                    //    Alldrivers = responseReference.responseJSON.selectValues;
-                    //}
+                    "complete": function (responseReference, responseText) {
+                        if (responseText === "error") {
+                            toggleConnectStatus('error');
+                        }
+                        else {
+                            toggleConnectStatus('ok');
+                        }
+                    },
+                    "error": function (responseReference, responseText) {
+                        if (responseText === "error") {
+                            toggleConnectStatus('error');
+                        }
+                        else {
+                            toggleConnectStatus('ok');
+                        }
+
+                    },
                 },
                 columnDefs: [
                     { "width": "20%", "targets": 3 },
@@ -247,7 +267,7 @@
                 ],
                 "order": [[2, "asc"]],
 
-            });
+            })
 
             $('thead th').each(function () {
                 $(this).addClass("stickyHeader");

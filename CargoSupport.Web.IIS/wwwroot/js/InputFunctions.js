@@ -19,6 +19,29 @@ function formatDate(d) {
     return [year, month, day].join('-');
 }
 
+function toggleConnectStatus(status) {
+    var loadingRef = document.getElementById('connectStatus');
+    var errorRef = document.getElementById('errorSymbol');
+    var onlineRef = document.getElementById('onlineSymbom');
+    switch (status) {
+        case 'ok':
+            loadingRef.style.display = "none";
+            errorRef.style.display = "none";
+            onlineRef.style.display = "inline-block";
+            break;
+        case 'loading':
+            loadingRef.style.display = "inline-block";
+            errorRef.style.display = "none";
+            onlineRef.style.display = "none";
+            break;
+        case 'error':
+            loadingRef.style.display = "none";
+            errorRef.style.display = "inline-block";
+            onlineRef.style.display = "none";
+            break;
+    }
+}
+
 const preRideInput = function (data, type, full, meta) {
     return '<input contenteditable="true" type="text" id="preRideInput" onfocusout=updateRow(this) class="form-control" value="' +
         data + '"  />';
@@ -135,6 +158,7 @@ const hidden_IntIfNull = function (data, type, full, meta) {
 }
 
 function reloadDatatableAjax() {
+    toggleConnectStatus('loading');
     console.log("reloading ajax...");
     table.ajax.reload(null, false);
 }
