@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text.Json;
@@ -130,7 +131,6 @@ namespace CargoSupport.Web.IIS.Controllers
             }
 
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
-
             var res = CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModels(analyzeModels, splitData);
             return Ok(res);
         }
@@ -174,7 +174,7 @@ namespace CargoSupport.Web.IIS.Controllers
             return Ok(res);
         }
 
-        public async Task<ActionResult> AllBosses()
+        public async Task<ActionResult> DataByGroup()
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
@@ -186,7 +186,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
         [HttpGet]
         [Route("api/[controller]/GetUnderBoss")]
-        public async Task<ActionResult> GetUnderBoss(string reportingTo, string fromDate, string toDate)
+        public async Task<ActionResult> GetUnderBoss(int? sectionId, int? staffCatId, string fromDate, string toDate)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
@@ -207,29 +207,36 @@ namespace CargoSupport.Web.IIS.Controllers
                 return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
             }
 
-            //1104 - oliwer
-            //900001 - Firas
+            if (sectionId != null)
+            {
+                var matchingRecordsInDatabase = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+                var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
 
-            //9999999992 - Konsulter
+                var matchingRecordsBySectionId = matchingRecordsInDatabase.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.Section == sectionId).ToList();
 
-            //9006 - Kari
+                if (staffCatId == 28899)
+                {
+                    var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId);
+                    return Ok(res);
+                }
+                else
+                {
+                    /*
+                     * Since all external drivers are grouped by same section id, we need extra grouping to correctly seperate by external company
+                     */
+                    matchingRecordsBySectionId = matchingRecordsBySectionId.Where(d => d.Driver.ExtendedInformationModel.StaffCat == staffCatId).ToList();
+                    var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId);
+                    return Ok(res);
+                }
+            }
+            else
+            {
+                var matchingRecordsInDatabase = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+                var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
 
-            //9001 - Carl
-
-            //9007 - Christian
-
-            var allDriversUnderBoss = _qh.GetAllDriversWithReportingTo(reportingTo);
-
-            var matchingRecordsInDatabase = _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
-            await Task.WhenAll(allDriversUnderBoss, matchingRecordsInDatabase);
-
-            await _qh.AddNamesToData(matchingRecordsInDatabase.Result);
-
-            var ressadas = matchingRecordsInDatabase.Result.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.ReportingTo == reportingTo).ToList();
-
-            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(ressadas);
-
-            return Ok(res);
+                var res = CargoSupport.Helpers.DataConversionHelper.ConvertDatRowsToBossGroup(recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null).ToList());
+                return Ok(res);
+            }
         }
     }
 }

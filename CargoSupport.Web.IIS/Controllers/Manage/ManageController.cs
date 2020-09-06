@@ -70,5 +70,31 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
             return View("../Home/Transport");
         }
+
+        [HttpPost]
+        [Route("Manage/AddResourceRoute")]
+        public async Task<ActionResult> AddResourceRoute(string fromDate)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            DateTime.TryParse(fromDate, out DateTime from);
+
+            if (from.ToString(@"yyyy-MM-dd") != fromDate)
+            {
+                return BadRequest($"fromDate is not valid, expecting 2020-01-01, recieved: '{fromDate}'");
+            }
+
+            var db = new MongoDbHelper(Constants.MongoDb.DatabaseName);
+
+            var routesOfTheDay = await db.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, from);
+            var numberOfResourceRoutes = routesOfTheDay.Where(route => route.IsResourceRoute == true).Count();
+
+            var ph = new PinHelper();
+            await ph.InsertNewResourceRoute($"Resurs {numberOfResourceRoutes + 1}", from);
+            return Ok();
+        }
     }
 }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "e1fg6RF9kth21ywMDQVzyoUrgZqpM8Iov3fZ3ByI7G/g5CsTbnmUc41w5Y1HlVUWZVZU6BSRbUbDvSjGuQrFUg==",
+  "dgSpecHash": "YXLx4yHo8WAoqQ63rIvL0CM69QYIIP5z+rds761TJnK8Dp45epKfbqq1p0OLTDfQqFQVkA5+VgkY3DA4SdaSzA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Eraza\\Source\\Repos\\MMorsell\\CargoSupport\\TestingConsole\\TestingConsole.csproj",
   "expectedPackageFiles": [
@@ -31,6 +31,7 @@
     "C:\\Users\\Eraza\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
     "C:\\Users\\Eraza\\.nuget\\packages\\newtonsoft.json\\10.0.1\\newtonsoft.json.10.0.1.nupkg.sha512",
     "C:\\Users\\Eraza\\.nuget\\packages\\quartz\\3.1.0\\quartz.3.1.0.nupkg.sha512",
+    "C:\\Users\\Eraza\\.nuget\\packages\\restsharp\\106.11.4\\restsharp.106.11.4.nupkg.sha512",
     "C:\\Microsoft\\Xamarin\\NuGet\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Microsoft\\Xamarin\\NuGet\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Microsoft\\Xamarin\\NuGet\\runtime.fedora.24-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.fedora.24-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",

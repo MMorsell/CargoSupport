@@ -135,7 +135,7 @@ namespace CargoSupport.Helpers
             return quinyxResult;
         }
 
-        private static async Task<List<BasicQuinyxModel>> GetNonSchedualedDrivers()
+        public async Task<List<BasicQuinyxModel>> GetNonSchedualedDrivers()
         {
             var client = new RestClient(Constants.SoapApi.Connection)
             {
@@ -157,6 +157,10 @@ namespace CargoSupport.Helpers
                 GivenName = (string)y.Elements().Where(z => z.Name.LocalName == "givenName").FirstOrDefault(),
                 FamilyName = (string)y.Elements().Where(z => z.Name.LocalName == "familyName").FirstOrDefault(),
                 Active = (int)y.Elements().Where(z => z.Name.LocalName == "active").FirstOrDefault(),
+                StaffCat = (int)y.Elements().Where(z => z.Name.LocalName == "staffCat").FirstOrDefault(),
+                StaffCatName = (string)y.Elements().Where(z => z.Name.LocalName == "staffCatName").FirstOrDefault(),
+                Section = (int)y.Elements().Where(z => z.Name.LocalName == "section").FirstOrDefault(),
+                SectionName = (string)y.Elements().Where(z => z.Name.LocalName == "sectionName").FirstOrDefault(),
                 ReportingTo = (string)y.Elements().Where(z => z.Name.LocalName == "reportingTo").FirstOrDefault(),
             }).ToList();
             return quinyxBasicModels.Where(mod => mod.Active == 1).ToList();
@@ -185,6 +189,8 @@ namespace CargoSupport.Helpers
                 FamilyName = (string)y.Elements().Where(z => z.Name.LocalName == "familyName").FirstOrDefault(),
                 StaffCat = (int)y.Elements().Where(z => z.Name.LocalName == "staffCat").FirstOrDefault(),
                 StaffCatName = (string)y.Elements().Where(z => z.Name.LocalName == "staffCatName").FirstOrDefault(),
+                Section = (int)y.Elements().Where(z => z.Name.LocalName == "section").FirstOrDefault(),
+                SectionName = (string)y.Elements().Where(z => z.Name.LocalName == "sectionName").FirstOrDefault(),
                 ReportingTo = (string)y.Elements().Where(z => z.Name.LocalName == "reportingTo").FirstOrDefault(),
                 Active = (int)y.Elements().Where(z => z.Name.LocalName == "active").FirstOrDefault(),
             }).ToList();

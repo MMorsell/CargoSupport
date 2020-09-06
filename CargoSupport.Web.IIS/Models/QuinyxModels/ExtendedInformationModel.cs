@@ -14,5 +14,7 @@ namespace CargoSupport.Models.QuinyxModels
         public string StaffCatName { get; internal set; }
         public string ReportingTo { get; internal set; }
         public int Active { get; internal set; }
+        public int Section { get; internal set; }
+        public string SectionName { get; internal set; }
     }
 }

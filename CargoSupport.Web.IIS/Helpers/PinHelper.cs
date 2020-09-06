@@ -1,7 +1,9 @@
-﻿using CargoSupport.Helpers;
+﻿using CargoSupport.Extensions;
+using CargoSupport.Helpers;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
 using CargoSupport.Models.QuinyxModels;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -93,6 +95,23 @@ namespace CargoSupport.Helpers
                     await _dbHelper.UpsertDataRecordById(Constants.MongoDb.OutputScreenTableName, existingRecord);
                 }
             }
+        }
+
+        internal async Task InsertNewResourceRoute(string v, DateTime date)
+        {
+            date = date.SetHour(6);
+            var newResourceRoute = new DataModel
+            {
+                Driver = new QuinyxModel(),
+                PinRouteModel = new PinRouteModel(),
+            };
+            newResourceRoute.IsResourceRoute = true;
+            newResourceRoute.DateOfRoute = date;
+            newResourceRoute.PinRouteModel.RouteName = v;
+
+            //newResourceRoute.PinRouteModel.
+
+            await _dbHelper.InsertRecord(Constants.MongoDb.OutputScreenTableName, newResourceRoute);
         }
 
         public async Task<int> AnyPinRouteModelExistInDatabase(List<PinRouteModel> pinRouteModels)

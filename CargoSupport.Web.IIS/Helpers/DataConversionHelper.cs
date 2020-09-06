@@ -123,7 +123,7 @@ namespace CargoSupport.Helpers
                     else
                     {
                         //Number of customers per work time of the drivers of all routes (does NOT include worktime for the whole force)
-                        todayGraphsModel.CustomersDividedByWorkHours = todayGraphsModel.NumberOfValidDeliveries / allHoursDedicatedOnRoutes;
+                        todayGraphsModel.CustomersDividedByWorkHours = Math.Round(todayGraphsModel.NumberOfValidDeliveries / allHoursDedicatedOnRoutes);
                     }
 
                     if (todayGraphsModel.NumberOfValidDeliveries > 0)
@@ -164,9 +164,149 @@ namespace CargoSupport.Helpers
             return resultModels.OrderBy(d => d.LabelTitle).ToArray();
         }
 
-        public static DriverDeliveryStatsViewModel[] ConvertDataModelsToMultipleDriverTableData(List<DataModel> routesOfToday)
+        public static AllBossesViewModel[] ConvertDatRowsToBossGroup(List<DataModel> routesOfToday)
         {
-            var resultModels = new List<DriverDeliveryStatsViewModel>();
+            var resultModels = new List<AllBossesViewModel>();
+
+            var dataGroupedByReportingTo = routesOfToday.GroupBy(data => data.Driver.ExtendedInformationModel.StaffCat);
+
+            foreach (var driverGroup in dataGroupedByReportingTo)
+            {
+                var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
+                var todayGraphsModel = new AllBossesViewModel();
+
+                if (driverGroup.Key == 28899)
+                {
+                    /*
+                     * Since all internal drivers are grouped by same id, we need extra grouping to seperate by correct boss
+                     */
+                    ExtractDataByCompanyBosses(resultModels, driverGroup);
+                }
+                else
+                {
+                    foreach (var route in driverGroup)
+                    {
+                        allCustomerWhereDeliveryHasBeenDone.AddRange(route.PinRouteModel.Customers.Where(customer => customer.PinCustomerDeliveryInfo.time_handled != null));
+                    }
+                    if (allCustomerWhereDeliveryHasBeenDone.Count > 0)
+                    {
+                        var listOfGroup = driverGroup.ToList();
+                        //Number of deliveries validated and done
+                        todayGraphsModel.NumberOfValidDeliveries = allCustomerWhereDeliveryHasBeenDone.Count;
+                        //Number left to be delivered
+                        todayGraphsModel.NumberOfValidDeliveriesLeft = driverGroup.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
+
+                        //Number of deliveries made within 5 minutes of each customer time slot
+                        todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInTimeWindowPlusMinus5(customer)).Count();
+
+                        //Number of deliveries made withing 15 minutes of each customers estimated time
+                        todayGraphsModel.CustomersWithinPrognosis = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInPhasePlusMinus15Minutes(customer)).Count();
+
+                        //Number of customer deliveries made before time slot - 5 minutes
+                        todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer)).Count();
+
+                        //Number of deliveries made before estimated time +-0 minutes
+                        todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer)).Count();
+
+                        var allHoursDedicatedOnRoutes = driverGroup.Sum(route => (double)route.Driver.hours);
+                        if (allHoursDedicatedOnRoutes <= 0)
+                        {
+                            //Failsafe if no driver exist on any route
+                            todayGraphsModel.CustomersDividedByWorkHours = 0;
+                        }
+                        else
+                        {
+                            //Number of customers per work time of the drivers of all routes (does NOT include worktime for the whole force)
+                            todayGraphsModel.CustomersDividedByWorkHours = Math.Round(todayGraphsModel.NumberOfValidDeliveries / allHoursDedicatedOnRoutes);
+                        }
+
+                        if (todayGraphsModel.NumberOfValidDeliveries > 0)
+                        {
+                            //Percentages deliveries withing 5 minutes of each customer time slot
+                            var conversion = (todayGraphsModel.CustomersWithinTimeSlot / todayGraphsModel.NumberOfValidDeliveries);
+                            todayGraphsModel.PercentageWithing5MinOfTimeSlot = Math.Round(conversion, 4) * 100;
+                            //Percentages deliveries withing 15 minutes of each customers estimated time
+                            conversion = (todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries);
+                            todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = Math.Round(conversion, 4) * 100;
+                        }
+
+                        todayGraphsModel.LabelTitle = listOfGroup[0].Driver.ExtendedInformationModel.StaffCatName;
+                        todayGraphsModel.StaffCatId = listOfGroup[0].Driver.ExtendedInformationModel.StaffCat;
+                        todayGraphsModel.SectionId = listOfGroup[0].Driver.ExtendedInformationModel.Section;
+                        resultModels.Add(todayGraphsModel);
+                    }
+                }
+            }
+
+            return resultModels.OrderBy(d => d.LabelTitle).ToArray();
+        }
+
+        private static void ExtractDataByCompanyBosses(List<AllBossesViewModel> resultModels, IGrouping<int, DataModel> driverGroup)
+        {
+            var innerGroupByBoss = driverGroup.GroupBy(data => data.Driver.ExtendedInformationModel.Section);
+
+            foreach (var innerDriverGroup in innerGroupByBoss)
+            {
+                var innerAllCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
+                var innerTodayGraphsModel = new AllBossesViewModel();
+
+                foreach (var route in innerDriverGroup)
+                {
+                    innerAllCustomerWhereDeliveryHasBeenDone.AddRange(route.PinRouteModel.Customers.Where(customer => customer.PinCustomerDeliveryInfo.time_handled != null));
+                }
+                if (innerAllCustomerWhereDeliveryHasBeenDone.Count > 0)
+                {
+                    var listOfGroup = innerDriverGroup.ToList();
+                    //Number of deliveries validated and done
+                    innerTodayGraphsModel.NumberOfValidDeliveries = innerAllCustomerWhereDeliveryHasBeenDone.Count;
+                    //Number left to be delivered
+                    innerTodayGraphsModel.NumberOfValidDeliveriesLeft = innerDriverGroup.Sum(route => route.PinRouteModel.NumberOfCustomers) - innerTodayGraphsModel.NumberOfValidDeliveries;
+
+                    //Number of deliveries made within 5 minutes of each customer time slot
+                    innerTodayGraphsModel.CustomersWithinTimeSlot = innerAllCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInTimeWindowPlusMinus5(customer)).Count();
+
+                    //Number of deliveries made withing 15 minutes of each customers estimated time
+                    innerTodayGraphsModel.CustomersWithinPrognosis = innerAllCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInPhasePlusMinus15Minutes(customer)).Count();
+
+                    //Number of customer deliveries made before time slot - 5 minutes
+                    innerTodayGraphsModel.CustomersBeforeTimeSlot = innerAllCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer)).Count();
+
+                    //Number of deliveries made before estimated time +-0 minutes
+                    innerTodayGraphsModel.CustomersBeforeEstimatedTime = innerAllCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer)).Count();
+
+                    var allHoursDedicatedOnRoutes = innerDriverGroup.Sum(route => (double)route.Driver.hours);
+                    if (allHoursDedicatedOnRoutes <= 0)
+                    {
+                        //Failsafe if no driver exist on any route
+                        innerTodayGraphsModel.CustomersDividedByWorkHours = 0;
+                    }
+                    else
+                    {
+                        //Number of customers per work time of the drivers of all routes (does NOT include worktime for the whole force)
+                        innerTodayGraphsModel.CustomersDividedByWorkHours = Math.Round(innerTodayGraphsModel.NumberOfValidDeliveries / allHoursDedicatedOnRoutes);
+                    }
+
+                    if (innerTodayGraphsModel.NumberOfValidDeliveries > 0)
+                    {
+                        //Percentages deliveries withing 5 minutes of each customer time slot
+                        var conversion = (innerTodayGraphsModel.CustomersWithinTimeSlot / innerTodayGraphsModel.NumberOfValidDeliveries);
+                        innerTodayGraphsModel.PercentageWithing5MinOfTimeSlot = Math.Round(conversion, 4) * 100;
+                        //Percentages deliveries withing 15 minutes of each customers estimated time
+                        conversion = (innerTodayGraphsModel.CustomersWithinPrognosis / innerTodayGraphsModel.NumberOfValidDeliveries);
+                        innerTodayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = Math.Round(conversion, 4) * 100;
+                    }
+
+                    innerTodayGraphsModel.LabelTitle = listOfGroup[0].Driver.ExtendedInformationModel.SectionName;
+                    innerTodayGraphsModel.StaffCatId = listOfGroup[0].Driver.ExtendedInformationModel.StaffCat;
+                    innerTodayGraphsModel.SectionId = listOfGroup[0].Driver.ExtendedInformationModel.Section;
+                    resultModels.Add(innerTodayGraphsModel);
+                }
+            }
+        }
+
+        public static AllBossesViewModel[] ConvertDataModelsToMultipleDriverTableData(List<DataModel> routesOfToday)
+        {
+            var resultModels = new List<AllBossesViewModel>();
 
             var groupedData = routesOfToday.GroupBy(data => data.Driver.Id);
             /*
@@ -176,7 +316,7 @@ namespace CargoSupport.Helpers
             foreach (var group in groupedData)
             {
                 var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
-                var todayGraphsModel = new DriverDeliveryStatsViewModel();
+                var todayGraphsModel = new AllBossesViewModel();
 
                 foreach (var route in group)
                 {
@@ -184,6 +324,7 @@ namespace CargoSupport.Helpers
                 }
                 if (allCustomerWhereDeliveryHasBeenDone.Count > 0)
                 {
+                    var groupAsList = group.ToList();
                     //Number of deliveries validated and done
                     todayGraphsModel.NumberOfValidDeliveries = allCustomerWhereDeliveryHasBeenDone.Count;
                     //Number left to be delivered
@@ -209,7 +350,9 @@ namespace CargoSupport.Helpers
                         todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = Math.Round((todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
                     }
 
-                    todayGraphsModel.LabelTitle = group.ToList()[0].Driver.GetDriverName();
+                    todayGraphsModel.LabelTitle = groupAsList[0].Driver.GetDriverName();
+                    todayGraphsModel.StaffCatId = groupAsList[0].Driver.ExtendedInformationModel.StaffCat;
+                    todayGraphsModel.SectionId = groupAsList[0].Driver.ExtendedInformationModel.Section;
                 }
                 else
                 {

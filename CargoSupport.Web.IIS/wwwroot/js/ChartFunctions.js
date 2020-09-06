@@ -33,6 +33,21 @@ function getDataBetweenDates(apiUrl) {
         }
     });
 }
+function getDataBetweenDatesAndReportingToString(apiUrl, sectionId) {
+    $.ajax({
+        type: "GET",
+        url: apiUrl,
+        data: {
+            "fromDate": function () { return fromDate.format(timeFormat) },
+            "toDate": function () { return toDate.format(timeFormat) },
+            "splitData": function () { return splitData() },
+            "sectionId": sectionId
+        },
+        success: function (responseData) {
+            reloadDatatable(responseData);
+        }
+    });
+}
 
 function getRandomColor() {
     var r = Math.floor(Math.random() * 255);

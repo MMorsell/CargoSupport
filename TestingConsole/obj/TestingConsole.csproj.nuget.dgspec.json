@@ -53,6 +53,10 @@
             "Quartz": {
               "target": "Package",
               "version": "[3.1.0, )"
+            },
+            "RestSharp": {
+              "target": "Package",
+              "version": "[106.11.4, )"
             }
           },
           "imports": [

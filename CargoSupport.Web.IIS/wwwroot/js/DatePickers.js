@@ -73,3 +73,28 @@ flatpickr('#calendar-to-graphs-dashboard', {
         getDataBetweenDates(mainApiEndpoint);
     }
 });
+
+/*
+ * Datepicker for grouped data by boss
+ */
+flatpickr('#calendar-from-group-dashboard', {
+    "locale": "sv",
+    "maxDate": new Date(),
+    defaultDate: new Date().fp_incr(-7),
+    onChange: function (selectedDates, dateStr, instance) {
+        fromDate = moment(dateStr, timeFormat);
+        redrawTableById(null, null);
+    }
+});
+/*
+ * Datepicker for grouped data by boss
+ */
+flatpickr('#calendar-to-group-dashboard', {
+    "locale": "sv",
+    "maxDate": new Date(),
+    defaultDate: new Date(),
+    onChange: function (selectedDates, dateStr, instance) {
+        toDate = moment(dateStr, timeFormat);
+        redrawTableById(null, null);
+    }
+});

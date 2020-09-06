@@ -26,105 +26,54 @@
         </div>
     </div>
     <div class="row ">
-        <div class="col-8">
-            <canvas id="mainDataBar"></canvas>
-        </div>
-        <div class="col-4">
-            <canvas id="percentageWithing5MinOfTimeSlot"></canvas>
-            <canvas id="percentageWithing15MinOfCustomerEstimatedTime"></canvas>
-        </div>
+        <table id="dataTable" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
+            <thead style="position: sticky; top: 0;">
+            </thead>
+        </table>
     </div>
 </div>
 
 @section Scripts
 {
     <script>
+        let table;
         const mainApiEndpoint = driverExtendedStats + '?fromDate=2020-08-27&toDate=2020-08-31&reportingTo=9006';
         fromDate = moment();
         toDate = moment();
 
         function reloadGraphs(returnData) {
-            generateMainDatasetFromApiResponse(returnData);
         }
 
-        function generateMainDatasetFromApiResponse(returnData) {
-
-            deleteAllDatasetsOnChart(window.mainChart);
-
-            /*
-             * Generates new datasets based on returned data and pushes the changes
-             */
-            returnData.forEach(dataRow => {
-                var newDataset = {
-                    label: dataRow.labelTitle,
-                    backgroundColor: [
-                        "rgba(255, 159, 64, 0.2)",
-                        "rgba(255, 99, 132, 0.2)",
-                        "rgba(54, 162, 235, 0.2)",
-                        "rgba(153, 102, 255, 0.2)",
-                        "rgba(255, 205, 86, 0.2)",
-                        "rgba(255, 99, 132, 0.2)",
-                    ],
-                    data: [
-                        dataRow.numberOfValidDeliveries,
-                        dataRow.numberOfValidDeliveriesLeft,
-                        dataRow.customersWithinTimeSlot,
-                        dataRow.customersWithinPrognosis,
-                        dataRow.customersBeforeTimeSlot,
-                        dataRow.customersBeforeEstimatedTime
-                    ],
-                    fill: false,
-                    borderColor: [
-                        "rgb(255, 159, 64)",
-                        "rgb(255, 99, 132)",
-                        "rgb(54, 162, 235)",
-                        "rgb(153, 102, 255)",
-                        "rgb(255, 205, 86)",
-                        "rgb(255, 99, 132)"],
-                    borderWidth: 1,
-                }
-
-                window.mainChart.data.datasets.push(newDataset);
-            });
-
-            updateChartReference(window.mainChart);
-        }
-
-        window.onload = function () {
-            var ctx1 = document.getElementById('mainDataBar').getContext('2d');
-            window.mainChart = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    datasets: [{
-                        data: [0, 0, 0, 0, 0, 0],
-                        label: ''
+        $(document).ready(function () {
+            table = $('#dataTable').DataTable({
+                pageLength: 250,
+                "ajax": {
+                    "url": '/api/Analyze/GetSlim',
+                    "data": {
+                        "fromDate": function () { return fromDate.format(timeFormat) },
+                        "toDate": function () { return toDate.format(timeFormat) }
                     },
-                    ],
-                    labels: [
-                        "Antal leveranser",
-                        "Olevererade leveranser",
-                        "Leveranser inom tidsfönster +-5",
-                        "Leveranser inom beräknad leveranstid +-15",
-                        "Leveranser före tidsfönster -5",
-                        "Leveranser före beräknad tid -15",
-                    ]
+                    "dataSrc": ""
                 },
-                options: {
-                    title: {
-                        display: true,
-                        text: 'Leveransstatistiken baseras på antal leveranser som är genomförda'
-                    },
-                    plugins: {
-                        labels: {
-                            render: 'value',
-                            fontSize: 20,
-                            position: 'outside',
-                            textMargin: 10,
-                        }
-                    }
-                }
+                columnDefs: [
+                    { "width": "20%", "targets": 3 }
+                ],
+                columns: [
+                    { data: 'driverFullName', title: 'Leveransansvarig', render: driver_extendedInfo },
+                    //{ data: 'driverFullName', title: 'Chef', render: driver_extendedInfo },
+                    { data: 'avrWeight', title: 'Snittvikt', render: input_kilos },
+                    { data: 'avrCustomers', title: 'Snitt antal kunder' },
+                    { data: 'avrDrivingDistance', title: 'Snitt Kördistans i mil' },
+                ],
+                "order": [[1, "asc"]],
+
             });
-            getDataBetweenDates(driverExtendedStats);
+
+            $('thead th').each(function () {
+                $(this).addClass("stickyHeader");
+            })
+
+            getDataBetweenDatesAndReportingToString(driverExtendedStats);
         }
     </script>
 }
