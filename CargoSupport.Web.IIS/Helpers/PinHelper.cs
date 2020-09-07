@@ -97,7 +97,7 @@ namespace CargoSupport.Helpers
             }
         }
 
-        internal async Task InsertNewResourceRoute(string v, DateTime date)
+        internal async Task InsertNewResourceRoute(string routeName, DateTime date)
         {
             date = date.SetHour(6);
             var newResourceRoute = new DataModel
@@ -107,9 +107,9 @@ namespace CargoSupport.Helpers
             };
             newResourceRoute.IsResourceRoute = true;
             newResourceRoute.DateOfRoute = date;
-            newResourceRoute.PinRouteModel.RouteName = v;
-
-            //newResourceRoute.PinRouteModel.
+            newResourceRoute.PinRouteModel.RouteName = routeName;
+            newResourceRoute.PinRouteModel.ScheduledRouteStart = DateTime.Now.SetHour(23);
+            newResourceRoute.PinRouteModel.ScheduledRouteEnd = DateTime.Now.SetHour(23).SetMinute(59);
 
             await _dbHelper.InsertRecord(Constants.MongoDb.OutputScreenTableName, newResourceRoute);
         }

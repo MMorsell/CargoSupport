@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
 using CargoSupport.Enums;
+using CargoSupport.Extensions;
 using CargoSupport.Helpers;
 using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
@@ -91,27 +92,21 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         [HttpPost]
         [Route("Manage/AddResourceRoute")]
-        public async Task<ActionResult> AddResourceRoute(string fromDate)
+        public async Task<ActionResult> AddResourceRoute()
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
                 return Unauthorized();
             }
 
-            DateTime.TryParse(fromDate, out DateTime from);
-
-            if (from.ToString(@"yyyy-MM-dd") != fromDate)
-            {
-                return BadRequest($"fromDate is not valid, expecting 2020-01-01, recieved: '{fromDate}'");
-            }
-
+            var date = DateTime.Now.SetHour(6);
             var db = new MongoDbHelper(Constants.MongoDb.DatabaseName);
 
-            var routesOfTheDay = await db.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, from);
+            var routesOfTheDay = await db.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date);
             var numberOfResourceRoutes = routesOfTheDay.Where(route => route.IsResourceRoute == true).Count();
 
             var ph = new PinHelper();
-            await ph.InsertNewResourceRoute($"Resurs {numberOfResourceRoutes + 1}", from);
+            await ph.InsertNewResourceRoute($"Resurs {numberOfResourceRoutes + 1}", date);
             return Ok();
         }
     }

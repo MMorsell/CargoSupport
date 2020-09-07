@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CargoSupport.Extensions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace CargoSupport.Models.PinModels
 {
     public class PinRouteModel
     {
-        public string ParentOrderId { get; set; }
+        public string ParentOrderId { get; set; } = "";
         public string ParentOrderName { get; set; }
 
         [JsonProperty("id")]
@@ -25,32 +26,32 @@ namespace CargoSupport.Models.PinModels
          */
 
         [JsonProperty("customer")]
-        public List<PinCustomerModel> Customers { get; set; }
+        public List<PinCustomerModel> Customers { get; set; } = new List<PinCustomerModel>();
 
         [JsonProperty("route_info")]
-        public PinRouteInfoModel RouteInfoModel { get; set; }
+        public PinRouteInfoModel RouteInfoModel { get; set; } = new PinRouteInfoModel();
 
         [JsonProperty("order")]
-        public PinOrderInfoModel PinOrderInfoModel { get; set; }
+        public PinOrderInfoModel PinOrderInfoModel { get; set; } = new PinOrderInfoModel();
 
         /*
          * Intergers
          */
 
-        public double NumberOfCustomers { get; private set; }
+        public double NumberOfCustomers { get; private set; } = 0;
 
-        public double Weight { get; private set; }
-        public double DistanceInMeters { get; private set; }
+        public double Weight { get; private set; } = 0;
+        public double DistanceInMeters { get; private set; } = 0;
 
         /*
          * Booleans
          */
 
         [JsonProperty("started")]
-        public bool RouteHasStarted { get; set; }
+        public bool RouteHasStarted { get; set; } = false;
 
         [JsonProperty("ended")]
-        public bool RouteHasEnded { get; set; }
+        public bool RouteHasEnded { get; set; } = false;
 
         /*
          * DateTime and TimeSpan
@@ -91,12 +92,12 @@ namespace CargoSupport.Models.PinModels
 
     public class PinRouteInfoModel
     {
-        public string start_time { get; set; }
-        public string end_time { get; set; }
-        public string duration { get; set; }
+        public string start_time { get; set; } = "23:58";
+        public string end_time { get; set; } = "23:59";
+        public string duration { get; set; } = "0";
 
         [JsonProperty("distance")]
-        public string DistanceInMeters { get; set; }
+        public string DistanceInMeters { get; set; } = "0";
     }
 
     public class PinCustomerModel
@@ -105,12 +106,12 @@ namespace CargoSupport.Models.PinModels
         public int id { get; set; }
 
         [JsonProperty("position_in_route")]
-        public int PositionInRoute { get; set; }
+        public int PositionInRoute { get; set; } = 0;
 
-        public string tracking_number { get; set; }
-        public string vehicle_tags { get; set; }
-        public string position_lng { get; set; }
-        public string position_lat { get; set; }
+        public string tracking_number { get; set; } = "NO_TRACKINGNUMBER_SET";
+        public string vehicle_tags { get; set; } = "";
+        public string position_lng { get; set; } = "NOT_SET";
+        public string position_lat { get; set; } = "NOT_SET";
 
         [JsonProperty("delivery_info")]
         public PinCustomerDeliveryInfo PinCustomerDeliveryInfo { get; set; }
