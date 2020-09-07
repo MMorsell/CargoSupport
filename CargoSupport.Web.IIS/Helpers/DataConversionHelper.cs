@@ -68,9 +68,9 @@ namespace CargoSupport.Helpers
             return resultModels.ToArray();
         }
 
-        public static TodayGraphsViewModel[] ConvertTodaysDataToGraphModels(List<DataModel> routesOfToday, bool splitRouteName)
+        public static TodayGraphsViewModel[] ConvertTodaysDataToGraphModelsAsParalell(List<DataModel> routesOfToday, bool splitRouteName)
         {
-            var resultModels = new List<TodayGraphsViewModel>();
+            var resultModels = new ConcurrentBag<TodayGraphsViewModel>();
 
             IEnumerable<IGrouping<object, DataModel>> groupedData;
             if (splitRouteName)
@@ -85,7 +85,7 @@ namespace CargoSupport.Helpers
              * Get Valid data:
              */
 
-            foreach (var group in groupedData)
+            Parallel.ForEach(groupedData, group =>
             {
                 var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
                 var todayGraphsModel = new TodayGraphsViewModel();
@@ -123,7 +123,7 @@ namespace CargoSupport.Helpers
                     else
                     {
                         //Number of customers per work time of the drivers of all routes (does NOT include worktime for the whole force)
-                        todayGraphsModel.CustomersDividedByWorkHours = Math.Round(todayGraphsModel.NumberOfValidDeliveries / allHoursDedicatedOnRoutes);
+                        todayGraphsModel.CustomersDividedByWorkHours = Math.Round(todayGraphsModel.NumberOfValidDeliveries / allHoursDedicatedOnRoutes, 2);
                     }
 
                     if (todayGraphsModel.NumberOfValidDeliveries > 0)
@@ -159,18 +159,18 @@ namespace CargoSupport.Helpers
                 }
 
                 resultModels.Add(todayGraphsModel);
-            }
+            });
 
             return resultModels.OrderBy(d => d.LabelTitle).ToArray();
         }
 
         public static AllBossesViewModel[] ConvertDatRowsToBossGroup(List<DataModel> routesOfToday)
         {
-            var resultModels = new List<AllBossesViewModel>();
+            var resultModels = new ConcurrentBag<AllBossesViewModel>();
 
             var dataGroupedByReportingTo = routesOfToday.GroupBy(data => data.Driver.ExtendedInformationModel.StaffCat);
 
-            foreach (var driverGroup in dataGroupedByReportingTo)
+            Parallel.ForEach(dataGroupedByReportingTo, driverGroup =>
             {
                 var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
                 var todayGraphsModel = new AllBossesViewModel();
@@ -236,16 +236,15 @@ namespace CargoSupport.Helpers
                         resultModels.Add(todayGraphsModel);
                     }
                 }
-            }
+            });
 
             return resultModels.OrderBy(d => d.LabelTitle).ToArray();
         }
 
-        private static void ExtractDataByCompanyBosses(List<AllBossesViewModel> resultModels, IGrouping<int, DataModel> driverGroup)
+        private static void ExtractDataByCompanyBosses(ConcurrentBag<AllBossesViewModel> resultModels, IGrouping<int, DataModel> driverGroup)
         {
             var innerGroupByBoss = driverGroup.GroupBy(data => data.Driver.ExtendedInformationModel.Section);
-
-            foreach (var innerDriverGroup in innerGroupByBoss)
+            Parallel.ForEach(innerGroupByBoss, innerDriverGroup =>
             {
                 var innerAllCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
                 var innerTodayGraphsModel = new AllBossesViewModel();
@@ -301,19 +300,16 @@ namespace CargoSupport.Helpers
                     innerTodayGraphsModel.SectionId = listOfGroup[0].Driver.ExtendedInformationModel.Section;
                     resultModels.Add(innerTodayGraphsModel);
                 }
-            }
+            });
         }
 
         public static AllBossesViewModel[] ConvertDataModelsToMultipleDriverTableData(List<DataModel> routesOfToday)
         {
-            var resultModels = new List<AllBossesViewModel>();
+            var resultModels = new ConcurrentBag<AllBossesViewModel>();
 
             var groupedData = routesOfToday.GroupBy(data => data.Driver.Id);
-            /*
-             * Get Valid data:
-             */
 
-            foreach (var group in groupedData)
+            Parallel.ForEach(groupedData, group =>
             {
                 var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
                 var todayGraphsModel = new AllBossesViewModel();
@@ -368,7 +364,7 @@ namespace CargoSupport.Helpers
                 }
 
                 resultModels.Add(todayGraphsModel);
-            }
+            });
 
             return resultModels.ToArray();
         }

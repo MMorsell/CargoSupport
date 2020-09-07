@@ -131,7 +131,7 @@ namespace CargoSupport.Web.IIS.Controllers
             }
 
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
-            var res = CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModels(analyzeModels, splitData);
+            var res = CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModelsAsParalell(analyzeModels, splitData);
             return Ok(res);
         }
 
