@@ -64,9 +64,27 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             {
                 return Unauthorized();
             }
+
+            DateTime.TryParse(model.Date, out DateTime date);
+
+            if (model.Date != date.ToString(@"yyyy-MM-dd"))
+            {
+                return BadRequest($"fromDate is not valid, expecting 2020-01-01, recieved: '{model.Date}'");
+            }
+
             var _ph = new PinHelper();
-            List<PinRouteModel> routes = _ph.RetrieveRoutesFromActualPin(model.PinId).Result;
-            await _ph.UpdateExistingRecordsIfThereIsOne(routes);
+            var existingIds = await _ph.GetAllOrderIdsAsStringForThisDay(date);
+
+            foreach (var existingId in existingIds)
+            {
+                int.TryParse(existingId, out int result);
+
+                if (result != 0)
+                {
+                    List<PinRouteModel> routes = await _ph.RetrieveRoutesFromActualPin(result);
+                    await _ph.UpdateExistingRecordsIfThereIsOne(routes);
+                }
+            }
 
             return View("../Home/Transport");
         }

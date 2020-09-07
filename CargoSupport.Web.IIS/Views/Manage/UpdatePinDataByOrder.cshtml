@@ -3,24 +3,22 @@
     ViewData["Title"] = "Home Page";
 }
 
-@using (Html.BeginForm("UpdatePinDataByOrder", "Manage", FormMethod.Post))
-{
-    <table cellpadding="0" cellspacing="0">
+<form method="post" enctype="multipart/form-data" asp-action="UpdatePinDataByOrder">
+    <table>
         <tr>
-            <th colspan="2" align="center">Uppdatera data i databasen utifrån RuttID</th>
-        </tr>
-        <tr>
-            <td>ID: </td>
-            <td>
-                @Html.TextBoxFor(m => m.PinId)
-            </td>
+            <div>
+                <div style="padding-left: 20px;" class="group">
+                    <input type="text" asp-for="@Model.Date" id="calendar-pin-order">
+                    <span class="bar"></span>
+                </div>
+            </div>
         </tr>
         <tr>
             <td></td>
-            <td><input type="submit" value="Submit" /></td>
+            <td><input class="btn btn-outline-success" type="submit" value="Uppdatera vald dags turer" /></td>
         </tr>
     </table>
-}
+</form>
 
 @section Scripts
 {

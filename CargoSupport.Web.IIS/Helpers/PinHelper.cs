@@ -114,6 +114,14 @@ namespace CargoSupport.Helpers
             await _dbHelper.InsertRecord(Constants.MongoDb.OutputScreenTableName, newResourceRoute);
         }
 
+        public async Task<List<string>> GetAllOrderIdsAsStringForThisDay(DateTime date)
+        {
+            var allRecords = await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date);
+
+            var res = allRecords.Select(rec => rec.PinRouteModel.ParentOrderId).Distinct().ToList();
+            return res;
+        }
+
         public async Task<int> AnyPinRouteModelExistInDatabase(List<PinRouteModel> pinRouteModels)
         {
             foreach (var pinModel in pinRouteModels)
