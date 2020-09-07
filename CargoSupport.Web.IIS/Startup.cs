@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CargoSupport.Hubs;
+using CargoSupport.Services;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,7 +30,7 @@ namespace CargoSupport.Web.IIS
             //services
             //    .AddAuthentication(NegotiateDefaults.AuthenticationScheme)
             //    .AddNegotiate();
-
+            services.AddHostedService<PinUpdateService>();
             services.AddControllersWithViews();
             services.AddSignalR();
 
