@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="col-4">
-            <button onclick="resetTable()">Återgå till gruppvy</button>
+            <button class="btn btn-outline-info" onclick="resetTable()">Återgå till gruppvy</button>
         </div>
         <div class="col-4">
         </div>
@@ -60,12 +60,56 @@
 
             table.ajax.reload(null, false);
         }
+
+        function colorcolumns() {
+            //colorColumnDependingOnValue(1);
+            //colorColumnDependingOnValue(2);
+            colorColumnDependingOnValue(3, true);
+            colorColumnDependingOnValue(4, true);
+            colorColumnDependingOnValue(5, false);
+            colorColumnDependingOnValue(6, false);
+            colorColumnDependingOnValue(7, true);
+            colorColumnDependingOnValue(8, true);
+        }
+
+        function colorColumnDependingOnValue(columnIndex, highIsGood) {
+            const allValues = table.columns(columnIndex + 2).data()[0];
+            const maxVal = allValues.max();
+
+            for (i = 0; i < allValues.length; i++) {
+                const percentageVal = percentage(allValues[i], maxVal);
+                let colorToSet
+                if (highIsGood) {
+                    colorToSet = percentageToColorHighIsGood(percentageVal);
+                }
+                else {
+                    colorToSet = percentageToColorHighIsBad(percentageVal);
+                }
+                const tableRef = document.getElementById("dataTable");
+                const row = tableRef.rows[i + 1];
+                const cell = row.cells[columnIndex];
+                cell.style.backgroundColor = colorToSet;
+            }
+        }
+
         const boss_extendedInfo = function (data, type, full, meta) {
             if (type === 'sort' || type === 'filter') {
                 return data;
             }
-            return '<a class="nav-link text-dark" onClick="redrawTableById(' + full.sectionId + ',' + full.staffCatId + ')">' + data + '</a>';
+            return '<a style="color: blue;cursor: pointer;text-decoration: underline" onClick="redrawTableById(' + full.sectionId + ',' + full.staffCatId + ')">' + data + '</a>';
         }
+
+        function percentage(partialValue, totalValue) {
+            return (100 * partialValue) / totalValue;
+        }
+
+        Array.prototype.max = function () {
+            return Math.max.apply(null, this);
+        };
+
+        Array.prototype.min = function () {
+            return Math.min.apply(null, this);
+        };
 
         $(document).ready(function () {
             table = $('#dataTable').DataTable({
@@ -80,7 +124,7 @@
                     },
                     "dataSrc": "",
                     "complete": function (responseReference, responseText) {
-                        debugger;
+                        colorcolumns();
                     },
                     "error": function (responseReference, responseText) {
                     },
