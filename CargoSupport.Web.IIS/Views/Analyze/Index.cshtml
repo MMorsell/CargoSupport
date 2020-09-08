@@ -11,9 +11,9 @@
 <div class="row">
     <div style="float: right;">
         <h3 style="display: inline-block;"></h3>
-        <img id="errorSymbol" style="display:none" src="~/img/svg/errorSymbol.svg" />
-        <img id="onlineSymbom" style="display:none" src="~/img/svg/onlineSymbol.svg" />
-        <div id="connectStatus" style="display:none" class="lds-facebook"><div style="display: inline-block;"></div><div style="display: inline-block;"></div><div style="display: inline-block;"></div></div>
+        <img id="errorSymbol" style="height:0px;display:none" src="~/img/svg/errorSymbol.svg" />
+        <img id="onlineSymbom" style="height: 0px; display: none" src="~/img/svg/onlineSymbol.svg" />
+        <div id="connectStatus" style="height: 0px; display: none" class="lds-facebook"><div style="display: inline-block;"></div><div style="display: inline-block;"></div><div style="display: inline-block;"></div></div>
     </div>
 </div>
 <div class="row">
@@ -48,7 +48,7 @@
             if (type === 'sort' || type === 'filter') {
                 return data;
             }
-            return '<a class="nav-link text-dark" href="/Analyze/AllData/' + full.quinyxId + '">' + data + '</a>';
+            return '<a style="color: blue;cursor: pointer;text-decoration: underline" href="/Analyze/AllData/' + full.quinyxId + '">' + data + '</a>';
             //return '<a class="nav-link text-dark" asp-route-id="' + full.quinyxId + '" asp-area="" asp-controller="Analyze" asp-action="AllData">' + data + '</a>';
         }
 

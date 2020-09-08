@@ -63,7 +63,7 @@ namespace CargoSupport.Models.PinModels
         public DateTime ScheduledRouteEnd { get; set; }
 
         [JsonProperty("actual_start_time")]
-        public object ActualRouteStart { get; set; }
+        public string? ActualRouteStart { get; set; }
 
         public void CalculateProperties()
         {
@@ -126,6 +126,6 @@ namespace CargoSupport.Models.PinModels
         public int weight { get; set; }
         public int stop_time { get; set; }
         public object actual_stop_time { get; set; }
-        public object age_verification { get; set; }
+        public int? age_verification { get; set; }
     }
 }

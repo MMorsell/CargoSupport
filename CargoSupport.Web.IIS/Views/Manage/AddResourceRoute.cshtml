@@ -1,0 +1,28 @@
+﻿@model CargoSupport.ViewModels.Manange.ResourceRouteViewModel;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using (Html.BeginForm("AddResourceRoute", "Manage", FormMethod.Post))
+{
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <td>Order att lägga resursturen på (För statistik)</td>
+        </tr>
+        <tr>
+            <td>
+                <select asp-for="@Model.OrderID" asp-items="@(new SelectList(Model.RouteNamesOfToday,"Key","Value"))">
+                    <option>Välj</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Skapa resurstur" /></td>
+        </tr>
+    </table>
+}
+
+@section Scripts
+{
+}

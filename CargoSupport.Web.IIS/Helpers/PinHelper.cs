@@ -97,7 +97,7 @@ namespace CargoSupport.Helpers
             }
         }
 
-        internal async Task InsertNewResourceRoute(string routeName, DateTime date)
+        internal async Task InsertNewResourceRoute(string routeName, DateTime date, string parentOrderIdToBindTo, string parentOrderName)
         {
             date = date.SetHour(6);
             var newResourceRoute = new DataModel
@@ -110,6 +110,8 @@ namespace CargoSupport.Helpers
             newResourceRoute.PinRouteModel.RouteName = routeName;
             newResourceRoute.PinRouteModel.ScheduledRouteStart = DateTime.Now.SetHour(23);
             newResourceRoute.PinRouteModel.ScheduledRouteEnd = DateTime.Now.SetHour(23).SetMinute(59);
+            newResourceRoute.PinRouteModel.ParentOrderId = parentOrderIdToBindTo;
+            newResourceRoute.PinRouteModel.ParentOrderName = parentOrderName;
 
             await _dbHelper.InsertRecord(Constants.MongoDb.OutputScreenTableName, newResourceRoute);
         }
@@ -134,6 +136,21 @@ namespace CargoSupport.Helpers
                 }
             }
             return 0;
+        }
+
+        public async Task<Dictionary<string, string>> GetAllUniqueRoutesOfDayWithNames(DateTime date)
+        {
+            var returnDictionary = new Dictionary<string, string>();
+            var allRecords = await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date);
+
+            var allIds = allRecords.Select(rec => rec.PinRouteModel.ParentOrderId).Where(r => r != null && r != "" && r != "0").Distinct().ToList();
+            var allNames = allRecords.Select(rec => rec.PinRouteModel.ParentOrderName).Where(r => r != null && r != "" && r != "0").Distinct().ToList();
+            for (int i = 0; i < allIds.Count; i++)
+            {
+                returnDictionary.Add(allIds[i], allNames[i]);
+            }
+
+            return returnDictionary;
         }
     }
 }

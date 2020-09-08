@@ -90,24 +90,52 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             return View("../Home/Transport");
         }
 
+        public async Task<IActionResult> AddResourceRoute()
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+            var ph = new PinHelper();
+
+            var allSelectOptions = await ph.GetAllUniqueRoutesOfDayWithNames(DateTime.Now);
+            return View(new ResourceRouteViewModel { RouteNamesOfToday = allSelectOptions });
+        }
+
         [HttpPost]
         [Route("Manage/AddResourceRoute")]
-        public async Task<ActionResult> AddResourceRoute()
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddResourceRoute(ResourceRouteViewModel resourceRouteViewModel)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
                 return Unauthorized();
             }
 
+            if (resourceRouteViewModel.OrderID == "Välj")
+            {
+                return BadRequest("Att koppla resursturen till 'Välj går inte'");
+            }
+
             var date = DateTime.Now.SetHour(6);
             var db = new MongoDbHelper(Constants.MongoDb.DatabaseName);
 
             var routesOfTheDay = await db.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date);
-            var numberOfResourceRoutes = routesOfTheDay.Where(route => route.IsResourceRoute == true).Count();
+
+            var numberOfResourceRoutes = routesOfTheDay
+                .Where(route => route.IsResourceRoute == true &&
+                route.PinRouteModel.ParentOrderId == resourceRouteViewModel.OrderID).Count();
+
+            var existingRoute = routesOfTheDay.FirstOrDefault(r => r.PinRouteModel.ParentOrderId == resourceRouteViewModel.OrderID);
+
+            if (existingRoute == null)
+            {
+                return BadRequest($"RuttId {resourceRouteViewModel.OrderID} Gick inte att koppla till någon order i databasen på datum {date}");
+            }
 
             var ph = new PinHelper();
-            await ph.InsertNewResourceRoute($"Resurs {numberOfResourceRoutes + 1}", date);
-            return Ok();
+            await ph.InsertNewResourceRoute($"Resurs {numberOfResourceRoutes + 1}", date, resourceRouteViewModel.OrderID, existingRoute.PinRouteModel.ParentOrderName);
+            return View("../Home/Transport");
         }
     }
 }
