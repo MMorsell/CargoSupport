@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CargoSupport.ViewModels.Analyze;
 using System.Collections.Concurrent;
 using CargoSupport.Models.PinModels;
+using Microsoft.AspNetCore.Routing.Template;
 
 namespace CargoSupport.Helpers
 {
@@ -160,7 +161,7 @@ namespace CargoSupport.Helpers
                     CustomersBeforeEstimatedTime = 0,
                     PercentageWithing5MinOfTimeSlot = 0,
                     PercentageWithing15MinOfCustomerEstimatedTime = 0,
-                    LabelTitle = "No data on this day"
+                    LabelTitle = "No data on this day, or 0 deliveries has been made"
                 });
             }
 
@@ -350,6 +351,7 @@ namespace CargoSupport.Helpers
                     }
 
                     todayGraphsModel.LabelTitle = groupAsList[0].Driver.GetDriverName();
+                    todayGraphsModel.DriverId = groupAsList[0].Driver.Id;
                     todayGraphsModel.StaffCatId = groupAsList[0].Driver.ExtendedInformationModel.StaffCat;
                     todayGraphsModel.SectionId = groupAsList[0].Driver.ExtendedInformationModel.Section;
                     resultModels.Add(todayGraphsModel);
@@ -370,6 +372,33 @@ namespace CargoSupport.Helpers
                     PercentageWithing15MinOfCustomerEstimatedTime = 0,
                     LabelTitle = "No data on this day"
                 });
+            }
+
+            return resultModels.ToArray();
+        }
+
+        public static SimplifiedRecordsViewModel[] ConvertDataToSimplifiedRecordsAsParalell(List<DataModel> routes)
+        {
+            var resultModels = new ConcurrentBag<SimplifiedRecordsViewModel>();
+
+            Parallel.ForEach(routes, route =>
+            {
+                resultModels.Add(new SimplifiedRecordsViewModel()
+                {
+                    RouteName = route.PinRouteModel.RouteName,
+                    NumberOfCustomers = route.PinRouteModel.NumberOfCustomers,
+                    Weight = route.PinRouteModel.Weight,
+                    DistansInSwedishMiles = Math.Round((route.PinRouteModel.DistanceInMeters / 10000), 2),
+                    CommentFromTransport = route.PostRideAnnotation,
+                    ResourceRoute = route.IsResourceRoute,
+                    DateOfRoute = route.DateOfRoute.ToString(@"yyyy-MM-dd")
+                    //TODO: Add for customer comments
+                });
+            });
+
+            if (resultModels.Count == 0)
+            {
+                resultModels.Add(new SimplifiedRecordsViewModel());
             }
 
             return resultModels.ToArray();

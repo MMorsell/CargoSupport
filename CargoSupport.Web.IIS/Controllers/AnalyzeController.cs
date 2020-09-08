@@ -59,13 +59,20 @@ namespace CargoSupport.Web.IIS.Controllers
             return View(allRoutes);
         }
 
-        public async Task<ActionResult> DriversUnderMe()
+        [Route("[controller]/DriverDiscreteData/{id:int}")]
+        public async Task<IActionResult> DriverDiscreteData(int id)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
                 return Unauthorized();
             }
 
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            ViewBag.DriverId = JsonSerializer.Serialize(id);
             return View();
         }
 
@@ -132,6 +139,64 @@ namespace CargoSupport.Web.IIS.Controllers
 
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
             var res = CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModelsAsParalell(analyzeModels, splitData);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Route("api/[controller]/GetTodayGraphsForDriver")]
+        public async Task<ActionResult> GetTodayGraphsForDriver(string fromDate, string toDate, int driverId)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            DateTime.TryParse(fromDate, out DateTime from);
+
+            if (from.ToString(@"yyyy-MM-dd") != fromDate)
+            {
+                return BadRequest($"fromDate is not valid, expecting 2020-01-01, recieved: '{fromDate}'");
+            }
+
+            DateTime.TryParse(toDate, out DateTime to);
+
+            if (to.ToString(@"yyyy-MM-dd") != toDate)
+            {
+                return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
+            }
+
+            List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            analyzeModels = analyzeModels.Where(data => data.Driver.Id == driverId).ToList();
+            var res = CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModelsAsParalell(analyzeModels, true);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Route("api/[controller]/GetSimplifiedRecordsForDriver")]
+        public async Task<ActionResult> GetSimplifiedRecordsForDriver(string fromDate, string toDate, int driverId)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            DateTime.TryParse(fromDate, out DateTime from);
+
+            if (from.ToString(@"yyyy-MM-dd") != fromDate)
+            {
+                return BadRequest($"fromDate is not valid, expecting 2020-01-01, recieved: '{fromDate}'");
+            }
+
+            DateTime.TryParse(toDate, out DateTime to);
+
+            if (to.ToString(@"yyyy-MM-dd") != toDate)
+            {
+                return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
+            }
+
+            List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            analyzeModels = analyzeModels.Where(data => data.Driver.Id == driverId).ToList();
+            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataToSimplifiedRecordsAsParalell(analyzeModels);
             return Ok(res);
         }
 
@@ -237,6 +302,37 @@ namespace CargoSupport.Web.IIS.Controllers
                 var res = CargoSupport.Helpers.DataConversionHelper.ConvertDatRowsToBossGroup(recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null).ToList());
                 return Ok(res);
             }
+        }
+
+        [HttpGet]
+        [Route("api/[controller]/GetSingleDriverUnderBoss")]
+        public async Task<ActionResult> GetSingleDriverUnderBoss(int driverId, string fromDate, string toDate)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            DateTime.TryParse(fromDate, out DateTime from);
+
+            if (from.ToString(@"yyyy-MM-dd") != fromDate)
+            {
+                return BadRequest($"fromDate is not valid, expecting 2020-01-01, recieved: '{fromDate}'");
+            }
+
+            DateTime.TryParse(toDate, out DateTime to);
+
+            if (to.ToString(@"yyyy-MM-dd") != toDate)
+            {
+                return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
+            }
+
+            var matchingRecordsInDatabase = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            matchingRecordsInDatabase = matchingRecordsInDatabase.Where(rec => rec.Driver.Id.Equals(driverId)).ToList();
+            var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
+
+            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsInDatabase);
+            return Ok(res);
         }
     }
 }

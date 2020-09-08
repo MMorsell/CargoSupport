@@ -64,11 +64,11 @@
         function colorcolumns() {
             //colorColumnDependingOnValue(1);
             //colorColumnDependingOnValue(2);
-            colorColumnDependingOnValue(3, true);
+            //colorColumnDependingOnValue(3, true);
             colorColumnDependingOnValue(4, true);
-            colorColumnDependingOnValue(5, false);
+            colorColumnDependingOnValue(5, true);
             colorColumnDependingOnValue(6, false);
-            colorColumnDependingOnValue(7, true);
+            colorColumnDependingOnValue(7, false);
             colorColumnDependingOnValue(8, true);
         }
 
@@ -96,7 +96,12 @@
             if (type === 'sort' || type === 'filter') {
                 return data;
             }
-            return '<a style="color: blue;cursor: pointer;text-decoration: underline" onClick="redrawTableById(' + full.sectionId + ',' + full.staffCatId + ')">' + data + '</a>';
+            if (full.driverId !== 0) {
+                return '<a style="color: blue;cursor: pointer;text-decoration: underline" href="DriverDiscreteData/' + full.driverId + '" class="dropdown-item">' + data + '</a>';
+            }
+            else {
+                return '<a style="color: blue;cursor: pointer;text-decoration: underline" onClick="redrawTableById(' + full.sectionId + ',' + full.staffCatId + ')">' + data + '</a>';
+            }
         }
 
         function percentage(partialValue, totalValue) {
@@ -135,15 +140,16 @@
                 columns: [
                     { data: 'sectionId', title: 'SectionId', "visible": false, "searchable": false },
                     { data: 'staffCatId', title: 'StaffCatId', "visible": false, "searchable": false },
+                    { data: 'driverId', title: 'DriverId', "visible": false, "searchable": false },
                     { data: 'labelTitle', title: 'Gruppnamn', render: boss_extendedInfo },
                     { data: 'numberOfValidDeliveries', title: 'Genomförda leveranser' },
-                    { data: 'numberOfValidDeliveriesLeft', title: 'Leveranser ej klara' },
-                    { data: 'customersWithinTimeSlot', title: 'Leveranser inom tidsfönster +-5' },
-                    { data: 'customersWithinPrognosis', title: 'Leveranser inom beräknad leveranstid +-15' },
-                    { data: 'customersBeforeTimeSlot', title: 'Leveranser före tidsfönster -5' },
-                    { data: 'customersBeforeEstimatedTime', title: 'Leveranser före beräknad tid -15' },
-                    { data: 'percentageWithing5MinOfTimeSlot', title: 'Procent Leveranser inom tidsfönster +-5' },
-                    { data: 'percentageWithing15MinOfCustomerEstimatedTime', title: 'Procent Leveranser inom beräknad leveranstid +-15' },
+                    { data: 'numberOfValidDeliveriesLeft', title: 'Ej klara Leveranser' },
+                    { data: 'customersWithinTimeSlot', title: 'Inom tidsfönster +-5' },
+                    { data: 'customersWithinPrognosis', title: 'Inom beräknad leveranstid +-15' },
+                    { data: 'customersBeforeTimeSlot', title: 'Före tidsfönster -5' },
+                    { data: 'customersBeforeEstimatedTime', title: 'Före beräknad tid -15' },
+                    { data: 'percentageWithing5MinOfTimeSlot', title: 'Procent inom tidsfönster +-5' },
+                    { data: 'percentageWithing15MinOfCustomerEstimatedTime', title: 'Procent inom beräknad leveranstid +-15' },
                 ]
             });
 

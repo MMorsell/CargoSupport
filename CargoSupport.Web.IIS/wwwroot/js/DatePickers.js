@@ -50,6 +50,30 @@ flatpickr('#calendar-to-vanilla', {
 });
 
 /*
+ * datepicker for index driver
+ */
+flatpickr('#calendar-from-driverIndex', {
+    "locale": "sv",
+    defaultDate: new Date().fp_incr(-7),
+    onChange: function (selectedDates, dateStr, instance) {
+        fromDate = moment(dateStr);
+        reloadDatatableWithNoStatusAjax();
+    }
+});
+
+/*
+ * datepicker for index driver
+ */
+flatpickr('#calendar-to-driverIndex', {
+    "locale": "sv",
+    defaultDate: new Date(),
+    onChange: function (selectedDates, dateStr, instance) {
+        toDate = moment(dateStr);
+        reloadDatatableWithNoStatusAjax();
+    }
+});
+
+/*
  * Datepicker for graph dashboard
  */
 flatpickr('#calendar-from-graphs-dashboard', {
@@ -71,6 +95,33 @@ flatpickr('#calendar-to-graphs-dashboard', {
     onChange: function (selectedDates, dateStr, instance) {
         toDate = moment(dateStr, timeFormat);
         getDataBetweenDates(mainApiEndpoint);
+    }
+});
+
+/*
+ * Datepicker for detailed discrete driver
+ */
+flatpickr('#calendar-from-graphs-discrete', {
+    "locale": "sv",
+    "maxDate": new Date(),
+    defaultDate: new Date().fp_incr(-7),
+    onChange: function (selectedDates, dateStr, instance) {
+        fromDate = moment(dateStr, timeFormat);
+        getDataBetweenDates(mainApiEndpoint);
+        redrawTableById(null, null);
+    }
+});
+/*
+ * Datepicker for detailed discrete driver
+ */
+flatpickr('#calendar-to-graphs-discrete', {
+    "locale": "sv",
+    "maxDate": new Date(),
+    defaultDate: new Date(),
+    onChange: function (selectedDates, dateStr, instance) {
+        toDate = moment(dateStr, timeFormat);
+        getDataBetweenDates(mainApiEndpoint);
+        redrawTableById(null, null);
     }
 });
 

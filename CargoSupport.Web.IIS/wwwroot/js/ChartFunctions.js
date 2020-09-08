@@ -26,7 +26,8 @@ function getDataBetweenDates(apiUrl) {
         data: {
             "fromDate": function () { return fromDate.format(timeFormat) },
             "toDate": function () { return toDate.format(timeFormat) },
-            "splitData": function () { return splitData() }
+            "splitData": function () { return splitData() },
+            "driverId": function () { return driverId() }
         },
         success: function (responseData) {
             reloadGraphs(responseData);
@@ -55,5 +56,14 @@ function splitData() {
     }
     else {
         return document.getElementById('split-data').checked;
+    }
+}
+function driverId() {
+    debugger;
+    if (Id === null) {
+        return 0;
+    }
+    else {
+        return Id;
     }
 }

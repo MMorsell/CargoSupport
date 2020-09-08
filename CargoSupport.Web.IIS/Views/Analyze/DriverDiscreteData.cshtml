@@ -1,0 +1,473 @@
+﻿@model List<CargoSupport.Models.DatabaseModels.DataModel>;
+@{
+    ViewData["Title"] = "Föraranalys";
+}
+
+<div class="row">
+    <div class="col-6">
+        <h1 id="mainName" class="display-4"></h1>
+    </div>
+    <div class="col-4">
+    </div>
+    <div class="col-2">
+        <div>
+            <h6>Visa data</h6>
+            <div style="padding-left: 20px;" class="group">
+                <label class="input-label">Från</label>
+                <input type="text" id="calendar-from-graphs-discrete">
+                <span class="bar"></span>
+            </div>
+            <div style="padding-left: 30px;" class="group">
+                <label class="input-label">Till</label>
+                <input type="text" id="calendar-to-graphs-discrete">
+                <span class="bar"></span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row ">
+    <table id="dataTable" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
+        <thead>
+        </thead>
+    </table>
+</div>
+
+<div class="row ">
+    <div class="col-8">
+        <canvas id="mainDataBar"></canvas>
+    </div>
+    <div class="col-4">
+        <canvas id="percentageWithing5MinOfTimeSlot"></canvas>
+        <canvas id="percentageWithing15MinOfCustomerEstimatedTime"></canvas>
+    </div>
+</div>
+
+<div class="row ">
+    <table id="fullRecords" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
+        <thead style="position: sticky; top: 0;">
+        </thead>
+    </table>
+</div>
+
+@section Scripts
+{
+    <script>
+        Id = @Html.Raw(ViewBag.DriverId);
+        const mainApiEndpoint = todayGraphsForDriver;
+        fromDate = moment().subtract(7, 'd');
+        toDate = moment();
+        let section = null;
+        let staffCat = null;
+        let secondTable;
+
+        function resetTable() {
+            staffCat = null;
+            section = null;
+            table.ajax.reload(null, false);
+        }
+
+        function redrawTableById(sectionId, staffCatId) {
+            if (sectionId != null) {
+                section = sectionId;
+            }
+
+            if (staffCatId != null) {
+                staffCat = staffCatId;
+            }
+
+            table.ajax.reload(null, false);
+            secondTable.ajax.reload(null, false);
+        }
+
+        const set_Mainname = function (data, type, full, meta) {
+            document.getElementById('mainName').innerText = 'Rapport för ' + full.labelTitle;
+            return data;
+        }
+
+        function percentage(partialValue, totalValue) {
+            return (100 * partialValue) / totalValue;
+        }
+
+        Array.prototype.max = function () {
+            return Math.max.apply(null, this);
+        };
+
+        Array.prototype.min = function () {
+            return Math.min.apply(null, this);
+        };
+
+        function reloadGraphs(returnData) {
+            generateMainDatasetFromApiResponse(returnData);
+            generateMainDatasetFromApiResponsePieGraphOne(returnData);
+            generateMainDatasetFromApiResponsePieGraphTwo(returnData);
+        }
+
+        function generateMainDatasetFromApiResponse(returnData) {
+
+            deleteAllDatasetsOnChart(window.mainChart);
+
+            /*
+             * Generates new datasets based on returned data and pushes the changes
+             */
+            colorIndex = -1;
+            returnData.forEach(dataRow => {
+                colorIndex++;
+                if (colorIndex > AllColors.rgba.length - 1) {
+                    colorIndex = 0;
+                }
+                var newDataset = {
+                    label: dataRow.labelTitle,
+                    //backgroundColor: [
+                    //    "rgba(255, 159, 64, 0.2)",
+                    //    "rgba(255, 99, 132, 0.2)",
+                    //    "rgba(54, 162, 235, 0.2)",
+                    //    "rgba(153, 102, 255, 0.2)",
+                    //    "rgba(255, 205, 86, 0.2)",
+                    //    "rgba(255, 99, 132, 0.2)",
+                    //],
+                    backgroundColor: [
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
+                    ],
+                    data: [
+                        dataRow.numberOfValidDeliveries,
+                        dataRow.numberOfValidDeliveriesLeft,
+                        dataRow.customersWithinTimeSlot,
+                        dataRow.customersWithinPrognosis,
+                        dataRow.customersBeforeTimeSlot,
+                        dataRow.customersBeforeEstimatedTime,
+                        dataRow.customersDividedByWorkHours,
+                    ],
+                    fill: false,
+                    borderColor: [
+                        getrgbColor(colorIndex),
+                        getrgbColor(colorIndex),
+                        getrgbColor(colorIndex),
+                        getrgbColor(colorIndex),
+                        getrgbColor(colorIndex),
+                        getrgbColor(colorIndex)],
+                    //borderColor: [
+                    //    "rgb(255, 159, 64)",
+                    //    "rgb(255, 99, 132)",
+                    //    "rgb(54, 162, 235)",
+                    //    "rgb(153, 102, 255)",
+                    //    "rgb(255, 205, 86)",
+                    //    "rgb(255, 99, 132)"],
+                    borderWidth: 1,
+                }
+
+                window.mainChart.data.datasets.push(newDataset);
+            });
+
+            updateChartReference(window.mainChart);
+        }
+
+        function generateMainDatasetFromApiResponsePieGraphOne(returnData) {
+
+            deleteAllDatasetsOnChart(percentageWithing5MinOfTimeSlotRef);
+
+            /*
+             * Generates new datasets based on returned data and pushes the changes
+             */
+            let percentageWithing5MinOfTimeSlot = [];
+            let percentageWithing5MinOfTimeSlotRemainder = [];
+            let allLabels = [];
+
+            returnData.forEach(dataRow => {
+                allLabels.push(dataRow.labelTitle);
+                percentageWithing5MinOfTimeSlot.push(dataRow.percentageWithing5MinOfTimeSlot);
+                percentageWithing5MinOfTimeSlotRemainder.push(100 - dataRow.percentageWithing5MinOfTimeSlot);
+            });
+
+            deleteAllDatasetsOnChart(percentageWithing5MinOfTimeSlotRef);
+
+            /*
+             * Generates new datasets based on returned data and pushes the changes
+             */
+            const accuracyDataSet = {
+                label: "Inom tidsfönster +- 5 minuter",
+                backgroundColor: [
+                    "rgba(75, 192, 192, 0.2)",
+                ],
+                data:
+                    percentageWithing5MinOfTimeSlot,
+                fill: "start",
+                borderColor: ["rgb(75, 192, 192)"],
+                borderWidth: 1,
+            }
+
+            const inAccuracyDataSet = {
+                label: "Ej inom tidsfönster +- 5 minuter",
+                backgroundColor: [
+                    "rgba(255, 99, 132, 0.2)",
+                ],
+                data:
+                    percentageWithing5MinOfTimeSlotRemainder,
+                fill: "start",
+                borderColor: ["rgb(255, 99, 132)"],
+                borderWidth: 1,
+            }
+            percentageWithing5MinOfTimeSlotRef.data.labels = allLabels;
+            percentageWithing5MinOfTimeSlotRef.data.datasets.push(accuracyDataSet);
+            percentageWithing5MinOfTimeSlotRef.data.datasets.push(inAccuracyDataSet);
+
+            updateChartReference(percentageWithing5MinOfTimeSlotRef);
+        }
+
+        function generateMainDatasetFromApiResponsePieGraphTwo(returnData) {
+
+            deleteAllDatasetsOnChart(percentageWithing15MinOfCustomerEstimatedTimeRef);
+
+            /*
+             * Generates new datasets based on returned data and pushes the changes
+             */
+            let percentageWithing15MinOfCustomerEstimatedTime = [];
+            let percentageWithing15MinOfCustomerEstimatedTimeRemainder = [];
+            let allLabels = [];
+
+            returnData.forEach(dataRow => {
+                allLabels.push(dataRow.labelTitle);
+                percentageWithing15MinOfCustomerEstimatedTime.push(dataRow.percentageWithing15MinOfCustomerEstimatedTime);
+                percentageWithing15MinOfCustomerEstimatedTimeRemainder.push(100 - dataRow.percentageWithing15MinOfCustomerEstimatedTime);
+            });
+
+            deleteAllDatasetsOnChart(percentageWithing15MinOfCustomerEstimatedTimeRef);
+
+            /*
+             * Generates new datasets based on returned data and pushes the changes
+             */
+            const accuracyDataSet = {
+                label: "Inom beräknad leveranstid +- 15 minuter",
+                backgroundColor: [
+                    "rgba(75, 192, 192, 0.2)",
+                ],
+                data:
+                    percentageWithing15MinOfCustomerEstimatedTime,
+                fill: "start",
+                borderColor: ["rgb(75, 192, 192)"],
+                borderWidth: 1,
+            }
+
+            const inAccuracyDataSet = {
+                label: "Ej Inom beräknad leveranstid +- 15 minuter",
+                backgroundColor: [
+                    "rgba(255, 99, 132, 0.2)",
+                ],
+                data:
+                    percentageWithing15MinOfCustomerEstimatedTimeRemainder,
+                fill: "start",
+                borderColor: ["rgb(255, 99, 132)"],
+                borderWidth: 1,
+            }
+            percentageWithing15MinOfCustomerEstimatedTimeRef.data.labels = allLabels;
+            percentageWithing15MinOfCustomerEstimatedTimeRef.data.datasets.push(accuracyDataSet);
+            percentageWithing15MinOfCustomerEstimatedTimeRef.data.datasets.push(inAccuracyDataSet);
+
+            updateChartReference(percentageWithing15MinOfCustomerEstimatedTimeRef);
+        }
+
+        $(document).ready(function () {
+        /*
+         * Datatable from allbosses
+         */
+            table = $('#dataTable').DataTable({
+                pageLength: 250,
+                "ajax": {
+                    "url": singleDriverExtendedStats,
+                    "data": {
+                        "fromDate": function () { return fromDate.format(timeFormat) },
+                        "toDate": function () { return toDate.format(timeFormat) },
+                        "driverId": Id
+                    },
+                    "dataSrc": "",
+                    "complete": function (responseReference, responseText) {
+                    },
+                    "error": function (responseReference, responseText) {
+                    },
+                },
+                columnDefs: [
+                    { "width": "20%", "targets": 3 }
+                ],
+                columns: [
+                    { data: 'labelTitle', title: 'Namn', "visible": false, "searchable": false, render: set_Mainname },
+                    { data: 'numberOfValidDeliveries', title: 'Genomförda leveranser' },
+                    { data: 'numberOfValidDeliveriesLeft', title: 'Leveranser ej klara' },
+                    { data: 'customersWithinTimeSlot', title: 'Leveranser inom tidsfönster +-5' },
+                    { data: 'customersWithinPrognosis', title: 'Leveranser inom beräknad leveranstid +-15' },
+                    { data: 'customersBeforeTimeSlot', title: 'Leveranser före tidsfönster -5' },
+                    { data: 'customersBeforeEstimatedTime', title: 'Leveranser före beräknad tid -15' },
+                    { data: 'percentageWithing5MinOfTimeSlot', title: 'Procent Leveranser inom tidsfönster +-5' },
+                    { data: 'percentageWithing15MinOfCustomerEstimatedTime', title: 'Procent Leveranser inom beräknad leveranstid +-15' },
+                ],
+                "searching": false,
+                "paging": false,
+                "bInfo": false
+            });
+
+        /*
+         * Charts from todayGraphs
+         */
+            var ctx1 = document.getElementById('mainDataBar').getContext('2d');
+            window.mainChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: [0, 0, 0, 0, 0, 0],
+                        label: ''
+                    },
+                    ],
+                    labels: [
+                        "Antal levererade leveranser",
+                        "Olevererade leveranser",
+                        "Leveranser inom tidsfönster +-5",
+                        "Leveranser inom beräknad leveranstid +-15",
+                        "Leveranser före tidsfönster -5",
+                        "Leveranser före beräknad tid -15",
+                        "Leveranser/timmar (Endast turtimmar inräknat)",
+                    ]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Leveransstatistiken baseras på antal leveranser som är genomförda'
+                    },
+                    plugins: {
+                        labels: {
+                            render: 'value',
+                            fontSize: 20,
+                            position: 'outside',
+                            textMargin: 10,
+                        }
+                    }
+                }
+            });
+
+            let configBase1 = {
+                type: 'line',
+                data: {
+                    labels: ["2020-08-27"],
+                    datasets: [{
+                        label: 'Chart 1',
+                        data: [0],
+                        fill: "start",
+                        borderColor: ["rgb(75, 192, 192)"],
+                        backgroundColor: [
+                            "rgba(75, 192, 192, 0.2)",
+                        ],
+                    }, {
+                        label: 'Chart 2',
+                        data: [0],
+                        fill: "start",
+                        borderColor: ["rgb(255, 99, 132)"],
+                        backgroundColor: [
+                            "rgba(255, 99, 132, 0.2)",
+                        ],
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Leverans beräknad leveranstid +- 15 minuter'
+                    },
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Procent'
+                            },
+                        }]
+                    }
+                }
+            };
+            let ctx2 = document.getElementById('percentageWithing15MinOfCustomerEstimatedTime').getContext('2d');
+            percentageWithing15MinOfCustomerEstimatedTimeRef = new Chart(ctx2, configBase1);
+
+            let configBase2 = {
+                type: 'line',
+                data: {
+                    labels: ["2020-08-27"],
+                    datasets: [{
+                        label: 'Chart 1',
+                        data: [0],
+                        fill: "start",
+                        borderColor: ["rgb(75, 192, 192)"],
+                        backgroundColor: [
+                            "rgba(75, 192, 192, 0.2)",
+                        ],
+                    }, {
+                        label: 'Chart 2',
+                        data: [0],
+                        fill: "start",
+                        borderColor: ["rgb(255, 99, 132)"],
+                        backgroundColor: [
+                            "rgba(255, 99, 132, 0.2)",
+                        ],
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Leveranser inom tidsfönster +- 5 minuter'
+                    },
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Procent'
+                            },
+                        }]
+                    }
+                }
+            };
+            let ctx3 = document.getElementById('percentageWithing5MinOfTimeSlot').getContext('2d');
+            percentageWithing5MinOfTimeSlotRef = new Chart(ctx3, configBase2);
+
+            getDataBetweenDates(todayGraphsForDriver);
+
+        /*
+        * Simplified data by tour
+        */
+
+            secondTable = $('#fullRecords').DataTable({
+                pageLength: 250,
+                "ajax": {
+                    "url": singleDriverSimplifiedRecords,
+                    "data": {
+                        "fromDate": function () { return fromDate.format(timeFormat) },
+                        "toDate": function () { return toDate.format(timeFormat) },
+                        "driverId": Id
+                    },
+                    "dataSrc": "",
+                    "complete": function (responseReference, responseText) {
+                    },
+                    "error": function (responseReference, responseText) {
+                    },
+                },
+                columns: [
+                    { data: 'routeName', title: 'Ruttnamn' },
+                    { data: 'dateOfRoute', title: 'Datum' },
+                    { data: 'numberOfCustomers', title: 'Antal kunder' },
+                    { data: 'weight', title: 'Vikt' },
+                    { data: 'distansInSwedishMiles', title: 'Mil' },
+                    { data: 'commentFromTransport', title: 'Kommentar transport' },
+                    { data: 'customerComments', title: 'Kundkommentarer' },
+                    { data: 'resourceRoute', title: 'Resurstur' },
+                ],
+                "order": [[1, "desc"]],
+                "searching": false,
+                "paging": false,
+                "bInfo": false
+            });
+
+            $('thead th').each(function () {
+                $(this).addClass("stickyHeader");
+            })
+        });
+    </script>
+}

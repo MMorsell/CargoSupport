@@ -5,7 +5,7 @@ let ajaxDate = new Date();
 const timeFormat = 'YYYY-MM-DD';
 let fromDate = moment().subtract(7, 'd');
 let toDate = moment();
-
+let Id = null;
 function formatDate(d) {
     month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
@@ -159,6 +159,10 @@ const hidden_IntIfNull = function (data, type, full, meta) {
 
 function reloadDatatableAjax() {
     toggleConnectStatus('loading');
+    console.log("reloading ajax...");
+    table.ajax.reload(null, false);
+}
+function reloadDatatableWithNoStatusAjax() {
     console.log("reloading ajax...");
     table.ajax.reload(null, false);
 }
