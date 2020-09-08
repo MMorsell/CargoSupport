@@ -49,11 +49,19 @@
             /*
              * Generates new datasets based on returned data and pushes the changes
              */
+            colorIndex = -1;
             returnData.forEach(dataRow => {
+                colorIndex++;
+                if (colorIndex > AllColors.rgba.length - 1) {
+                    colorIndex = 0;
+                }
                 var newDataset = {
                     label: dataRow.carName,
                     backgroundColor: [
-                        getRandomColor(),
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
+                    ],
+                    borderColor: [
+                        getrgbColor(colorIndex),
                     ],
                     data: [
                         dataRow.distanceInSwedishMiles

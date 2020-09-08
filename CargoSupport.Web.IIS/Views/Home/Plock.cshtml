@@ -16,7 +16,6 @@
             <span class="bar"></span>
         </div>
     </div>
-    <div><select class="selectpicker show-tick" data-style="btn-primary"><option>Mustard</option></select></div>
     <table id="dataTable" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
         <thead>
         </thead>
@@ -248,7 +247,7 @@
                         "dateString": function () { return formatDate(ajaxDate) }
                     },
                     "dataSrc": "",
-                        "complete": function (responseReference, responseText) {
+                    "complete": function (responseReference, responseText) {
                         if (responseText === "error") {
                             toggleConnectStatus('error');
                         }

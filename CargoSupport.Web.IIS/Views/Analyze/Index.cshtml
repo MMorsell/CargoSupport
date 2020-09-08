@@ -3,11 +3,6 @@
     ViewData["Title"] = "Analyze";
 }
 
-<div class="text-center">
-    <input type="button" class="btn btn-primary" value="Visa data för en eller flera förare" onclick="location.href='@Url.Action("AllData", "Analyze")'" />
-    <input disabled type="button" class="btn btn-primary" value="Visa alla förare under en chef" onclick="location.href='@Url.Action("DriversUnderMe", "Analyze")'" />
-</div>
-
 <div class="row">
     <div style="float: right;">
         <h3 style="display: inline-block;"></h3>
@@ -49,7 +44,6 @@
                 return data;
             }
             return '<a style="color: blue;cursor: pointer;text-decoration: underline" href="/Analyze/AllData/' + full.quinyxId + '">' + data + '</a>';
-            //return '<a class="nav-link text-dark" asp-route-id="' + full.quinyxId + '" asp-area="" asp-controller="Analyze" asp-action="AllData">' + data + '</a>';
         }
 
         $(document).ready(function () {
@@ -68,7 +62,6 @@
                 ],
                 columns: [
                     { data: 'driverFullName', title: 'Leveransansvarig', render: driver_extendedInfo },
-                    //{ data: 'driverFullName', title: 'Chef', render: driver_extendedInfo },
                     { data: 'avrWeight', title: 'Snittvikt', render: input_kilos },
                     { data: 'avrCustomers', title: 'Snitt antal kunder' },
                     { data: 'avrDrivingDistance', title: 'Snitt Kördistans i mil' },

@@ -61,16 +61,29 @@
             /*
              * Generates new datasets based on returned data and pushes the changes
              */
+            colorIndex = -1;
             returnData.forEach(dataRow => {
+                colorIndex++;
+                if (colorIndex > AllColors.rgba.length - 1) {
+                    colorIndex = 0;
+                }
                 var newDataset = {
                     label: dataRow.labelTitle,
+                    //backgroundColor: [
+                    //    "rgba(255, 159, 64, 0.2)",
+                    //    "rgba(255, 99, 132, 0.2)",
+                    //    "rgba(54, 162, 235, 0.2)",
+                    //    "rgba(153, 102, 255, 0.2)",
+                    //    "rgba(255, 205, 86, 0.2)",
+                    //    "rgba(255, 99, 132, 0.2)",
+                    //],
                     backgroundColor: [
-                        "rgba(255, 159, 64, 0.2)",
-                        "rgba(255, 99, 132, 0.2)",
-                        "rgba(54, 162, 235, 0.2)",
-                        "rgba(153, 102, 255, 0.2)",
-                        "rgba(255, 205, 86, 0.2)",
-                        "rgba(255, 99, 132, 0.2)",
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
+                        getrgbaColorWithOpacity(colorIndex, 0.2),
                     ],
                     data: [
                         dataRow.numberOfValidDeliveries,
@@ -83,12 +96,19 @@
                     ],
                     fill: false,
                     borderColor: [
-                        "rgb(255, 159, 64)",
-                        "rgb(255, 99, 132)",
-                        "rgb(54, 162, 235)",
-                        "rgb(153, 102, 255)",
-                        "rgb(255, 205, 86)",
-                        "rgb(255, 99, 132)"],
+                        getrgbColor(colorIndex),
+                        getrgbColor(colorIndex),
+                        getrgbColor(colorIndex),
+                        getrgbColor(colorIndex),
+                        getrgbColor(colorIndex),
+                        getrgbColor(colorIndex)],
+                    //borderColor: [
+                    //    "rgb(255, 159, 64)",
+                    //    "rgb(255, 99, 132)",
+                    //    "rgb(54, 162, 235)",
+                    //    "rgb(153, 102, 255)",
+                    //    "rgb(255, 205, 86)",
+                    //    "rgb(255, 99, 132)"],
                     borderWidth: 1,
                 }
 
@@ -242,10 +262,10 @@
             let configBase1 = {
                 type: 'line',
                 data: {
-                    labels: ["2020-08-27", "2020-08-28", "2020-08-29", "2020-08-30"],
+                    labels: ["2020-08-27"],
                     datasets: [{
                         label: 'Chart 1',
-                        data: [81.58999999999999, 87.26, 97.27, 85.38],
+                        data: [0],
                         fill: "start",
                         borderColor: ["rgb(75, 192, 192)"],
                         backgroundColor: [
@@ -253,7 +273,7 @@
                         ],
                     }, {
                         label: 'Chart 2',
-                        data: [18.41000000000001, 12.739999999999995, 2.730000000000004, 14.620000000000005],
+                        data: [0],
                         fill: "start",
                         borderColor: ["rgb(255, 99, 132)"],
                         backgroundColor: [
@@ -283,10 +303,10 @@
             let configBase2 = {
                 type: 'line',
                 data: {
-                    labels: ["2020-08-27", "2020-08-28", "2020-08-29", "2020-08-30"],
+                    labels: ["2020-08-27"],
                     datasets: [{
                         label: 'Chart 1',
-                        data: [81.58999999999999, 87.26, 97.27, 85.38],
+                        data: [0],
                         fill: "start",
                         borderColor: ["rgb(75, 192, 192)"],
                         backgroundColor: [
@@ -294,7 +314,7 @@
                         ],
                     }, {
                         label: 'Chart 2',
-                        data: [18.41000000000001, 12.739999999999995, 2.730000000000004, 14.620000000000005],
+                        data: [0],
                         fill: "start",
                         borderColor: ["rgb(255, 99, 132)"],
                         backgroundColor: [

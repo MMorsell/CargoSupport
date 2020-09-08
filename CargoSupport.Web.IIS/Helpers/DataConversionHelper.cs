@@ -144,22 +144,25 @@ namespace CargoSupport.Helpers
                     {
                         todayGraphsModel.LabelTitle = listOfGroup[0].DateOfRoute.ToString(@"yyyy-MM-dd");
                     }
+                    resultModels.Add(todayGraphsModel);
                 }
-                else
-                {
-                    todayGraphsModel.NumberOfValidDeliveries = 0;
-                    todayGraphsModel.NumberOfValidDeliveriesLeft = 0;
-                    todayGraphsModel.CustomersWithinTimeSlot = 0;
-                    todayGraphsModel.CustomersWithinPrognosis = 0;
-                    todayGraphsModel.CustomersBeforeTimeSlot = 0;
-                    todayGraphsModel.CustomersBeforeEstimatedTime = 0;
-                    todayGraphsModel.PercentageWithing5MinOfTimeSlot = 0;
-                    todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = 0;
-                    todayGraphsModel.LabelTitle = "No data on this day";
-                }
-
-                resultModels.Add(todayGraphsModel);
             });
+
+            if (resultModels.Count == 0)
+            {
+                resultModels.Add(new TodayGraphsViewModel
+                {
+                    NumberOfValidDeliveries = 0,
+                    NumberOfValidDeliveriesLeft = 0,
+                    CustomersWithinTimeSlot = 0,
+                    CustomersWithinPrognosis = 0,
+                    CustomersBeforeTimeSlot = 0,
+                    CustomersBeforeEstimatedTime = 0,
+                    PercentageWithing5MinOfTimeSlot = 0,
+                    PercentageWithing15MinOfCustomerEstimatedTime = 0,
+                    LabelTitle = "No data on this day"
+                });
+            }
 
             return resultModels.OrderBy(d => d.LabelTitle).ToArray();
         }
@@ -349,22 +352,25 @@ namespace CargoSupport.Helpers
                     todayGraphsModel.LabelTitle = groupAsList[0].Driver.GetDriverName();
                     todayGraphsModel.StaffCatId = groupAsList[0].Driver.ExtendedInformationModel.StaffCat;
                     todayGraphsModel.SectionId = groupAsList[0].Driver.ExtendedInformationModel.Section;
+                    resultModels.Add(todayGraphsModel);
                 }
-                else
-                {
-                    todayGraphsModel.NumberOfValidDeliveries = 0;
-                    todayGraphsModel.NumberOfValidDeliveriesLeft = 0;
-                    todayGraphsModel.CustomersWithinTimeSlot = 0;
-                    todayGraphsModel.CustomersWithinPrognosis = 0;
-                    todayGraphsModel.CustomersBeforeTimeSlot = 0;
-                    todayGraphsModel.CustomersBeforeEstimatedTime = 0;
-                    todayGraphsModel.PercentageWithing5MinOfTimeSlot = 0;
-                    todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = 0;
-                    todayGraphsModel.LabelTitle = "No data on this driver";
-                }
-
-                resultModels.Add(todayGraphsModel);
             });
+
+            if (resultModels.Count == 0)
+            {
+                resultModels.Add(new AllBossesViewModel
+                {
+                    NumberOfValidDeliveries = 0,
+                    NumberOfValidDeliveriesLeft = 0,
+                    CustomersWithinTimeSlot = 0,
+                    CustomersWithinPrognosis = 0,
+                    CustomersBeforeTimeSlot = 0,
+                    CustomersBeforeEstimatedTime = 0,
+                    PercentageWithing5MinOfTimeSlot = 0,
+                    PercentageWithing15MinOfCustomerEstimatedTime = 0,
+                    LabelTitle = "No data on this day"
+                });
+            }
 
             return resultModels.ToArray();
         }
