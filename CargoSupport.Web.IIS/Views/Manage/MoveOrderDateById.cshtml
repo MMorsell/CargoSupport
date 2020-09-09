@@ -1,0 +1,34 @@
+﻿@model CargoSupport.ViewModels.Manange.OrderOptionViewModel;
+@{
+    ViewData["Title"] = "Byt dag";
+}
+
+@using (Html.BeginForm("MoveOrderDateById", "Manage", FormMethod.Post))
+{
+    <div style="padding-left: 20px;" class="group">
+        <td>Nytt datum</td>
+        <input type="text" asp-for="@Model.DateTimeString" id="calendar-pin-order">
+        <span class="bar"></span>
+    </div>
+    <br />
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <td>Flytta order till ny dag, detta rekommenderas inte att genomföras om det inte krävs</td>
+        </tr>
+        <tr>
+            <td>
+                <select asp-for="@Model.SelectedOrderId" asp-items="@(new SelectList(Model.RoutesToSelectFrom,"Key","Value"))">
+                    <option>Välj</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input class="btn btn-outline-success" type="submit" value="Flytta order" /></td>
+        </tr>
+    </table>
+}
+
+@section Scripts
+{
+}

@@ -40,7 +40,7 @@ namespace CargoSupport.Helpers
             return result;
         }
 
-        public async Task UpsertDataRecordById(string tableName, DataModel record)
+        public async Task UpsertDataRecord(string tableName, DataModel record)
         {
             var collection = _database.GetCollection<DataModel>(tableName);
 

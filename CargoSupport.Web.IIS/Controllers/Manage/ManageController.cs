@@ -98,23 +98,23 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             }
             var ph = new PinHelper();
 
-            var allSelectOptions = await ph.GetAllUniqueRoutesOfDayWithNames(DateTime.Now);
-            return View(new ResourceRouteViewModel { RouteNamesOfToday = allSelectOptions });
+            var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now, DateTime.Now);
+            return View(new OrderOptionViewModel { RoutesToSelectFrom = allSelectOptions });
         }
 
         [HttpPost]
         [Route("Manage/AddResourceRoute")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddResourceRoute(ResourceRouteViewModel resourceRouteViewModel)
+        public async Task<ActionResult> AddResourceRoute(OrderOptionViewModel orderOptionViewModel)
         {
             if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
             {
                 return Unauthorized();
             }
 
-            if (resourceRouteViewModel.OrderID == "Välj")
+            if (orderOptionViewModel.SelectedOrderId == "Välj")
             {
-                return BadRequest("Att koppla resursturen till 'Välj går inte'");
+                return BadRequest("Att koppla resursturen till 'Välj' går inte");
             }
 
             var date = DateTime.Now.SetHour(6);
@@ -124,17 +124,117 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
             var numberOfResourceRoutes = routesOfTheDay
                 .Where(route => route.IsResourceRoute == true &&
-                route.PinRouteModel.ParentOrderId == resourceRouteViewModel.OrderID).Count();
+                route.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId).Count();
 
-            var existingRoute = routesOfTheDay.FirstOrDefault(r => r.PinRouteModel.ParentOrderId == resourceRouteViewModel.OrderID);
+            var existingRoute = routesOfTheDay.FirstOrDefault(r => r.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
 
             if (existingRoute == null)
             {
-                return BadRequest($"RuttId {resourceRouteViewModel.OrderID} Gick inte att koppla till någon order i databasen på datum {date}");
+                return BadRequest($"RuttId {orderOptionViewModel.SelectedOrderId} Gick inte att koppla till någon order i databasen på datum {date}");
             }
 
             var ph = new PinHelper();
-            await ph.InsertNewResourceRoute($"Resurs {numberOfResourceRoutes + 1}", date, resourceRouteViewModel.OrderID, existingRoute.PinRouteModel.ParentOrderName);
+            await ph.InsertNewResourceRoute($"Resurs {numberOfResourceRoutes + 1}", date, orderOptionViewModel.SelectedOrderId, existingRoute.PinRouteModel.ParentOrderName);
+            return View("../Home/Transport");
+        }
+
+        public async Task<IActionResult> DeleteRoutesByOrderId()
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+            var ph = new PinHelper();
+
+            var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
+            return View(new OrderOptionViewModel { RoutesToSelectFrom = allSelectOptions });
+        }
+
+        [HttpPost]
+        [Route("Manage/DeleteRoutesByOrderId")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteRoutesByOrderId(OrderOptionViewModel orderOptionViewModel)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            if (orderOptionViewModel.SelectedOrderId == "Välj")
+            {
+                return BadRequest("Att ta bort 'Välj' går inte");
+            }
+
+            var db = new MongoDbHelper(Constants.MongoDb.DatabaseName);
+
+            var routesOfOrder = await db.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
+
+            var matchingRoutes = routesOfOrder.Where(
+                data => data.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
+
+            if (matchingRoutes.Count() == 0)
+            {
+                return BadRequest($"No route with parent order id {orderOptionViewModel.SelectedOrderId} existed in database");
+            }
+            foreach (var route in matchingRoutes)
+            {
+                await db.DeleteRecord<DataModel>(Constants.MongoDb.OutputScreenTableName, route._Id);
+            }
+
+            return View("../Home/Transport");
+        }
+
+        public async Task<IActionResult> MoveOrderDateById()
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+            var ph = new PinHelper();
+
+            var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
+            return View(new OrderOptionViewModel { RoutesToSelectFrom = allSelectOptions });
+        }
+
+        [HttpPost]
+        [Route("Manage/MoveOrderDateById")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> MoveOrderDateById(OrderOptionViewModel orderOptionViewModel)
+        {
+            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            {
+                return Unauthorized();
+            }
+
+            if (orderOptionViewModel.SelectedOrderId == "Välj")
+            {
+                return BadRequest("Att koppla resursturen till 'Välj går inte'");
+            }
+
+            DateTime.TryParse(orderOptionViewModel.DateTimeString, out DateTime date);
+
+            if (date.ToString(@"yyyy-MM-dd") != orderOptionViewModel.DateTimeString)
+            {
+                return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{orderOptionViewModel.DateTimeString}'");
+            }
+
+            var db = new MongoDbHelper(Constants.MongoDb.DatabaseName);
+
+            var routesOfOrder = await db.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
+
+            var matchingRoutes = routesOfOrder.Where(
+               data => data.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
+
+            if (matchingRoutes.Count() == 0)
+            {
+                return BadRequest($"No route with parent order id {orderOptionViewModel.SelectedOrderId} existed in database");
+            }
+            foreach (var route in matchingRoutes)
+            {
+                route.DateOfRoute = date.SetHour(6);
+                await db.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, route);
+            }
+
             return View("../Home/Transport");
         }
     }

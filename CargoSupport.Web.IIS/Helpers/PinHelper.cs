@@ -92,7 +92,7 @@ namespace CargoSupport.Helpers
                 if (existingRecord != null)
                 {
                     existingRecord.PinRouteModel = pinModel;
-                    await _dbHelper.UpsertDataRecordById(Constants.MongoDb.OutputScreenTableName, existingRecord);
+                    await _dbHelper.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
                 }
             }
         }
@@ -138,10 +138,10 @@ namespace CargoSupport.Helpers
             return 0;
         }
 
-        public async Task<Dictionary<string, string>> GetAllUniqueRoutesOfDayWithNames(DateTime date)
+        public async Task<Dictionary<string, string>> GetAllUniqueRoutesBetweenDatesWithNames(DateTime from, DateTime to)
         {
             var returnDictionary = new Dictionary<string, string>();
-            var allRecords = await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date);
+            var allRecords = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
 
             var allIds = allRecords.Select(rec => rec.PinRouteModel.ParentOrderId).Where(r => r != null && r != "" && r != "0").Distinct().ToList();
             var allNames = allRecords.Select(rec => rec.PinRouteModel.ParentOrderName).Where(r => r != null && r != "" && r != "0").Distinct().ToList();

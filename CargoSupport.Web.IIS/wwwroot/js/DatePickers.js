@@ -155,7 +155,6 @@ flatpickr('#calendar-to-group-dashboard', {
  */
 flatpickr('#calendar-pin-order', {
     "locale": "sv",
-    "maxDate": new Date(),
     defaultDate: new Date(),
     onChange: function (selectedDates, dateStr, instance) {
         //toDate = moment(dateStr, timeFormat);

@@ -1,13 +1,13 @@
 ﻿@model CargoSupport.ViewModels.Manange.OrderOptionViewModel;
 @{
-    ViewData["Title"] = "Lägg till resurstur";
+    ViewData["Title"] = "Ta bort order";
 }
 
-@using (Html.BeginForm("AddResourceRoute", "Manage", FormMethod.Post))
+@using (Html.BeginForm("DeleteRoutesByOrderId", "Manage", FormMethod.Post))
 {
     <table cellpadding="0" cellspacing="0">
         <tr>
-            <td>Order att lägga resursturen på (För statistik)</td>
+            <td>Välj order du vill ta bort från databasen (Detta går inte att återställa)</td>
         </tr>
         <tr>
             <td>
@@ -18,7 +18,7 @@
         </tr>
         <tr>
             <td></td>
-            <td><input class="btn btn-outline-error" type="submit" value="Skapa resurstur" /></td>
+            <td><input class="btn btn-outline-danger" type="submit" value="Delete" /></td>
         </tr>
     </table>
 }
