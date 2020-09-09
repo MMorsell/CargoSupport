@@ -3,50 +3,53 @@
     ViewData["Title"] = "Föraranalys";
 }
 
-<div class="row">
-    <div class="col-6">
-        <h1 id="mainName" class="display-4"></h1>
-    </div>
-    <div class="col-4">
-    </div>
-    <div class="col-2">
-        <div>
-            <h6>Visa data</h6>
-            <div style="padding-left: 20px;" class="group">
-                <label class="input-label">Från</label>
-                <input type="text" id="calendar-from-graphs-discrete">
-                <span class="bar"></span>
-            </div>
-            <div style="padding-left: 30px;" class="group">
-                <label class="input-label">Till</label>
-                <input type="text" id="calendar-to-graphs-discrete">
-                <span class="bar"></span>
+<a href="#" class="btn-primary btn" id="downloadPdf">Ladda ner rapport som pdf</a>
+<div id="reportPage">
+    <div class="row">
+        <div class="col-6">
+            <h1 id="mainName" class="display-4"></h1>
+        </div>
+        <div class="col-4">
+        </div>
+        <div class="col-2">
+            <div>
+                <h6 id="elementH">Visa data</h6>
+                <div style="padding-left: 20px;" class="group">
+                    <label id="elementH" class="input-label">Från</label>
+                    <input type="text" id="calendar-from-graphs-discrete">
+                    <span class="bar"></span>
+                </div>
+                <div style="padding-left: 30px;" class="group">
+                    <label id="elementH" class="input-label">Till</label>
+                    <input type="text" id="calendar-to-graphs-discrete">
+                    <span class="bar"></span>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="row ">
-    <table id="dataTable" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
-        <thead>
-        </thead>
-    </table>
-</div>
-
-<div class="row ">
-    <div class="col-8">
-        <canvas id="mainDataBar"></canvas>
+    <div class="row ">
+        <table id="dataTable" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
+            <thead style="position: sticky; top: 0;">
+            </thead>
+        </table>
     </div>
-    <div class="col-4">
-        <canvas id="percentageWithing5MinOfTimeSlot"></canvas>
-        <canvas id="percentageWithing15MinOfCustomerEstimatedTime"></canvas>
-    </div>
-</div>
 
-<div class="row ">
-    <table id="fullRecords" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
-        <thead style="position: sticky; top: 0;">
-        </thead>
-    </table>
+    <div class="row ">
+        <div class="col-8">
+            <canvas id="mainDataBar"></canvas>
+        </div>
+        <div class="col-4">
+            <canvas id="percentageWithing5MinOfTimeSlot"></canvas>
+            <canvas id="percentageWithing15MinOfCustomerEstimatedTime"></canvas>
+        </div>
+    </div>
+
+    <div class="row ">
+        <table id="fullRecords" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
+            <thead style="position: sticky; top: 0;">
+            </thead>
+        </table>
+    </div>
 </div>
 
 @section Scripts
@@ -294,14 +297,14 @@
                 ],
                 columns: [
                     { data: 'labelTitle', title: 'Namn', "visible": false, "searchable": false, render: set_Mainname },
-                    { data: 'numberOfValidDeliveries', title: 'Genomförda leveranser' },
-                    { data: 'numberOfValidDeliveriesLeft', title: 'Leveranser ej klara' },
-                    { data: 'customersWithinTimeSlot', title: 'Leveranser inom tidsfönster +-5' },
-                    { data: 'customersWithinPrognosis', title: 'Leveranser inom beräknad leveranstid +-15' },
-                    { data: 'customersBeforeTimeSlot', title: 'Leveranser före tidsfönster -5' },
-                    { data: 'customersBeforeEstimatedTime', title: 'Leveranser före beräknad tid -15' },
-                    { data: 'percentageWithing5MinOfTimeSlot', title: 'Procent Leveranser inom tidsfönster +-5' },
-                    { data: 'percentageWithing15MinOfCustomerEstimatedTime', title: 'Procent Leveranser inom beräknad leveranstid +-15' },
+                    { data: 'numberOfValidDeliveries', title: 'Leveranser' },
+                    { data: 'numberOfValidDeliveriesLeft', title: 'Ej klara lev.' },
+                    { data: 'customersWithinTimeSlot', title: 'Inom tidsfönster +-5' },
+                    { data: 'customersWithinPrognosis', title: 'Inom beräknad leveranstid +-15' },
+                    { data: 'customersBeforeTimeSlot', title: 'Före tidsfönster -5' },
+                    { data: 'customersBeforeEstimatedTime', title: 'Före beräknad tid -15' },
+                    { data: 'percentageWithing5MinOfTimeSlot', title: 'Procent tidsfönster' },
+                    { data: 'percentageWithing15MinOfCustomerEstimatedTime', title: 'Procent beräknad' },
                 ],
                 "searching": false,
                 "paging": false,

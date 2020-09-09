@@ -59,7 +59,6 @@ function splitData() {
     }
 }
 function driverId() {
-    debugger;
     if (Id === null) {
         return 0;
     }
