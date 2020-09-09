@@ -24,6 +24,8 @@
             <button class="btn btn-outline-info" onclick="resetTable()">Återgå till gruppvy</button>
         </div>
         <div class="col-4">
+            <iframe id="txtArea1" style="display:none"></iframe>
+            <button class="btn btn-outline-success" id="btnExport" onclick="fnExcelReport('dataTable');"> Exportera som excel</button>
         </div>
     </div>
     <div class="row ">
@@ -118,6 +120,10 @@
 
         $(document).ready(function () {
             table = $('#dataTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'excelHtml5',
+                ],
                 pageLength: 250,
                 "ajax": {
                     "url": mainApiEndpoint,
