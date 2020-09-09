@@ -46,9 +46,18 @@ const preRideInput = function (data, type, full, meta) {
     return '<input contenteditable="true" type="text" id="preRideInput" onfocusout=updateRow(this) class="form-control" value="' +
         data + '"  />';
 }
+
+const preRideInput_fat = function (data, type, full, meta) {
+    return '<textarea id="preRideInput" onfocusout=updateRow(this) style="background: white;" class="form-control" rows="5" cols="50">' + data + '</textarea >';
+}
+
 const postRideInput = function (data, type, full, meta) {
     return '<input contenteditable="true" type="text" id="postRideInput" onfocusout=updateRow(this) class="form-control" value="' +
         data + '"  />';
+}
+
+const postRideInput_fat = function (data, type, full, meta) {
+    return '<textarea id="postRideInput" onfocusout=updateRow(this) style="background: white;" class="form-control" rows="5" cols="50">' + data + '</textarea >';
 }
 
 const convert_loadingLevel_toSelectbox = function (data, type, full, meta) {
@@ -132,6 +141,9 @@ const disabled_checkbox = function (data, type, full, meta) {
 const disabled_textInput = function (data, type, full, meta) {
     return '<input type="text" readonly style="background: white;" class="form-control" value="' +
         data + '"  />';
+}
+const disabled_fat_textInput = function (data, type, full, meta) {
+    return '<textarea readonly style="background: white;" class="form-control" rows="5" cols="50">' + data + '</textarea >';
 }
 
 const disabled_intInput = function (data, type, full, meta) {
