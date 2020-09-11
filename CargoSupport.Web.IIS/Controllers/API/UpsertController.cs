@@ -12,9 +12,7 @@ using CargoSupport.ViewModels;
 using CargoSupport.ViewModels.Public;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
 using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers.API
@@ -33,7 +31,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
         [HttpPost]
         public async Task<ActionResult> UpsertTransport([FromBody] TransportViewModel transportViewModel)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -120,7 +118,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
         [HttpPost]
         public async Task<ActionResult> UpsertStorage([FromBody] StorageViewModel storageViewModel)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }

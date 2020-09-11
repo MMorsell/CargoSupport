@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CargoSupport.Enums;
 using CargoSupport.Models;
@@ -17,7 +15,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [Route("Car")]
         public async Task<ActionResult> Index()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -36,7 +34,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateAsync(CarModel newCarModel)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -54,7 +52,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         // GET: CarController/Edit/5
         public async Task<ActionResult> EditAsync(string id)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -74,7 +72,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditAsync(CarModel newCarModel)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }

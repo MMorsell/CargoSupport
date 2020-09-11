@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CargoSupport.Enums;
 using CargoSupport.Models;
@@ -17,7 +15,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [Route("User")]
         public async Task<ActionResult> Index()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -36,7 +34,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateAsync(WhitelistModel newUserModel)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -53,7 +51,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<ActionResult> EditAsync(string id)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -72,7 +70,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditAsync(WhitelistModel newUserModel)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -89,7 +87,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<ActionResult> DeleteAsync(string id)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }

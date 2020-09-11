@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.WebSockets;
 using System.Threading.Tasks;
 using CargoSupport.Enums;
 using CargoSupport.Extensions;
@@ -10,7 +9,6 @@ using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
 using CargoSupport.ViewModels.Manange;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static CargoSupport.Helpers.AuthorizeHelper;
 
@@ -20,7 +18,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
     {
         public async Task<IActionResult> GetFromPin()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -30,7 +28,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [HttpPost]
         public async Task<ActionResult> GetFromPin(PinIdModel model)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -51,7 +49,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> UpdatePinDataByOrder()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -61,7 +59,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [HttpPost]
         public async Task<ActionResult> UpdatePinDataByOrder(PinIdModel model)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -92,7 +90,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> AddResourceRoute()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -107,7 +105,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddResourceRoute(OrderOptionViewModel orderOptionViewModel)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -122,9 +120,8 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
             var routesOfTheDay = await db.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date);
 
-            var numberOfResourceRoutes = routesOfTheDay
-                .Where(route => route.IsResourceRoute == true &&
-                route.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId).Count();
+            var numberOfResourceRoutes = routesOfTheDay.Count(route => route.IsResourceRoute &&
+                route.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
 
             var existingRoute = routesOfTheDay.FirstOrDefault(r => r.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
 
@@ -140,7 +137,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> DeleteRoutesByOrderId()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -155,7 +152,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteRoutesByOrderId(OrderOptionViewModel orderOptionViewModel)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -172,7 +169,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             var matchingRoutes = routesOfOrder.Where(
                 data => data.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
 
-            if (matchingRoutes.Count() == 0)
+            if (!matchingRoutes.Any())
             {
                 return BadRequest($"No route with parent order id {orderOptionViewModel.SelectedOrderId} existed in database");
             }
@@ -186,7 +183,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> MoveOrderDateById()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -201,7 +198,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> MoveOrderDateById(OrderOptionViewModel orderOptionViewModel)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -225,7 +222,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             var matchingRoutes = routesOfOrder.Where(
                data => data.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
 
-            if (matchingRoutes.Count() == 0)
+            if (!matchingRoutes.Any())
             {
                 return BadRequest($"No route with parent order id {orderOptionViewModel.SelectedOrderId} existed in database");
             }

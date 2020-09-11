@@ -1,16 +1,10 @@
-﻿using CargoSupport.Helpers;
-using CargoSupport.Models.DatabaseModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace TestingConsole
+﻿namespace TestingConsole
 {
-    internal class Program
+    internal static class Program
     {
         private static void Main(string[] args)
         {
-            var _dbHelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
+            //var _dbHelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
 
             //DateTime.TryParse("2020-08-29", out DateTime from);
 

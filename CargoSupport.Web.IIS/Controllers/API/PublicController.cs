@@ -8,10 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using CargoSupport.ViewModels.Public;
 using CargoSupport.Enums;
 using static CargoSupport.Helpers.AuthorizeHelper;
-using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using CargoSupport.Models.QuinyxModels;
-using System.Diagnostics;
 using System.Collections.Concurrent;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -36,7 +34,7 @@ namespace CargoSupport.Web.Controllers.API
         [HttpGet]
         public async Task<ActionResult> GetTransport(string dateString)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -71,7 +69,7 @@ namespace CargoSupport.Web.Controllers.API
         [HttpGet]
         public async Task<ActionResult> GetPublic(string dateString)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -90,7 +88,7 @@ namespace CargoSupport.Web.Controllers.API
         [HttpGet]
         public async Task<ActionResult> GetStorage(string dateString)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }

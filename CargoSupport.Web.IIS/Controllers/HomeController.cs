@@ -1,18 +1,13 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CargoSupport.Models;
 using CargoSupport.Helpers;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 using static CargoSupport.Helpers.AuthorizeHelper;
 using CargoSupport.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using System.Text.Json;
-using System.Linq;
 
 namespace CargoSupport.Web.IIS.Controllers
 {
@@ -36,7 +31,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
         public async Task<IActionResult> Transport()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -52,7 +47,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
         public async Task<IActionResult> Plock()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -69,7 +64,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
         public async Task<IActionResult> Medarbetare()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }

@@ -2,17 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
-using System.Net;
-using System.Xml;
 using System.Xml.Linq;
 using CargoSupport.Enums;
 using CargoSupport.Models.DatabaseModels;
-using CargoSupport.Extensions;
-using CargoSupport.ViewModels;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
-using System.Diagnostics;
 using RestSharp;
 
 namespace CargoSupport.Helpers
@@ -56,8 +49,10 @@ namespace CargoSupport.Helpers
         {
             var fromDate = from.ToString(@"yyyy-MM-dd");
             var toDate = to.ToString(@"yyyy-MM-dd");
-            var client = new RestClient("https://api.quinyx.com/FlexForceWebServices.php");
-            client.Timeout = -1;
+            var client = new RestClient(Constants.SoapApi.Connection)
+            {
+                Timeout = -1
+            };
             var request = new RestRequest(Method.POST);
             request.AddHeader("Content-Type", "text/xml");
             request.AddHeader("Cookie", "QWFMSESSION=B3sAtHUIsYKEGfzcSW98Lsbqu4jAxdfy");
@@ -72,7 +67,7 @@ namespace CargoSupport.Helpers
             {
                 var quinyxModel = new QuinyxModel();
 
-                var rawId = item.Elements().Where(z => z.Name.LocalName == "persId").FirstOrDefault();
+                var rawId = item.Elements().FirstOrDefault(z => z.Name.LocalName == "persId");
                 if (rawId == null)
                 {
                     quinyxModel.Id = 0;
@@ -84,19 +79,19 @@ namespace CargoSupport.Helpers
 
                 if (quinyxModel.Id != 0)
                 {
-                    quinyxModel.BadgeNo = (string)item.Elements().Where(z => z.Name.LocalName == "badgeNo").FirstOrDefault();
-                    quinyxModel.begTimeString = (string)item.Elements().Where(z => z.Name.LocalName == "begTime").FirstOrDefault();
-                    quinyxModel.endTimeString = (string)item.Elements().Where(z => z.Name.LocalName == "endTime").FirstOrDefault();
-                    quinyxModel.CategoryId = (int)item.Elements().Where(z => z.Name.LocalName == "categoryId").FirstOrDefault();
-                    quinyxModel.Section = (int)item.Elements().Where(z => z.Name.LocalName == "section").FirstOrDefault();
-                    quinyxModel.SectionName = (string)item.Elements().Where(z => z.Name.LocalName == "sectionName").FirstOrDefault();
-                    quinyxModel.hours = (decimal)item.Elements().Where(z => z.Name.LocalName == "hours").FirstOrDefault();
-                    quinyxModel.CostCentre = (int)item.Elements().Where(z => z.Name.LocalName == "costCentre").FirstOrDefault();
-                    quinyxModel.ManagerId = (int)item.Elements().Where(z => z.Name.LocalName == "managerId").FirstOrDefault();
+                    quinyxModel.BadgeNo = (string)item.Elements().FirstOrDefault(z => z.Name.LocalName == "badgeNo");
+                    quinyxModel.begTimeString = (string)item.Elements().FirstOrDefault(z => z.Name.LocalName == "begTime");
+                    quinyxModel.endTimeString = (string)item.Elements().FirstOrDefault(z => z.Name.LocalName == "endTime");
+                    quinyxModel.CategoryId = (int)item.Elements().FirstOrDefault(z => z.Name.LocalName == "categoryId");
+                    quinyxModel.Section = (int)item.Elements().FirstOrDefault(z => z.Name.LocalName == "section");
+                    quinyxModel.SectionName = (string)item.Elements().FirstOrDefault(z => z.Name.LocalName == "sectionName");
+                    quinyxModel.hours = (decimal)item.Elements().FirstOrDefault(z => z.Name.LocalName == "hours");
+                    quinyxModel.CostCentre = (int)item.Elements().FirstOrDefault(z => z.Name.LocalName == "costCentre");
+                    quinyxModel.ManagerId = (int)item.Elements().FirstOrDefault(z => z.Name.LocalName == "managerId");
                     result.Add(quinyxModel);
                 }
             }
-            return result.ToList().Select(res => res).Where(res => res.Id != 0).ToList();
+            return result.Select(res => res).Where(res => res.Id != 0).ToList();
         }
 
         private List<QuinyxModel> CombineQuinyxModelWithExtendedModel(List<QuinyxModel> quinyxResult, List<ExtendedInformationModel> extendedResult, bool clearNames = true)
@@ -150,18 +145,17 @@ namespace CargoSupport.Helpers
 
             XDocument doc = XDocument.Parse(response.Content);
 
-            var quinyxBasicModels = new List<BasicQuinyxModel>();
-            quinyxBasicModels = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new BasicQuinyxModel
+            var quinyxBasicModels = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new BasicQuinyxModel
             {
-                Id = (int)y.Elements().Where(z => z.Name.LocalName == "id").FirstOrDefault(),
-                GivenName = (string)y.Elements().Where(z => z.Name.LocalName == "givenName").FirstOrDefault(),
-                FamilyName = (string)y.Elements().Where(z => z.Name.LocalName == "familyName").FirstOrDefault(),
-                Active = (int)y.Elements().Where(z => z.Name.LocalName == "active").FirstOrDefault(),
-                StaffCat = (int)y.Elements().Where(z => z.Name.LocalName == "staffCat").FirstOrDefault(),
-                StaffCatName = (string)y.Elements().Where(z => z.Name.LocalName == "staffCatName").FirstOrDefault(),
-                Section = (int)y.Elements().Where(z => z.Name.LocalName == "section").FirstOrDefault(),
-                SectionName = (string)y.Elements().Where(z => z.Name.LocalName == "sectionName").FirstOrDefault(),
-                ReportingTo = (string)y.Elements().Where(z => z.Name.LocalName == "reportingTo").FirstOrDefault(),
+                Id = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "id"),
+                GivenName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "givenName"),
+                FamilyName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "familyName"),
+                Active = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "active"),
+                StaffCat = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "staffCat"),
+                StaffCatName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "staffCatName"),
+                Section = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "section"),
+                SectionName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "sectionName"),
+                ReportingTo = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "reportingTo"),
             }).ToList();
             return quinyxBasicModels.Where(mod => mod.Active == 1).ToList();
         }
@@ -181,18 +175,17 @@ namespace CargoSupport.Helpers
 
             XDocument doc = XDocument.Parse(response.Content);
 
-            var extendedInformation = new List<ExtendedInformationModel>();
-            extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
+            var extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
             {
-                Id = (int)y.Elements().Where(z => z.Name.LocalName == "id").FirstOrDefault(),
-                GivenName = (string)y.Elements().Where(z => z.Name.LocalName == "givenName").FirstOrDefault(),
-                FamilyName = (string)y.Elements().Where(z => z.Name.LocalName == "familyName").FirstOrDefault(),
-                StaffCat = (int)y.Elements().Where(z => z.Name.LocalName == "staffCat").FirstOrDefault(),
-                StaffCatName = (string)y.Elements().Where(z => z.Name.LocalName == "staffCatName").FirstOrDefault(),
-                Section = (int)y.Elements().Where(z => z.Name.LocalName == "section").FirstOrDefault(),
-                SectionName = (string)y.Elements().Where(z => z.Name.LocalName == "sectionName").FirstOrDefault(),
-                ReportingTo = (string)y.Elements().Where(z => z.Name.LocalName == "reportingTo").FirstOrDefault(),
-                Active = (int)y.Elements().Where(z => z.Name.LocalName == "active").FirstOrDefault(),
+                Id = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "id"),
+                GivenName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "givenName"),
+                FamilyName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "familyName"),
+                StaffCat = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "staffCat"),
+                StaffCatName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "staffCatName"),
+                Section = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "section"),
+                SectionName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "sectionName"),
+                ReportingTo = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "reportingTo"),
+                Active = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "active"),
             }).ToList();
 
             foreach (var data in Data)
@@ -221,17 +214,15 @@ namespace CargoSupport.Helpers
             IRestResponse response = await client.ExecuteAsync(request);
 
             XDocument doc = XDocument.Parse(response.Content);
-            var extendedInformation = new List<ExtendedInformationModel>();
-
-            extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
+            var extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
             {
-                Id = (int)y.Elements().Where(z => z.Name.LocalName == "id").FirstOrDefault(),
-                GivenName = (string)y.Elements().Where(z => z.Name.LocalName == "givenName").FirstOrDefault(),
-                FamilyName = (string)y.Elements().Where(z => z.Name.LocalName == "familyName").FirstOrDefault(),
-                StaffCat = (int)y.Elements().Where(z => z.Name.LocalName == "staffCat").FirstOrDefault(),
-                StaffCatName = (string)y.Elements().Where(z => z.Name.LocalName == "staffCatName").FirstOrDefault(),
-                ReportingTo = (string)y.Elements().Where(z => z.Name.LocalName == "reportingTo").FirstOrDefault(),
-                Active = (int)y.Elements().Where(z => z.Name.LocalName == "active").FirstOrDefault(),
+                Id = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "id"),
+                GivenName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "givenName"),
+                FamilyName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "familyName"),
+                StaffCat = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "staffCat"),
+                StaffCatName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "staffCatName"),
+                ReportingTo = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "reportingTo"),
+                Active = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "active"),
             }).ToList();
 
             return extendedInformation;

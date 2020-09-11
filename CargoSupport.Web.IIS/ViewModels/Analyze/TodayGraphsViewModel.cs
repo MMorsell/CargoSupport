@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace CargoSupport.ViewModels.Analyze
+﻿namespace CargoSupport.ViewModels.Analyze
 {
     public class TodayGraphsViewModel
     {

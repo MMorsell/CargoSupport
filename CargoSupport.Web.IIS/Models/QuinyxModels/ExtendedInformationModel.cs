@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace CargoSupport.Models.QuinyxModels
+﻿namespace CargoSupport.Models.QuinyxModels
 {
     public class ExtendedInformationModel
     {

@@ -3,12 +3,8 @@ using CargoSupport.Helpers;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
 using CargoSupport.Models.QuinyxModels;
-using Microsoft.AspNetCore.Mvc.DataAnnotations;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 

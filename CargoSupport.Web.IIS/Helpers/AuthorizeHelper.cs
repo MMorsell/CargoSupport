@@ -2,15 +2,14 @@
 using CargoSupport.Models.DatabaseModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CargoSupport.Helpers
 {
-    public class AuthorizeHelper
+    public static class AuthorizeHelper
     {
-        public static async Task<bool> IsAuthorized(List<RoleLevel> authRoleLevels, ClaimsPrincipal user)
+        public static async Task<bool> IsNotAuthorized(List<RoleLevel> authRoleLevels, ClaimsPrincipal user)
         {
             //string userName = user.FindFirstValue(ClaimTypes.Name);
 
@@ -34,13 +33,12 @@ namespace CargoSupport.Helpers
             //{
             //    return true;
             //}
-
             return true;
         }
 
         public static async Task<bool> AddOrUpdateUserRoleLevel(WhitelistModel authModel, ClaimsPrincipal userWithPermissionsToAdd)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, userWithPermissionsToAdd) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, userWithPermissionsToAdd))
             {
                 return false;
             }
@@ -68,7 +66,7 @@ namespace CargoSupport.Helpers
 
         public static async Task<bool> AddOrUpdateCarModel(CarModel carModel, ClaimsPrincipal userWithPermissionsToAdd)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, userWithPermissionsToAdd) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, userWithPermissionsToAdd))
             {
                 return false;
             }

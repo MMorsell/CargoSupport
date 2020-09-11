@@ -10,7 +10,7 @@ namespace CargoSupport.Helpers
 {
     public class ApiRequestHelper
     {
-        private HttpClient client;
+        private readonly HttpClient client;
 
         public ApiRequestHelper()
         {

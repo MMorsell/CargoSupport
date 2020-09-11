@@ -1,5 +1,4 @@
 ﻿using CargoSupport.Enums;
-using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using System.Threading.Tasks;
 using CargoSupport.ViewModels.Analyze;
 using System.Collections.Concurrent;
 using CargoSupport.Models.PinModels;
-using Microsoft.AspNetCore.Routing.Template;
 
 namespace CargoSupport.Helpers
 {
@@ -49,7 +47,6 @@ namespace CargoSupport.Helpers
 
             foreach (var group in groupedData)
             {
-                var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
                 var listedGroup = group.ToList();
                 if (listedGroup[0].CarModel != "Ej Satt")
                 {
@@ -104,16 +101,16 @@ namespace CargoSupport.Helpers
                     todayGraphsModel.NumberOfValidDeliveriesLeft = group.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
 
                     //Number of deliveries made within 5 minutes of each customer time slot
-                    todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInTimeWindowPlusMinus5(customer)).Count();
+                    todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Count(customer => CustomerIsInTimeWindowPlusMinus5(customer));
 
                     //Number of deliveries made withing 15 minutes of each customers estimated time
-                    todayGraphsModel.CustomersWithinPrognosis = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInPhasePlusMinus15Minutes(customer)).Count();
+                    todayGraphsModel.CustomersWithinPrognosis = allCustomerWhereDeliveryHasBeenDone.Count(customer => CustomerIsInPhasePlusMinus15Minutes(customer));
 
                     //Number of customer deliveries made before time slot - 5 minutes
-                    todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer)).Count();
+                    todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer));
 
                     //Number of deliveries made before estimated time +-0 minutes
-                    todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer)).Count();
+                    todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer));
 
                     var allHoursDedicatedOnRoutes = group.Sum(route => (double)route.Driver.hours);
                     if (allHoursDedicatedOnRoutes <= 0)
@@ -201,16 +198,16 @@ namespace CargoSupport.Helpers
                         todayGraphsModel.NumberOfValidDeliveriesLeft = driverGroup.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
 
                         //Number of deliveries made within 5 minutes of each customer time slot
-                        todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInTimeWindowPlusMinus5(customer)).Count();
+                        todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Count(customer => CustomerIsInTimeWindowPlusMinus5(customer));
 
                         //Number of deliveries made withing 15 minutes of each customers estimated time
-                        todayGraphsModel.CustomersWithinPrognosis = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInPhasePlusMinus15Minutes(customer)).Count();
+                        todayGraphsModel.CustomersWithinPrognosis = allCustomerWhereDeliveryHasBeenDone.Count(customer => CustomerIsInPhasePlusMinus15Minutes(customer));
 
                         //Number of customer deliveries made before time slot - 5 minutes
-                        todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer)).Count();
+                        todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer));
 
                         //Number of deliveries made before estimated time +-0 minutes
-                        todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer)).Count();
+                        todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer));
 
                         var allHoursDedicatedOnRoutes = driverGroup.Sum(route => (double)route.Driver.hours);
                         if (allHoursDedicatedOnRoutes <= 0)
@@ -266,16 +263,16 @@ namespace CargoSupport.Helpers
                     innerTodayGraphsModel.NumberOfValidDeliveriesLeft = innerDriverGroup.Sum(route => route.PinRouteModel.NumberOfCustomers) - innerTodayGraphsModel.NumberOfValidDeliveries;
 
                     //Number of deliveries made within 5 minutes of each customer time slot
-                    innerTodayGraphsModel.CustomersWithinTimeSlot = innerAllCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInTimeWindowPlusMinus5(customer)).Count();
+                    innerTodayGraphsModel.CustomersWithinTimeSlot = innerAllCustomerWhereDeliveryHasBeenDone.Count(customer => CustomerIsInTimeWindowPlusMinus5(customer));
 
                     //Number of deliveries made withing 15 minutes of each customers estimated time
-                    innerTodayGraphsModel.CustomersWithinPrognosis = innerAllCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInPhasePlusMinus15Minutes(customer)).Count();
+                    innerTodayGraphsModel.CustomersWithinPrognosis = innerAllCustomerWhereDeliveryHasBeenDone.Count(customer => CustomerIsInPhasePlusMinus15Minutes(customer));
 
                     //Number of customer deliveries made before time slot - 5 minutes
-                    innerTodayGraphsModel.CustomersBeforeTimeSlot = innerAllCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer)).Count();
+                    innerTodayGraphsModel.CustomersBeforeTimeSlot = innerAllCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer));
 
                     //Number of deliveries made before estimated time +-0 minutes
-                    innerTodayGraphsModel.CustomersBeforeEstimatedTime = innerAllCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer)).Count();
+                    innerTodayGraphsModel.CustomersBeforeEstimatedTime = innerAllCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer));
 
                     var allHoursDedicatedOnRoutes = innerDriverGroup.Sum(route => (double)route.Driver.hours);
                     if (allHoursDedicatedOnRoutes <= 0)
@@ -331,16 +328,16 @@ namespace CargoSupport.Helpers
                     todayGraphsModel.NumberOfValidDeliveriesLeft = group.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
 
                     //Number of deliveries made within 5 minutes of each customer time slot
-                    todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInTimeWindowPlusMinus5(customer)).Count();
+                    todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Count(customer => CustomerIsInTimeWindowPlusMinus5(customer));
 
                     //Number of deliveries made withing 15 minutes of each customers estimated time
-                    todayGraphsModel.CustomersWithinPrognosis = allCustomerWhereDeliveryHasBeenDone.Where(customer => CustomerIsInPhasePlusMinus15Minutes(customer)).Count();
+                    todayGraphsModel.CustomersWithinPrognosis = allCustomerWhereDeliveryHasBeenDone.Count(customer => CustomerIsInPhasePlusMinus15Minutes(customer));
 
                     //Number of customer deliveries made before time slot - 5 minutes
-                    todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer)).Count();
+                    todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer));
 
                     //Number of deliveries made before estimated time +-0 minutes
-                    todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Where(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer)).Count();
+                    todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer));
 
                     if (todayGraphsModel.NumberOfValidDeliveries > 0)
                     {
@@ -571,7 +568,7 @@ namespace CargoSupport.Helpers
                         / 10000 /*To get result in swedish miles*/
                         )
                         , 1),
-                AvrWeight = dataModels.Sum(data => data.PinRouteModel.Weight) / dataModels.Count(),
+                AvrWeight = dataModels.Sum(data => data.PinRouteModel.Weight) / dataModels.Count,
                 DriverFullName = singleDataModelWithDriverDetails[0].Driver.GetDriverName(),
                 QuinyxId = singleDataModelWithDriverDetails[0].Driver.Id
             };

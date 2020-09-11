@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CargoSupport.Enums;
 using CargoSupport.Helpers;
 using CargoSupport.Models.DatabaseModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -32,7 +28,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
         public async Task<ActionResult> Index()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -43,7 +39,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("[controller]/AllData/{id:int}")]
         public async Task<IActionResult> AllData(int id)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -62,7 +58,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("[controller]/DriverDiscreteData/{id:int}")]
         public async Task<IActionResult> DriverDiscreteData(int id)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -80,7 +76,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetSlim")]
         public async Task<ActionResult> GetSlim(string fromDate, string toDate)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -106,7 +102,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
         public async Task<ActionResult> TodayGraphs()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -118,7 +114,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetTodayGraphs")]
         public async Task<ActionResult> GetTodayGraphs(string fromDate, string toDate, bool splitData)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -146,7 +142,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetTodayGraphsForDriver")]
         public async Task<ActionResult> GetTodayGraphsForDriver(string fromDate, string toDate, int driverId)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -175,7 +171,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetSimplifiedRecordsForDriver")]
         public async Task<ActionResult> GetSimplifiedRecordsForDriver(string fromDate, string toDate, int driverId)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -202,7 +198,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
         public async Task<ActionResult> CarStats()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -214,7 +210,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetCarStats")]
         public async Task<ActionResult> GetCarStats(string fromDate, string toDate)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -241,7 +237,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
         public async Task<ActionResult> DataByGroup()
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -253,7 +249,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetUnderBoss")]
         public async Task<ActionResult> GetUnderBoss(int? sectionId, int? staffCatId, string fromDate, string toDate)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -277,7 +273,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 var matchingRecordsInDatabase = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
                 var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
 
-                var matchingRecordsBySectionId = matchingRecordsInDatabase.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.Section == sectionId).ToList();
+                var matchingRecordsBySectionId = recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.Section == sectionId).ToList();
 
                 if (staffCatId == 28899)
                 {
@@ -308,7 +304,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetSingleDriverUnderBoss")]
         public async Task<ActionResult> GetSingleDriverUnderBoss(int driverId, string fromDate, string toDate)
         {
-            if (await IsAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User) == false)
+            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();
             }
@@ -331,7 +327,7 @@ namespace CargoSupport.Web.IIS.Controllers
             matchingRecordsInDatabase = matchingRecordsInDatabase.Where(rec => rec.Driver.Id.Equals(driverId)).ToList();
             var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
 
-            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsInDatabase);
+            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(recordsWithDriverNames);
             return Ok(res);
         }
     }

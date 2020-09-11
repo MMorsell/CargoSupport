@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CargoSupport.Constants
 {
-    public class SoapApi
+    public static class SoapApi
     {
         public static string GetApiKey()
         {
