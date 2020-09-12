@@ -1,6 +1,7 @@
 ﻿using CargoSupport.Helpers;
 using CargoSupport.Models.PinModels;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -12,9 +13,11 @@ namespace CargoSupport.Services
     {
         private readonly PinHelper _ph;
         private Timer _timer;
+        private readonly ILogger _logger;
 
-        public PinUpdateService()
+        public PinUpdateService(ILoggerFactory logger)
         {
+            _logger = logger.CreateLogger("PinUpdateService");
             this._ph = new PinHelper();
         }
 
@@ -43,6 +46,7 @@ namespace CargoSupport.Services
         {
             try
             {
+                _logger.LogInformation($"Start updating todays orders at {DateTime.Now.ToShortTimeString()}");
                 var existingIds = _ph.GetAllOrderIdsAsStringForThisDay(DateTime.Now).Result;
 
                 foreach (var existingId in existingIds)
@@ -55,10 +59,11 @@ namespace CargoSupport.Services
                         _ph.UpdateExistingRecordsIfThereIsOne(routes).Wait();
                     }
                 }
+                _logger.LogInformation($"Finished updating todays orders at {DateTime.Now.ToShortTimeString()}");
             }
             catch (Exception ex)
             {
-                //TODO: add logging for exception
+                _logger.LogError(ex, $"Exception when updating existing orders");
             }
         }
     }

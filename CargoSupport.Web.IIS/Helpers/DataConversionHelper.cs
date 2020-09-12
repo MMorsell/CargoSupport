@@ -7,12 +7,22 @@ using System.Threading.Tasks;
 using CargoSupport.ViewModels.Analyze;
 using System.Collections.Concurrent;
 using CargoSupport.Models.PinModels;
+using Microsoft.Extensions.Logging;
 
 namespace CargoSupport.Helpers
 {
-    public static class DataConversionHelper
+    public class DataConversionHelper
     {
-        public static QuinyxRole GetQuinyxEnum(int categoryId)
+        private readonly ILogger _logger;
+        private readonly QuinyxHelper _qnHelper;
+
+        public DataConversionHelper(ILoggerFactory logger)
+        {
+            _logger = logger.CreateLogger("DataConversionHelper");
+            _qnHelper = new QuinyxHelper(logger);
+        }
+
+        public QuinyxRole GetQuinyxEnum(int categoryId)
         {
             /*
              * 226245 .Eftermiddag
@@ -36,7 +46,7 @@ namespace CargoSupport.Helpers
             public double DistanceInSwedishMiles { get; set; }
         }
 
-        public static CarStatisticsModel[] ConvertDataToCarStatisticsModel(List<DataModel> routesOfToday)
+        public CarStatisticsModel[] ConvertDataToCarStatisticsModel(List<DataModel> routesOfToday)
         {
             var resultModels = new List<CarStatisticsModel>();
 
@@ -66,7 +76,7 @@ namespace CargoSupport.Helpers
             return resultModels.ToArray();
         }
 
-        public static TodayGraphsViewModel[] ConvertTodaysDataToGraphModelsAsParalell(List<DataModel> routesOfToday, bool splitRouteName)
+        public TodayGraphsViewModel[] ConvertTodaysDataToGraphModelsAsParalell(List<DataModel> routesOfToday, bool splitRouteName)
         {
             var resultModels = new ConcurrentBag<TodayGraphsViewModel>();
 
@@ -165,7 +175,7 @@ namespace CargoSupport.Helpers
             return resultModels.OrderBy(d => d.LabelTitle).ToArray();
         }
 
-        public static AllBossesViewModel[] ConvertDatRowsToBossGroup(List<DataModel> routesOfToday)
+        public AllBossesViewModel[] ConvertDatRowsToBossGroup(List<DataModel> routesOfToday)
         {
             var resultModels = new ConcurrentBag<AllBossesViewModel>();
 
@@ -242,7 +252,7 @@ namespace CargoSupport.Helpers
             return resultModels.OrderBy(d => d.LabelTitle).ToArray();
         }
 
-        private static void ExtractDataByCompanyBosses(ConcurrentBag<AllBossesViewModel> resultModels, IGrouping<int, DataModel> driverGroup)
+        private void ExtractDataByCompanyBosses(ConcurrentBag<AllBossesViewModel> resultModels, IGrouping<int, DataModel> driverGroup)
         {
             var innerGroupByBoss = driverGroup.GroupBy(data => data.Driver.ExtendedInformationModel.Section);
             Parallel.ForEach(innerGroupByBoss, innerDriverGroup =>
@@ -304,7 +314,7 @@ namespace CargoSupport.Helpers
             });
         }
 
-        public static AllBossesViewModel[] ConvertDataModelsToMultipleDriverTableData(List<DataModel> routesOfToday)
+        public AllBossesViewModel[] ConvertDataModelsToMultipleDriverTableData(List<DataModel> routesOfToday)
         {
             var resultModels = new ConcurrentBag<AllBossesViewModel>();
 
@@ -374,7 +384,7 @@ namespace CargoSupport.Helpers
             return resultModels.ToArray();
         }
 
-        public static SimplifiedRecordsViewModel[] ConvertDataToSimplifiedRecordsAsParalell(List<DataModel> routes)
+        public SimplifiedRecordsViewModel[] ConvertDataToSimplifiedRecordsAsParalell(List<DataModel> routes)
         {
             var resultModels = new ConcurrentBag<SimplifiedRecordsViewModel>();
 
@@ -401,7 +411,7 @@ namespace CargoSupport.Helpers
             return resultModels.ToArray();
         }
 
-        private static bool CustomerIsInTimeWindowPlusMinus5(PinCustomerModel customerModel)
+        private bool CustomerIsInTimeWindowPlusMinus5(PinCustomerModel customerModel)
         {
             //Inom Tidsfönser -Hur många procent kunder inom tidsfönster - lägg på 5 minuter - time_handled ska vara inom detta
             var timeSpan_ActualDeliveryTime = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_handled.Split(' ')[1]);
@@ -412,7 +422,7 @@ namespace CargoSupport.Helpers
             return result;
         }
 
-        private static bool CustomerIsInPhasePlusMinus15Minutes(PinCustomerModel customerModel)
+        private bool CustomerIsInPhasePlusMinus15Minutes(PinCustomerModel customerModel)
         {
             var timeSpan_ActualDeliveryTime = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_handled.Split(' ')[1]);
             var timeSpan_WindowsStart = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_estimated.Split(' ')[1]).Add(new TimeSpan(0, 0, -15, 0, 0));
@@ -422,7 +432,7 @@ namespace CargoSupport.Helpers
             return result;
         }
 
-        private static bool DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(PinCustomerModel customerModel)
+        private bool DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(PinCustomerModel customerModel)
         {
             var timeSpan_ActualDeliveryTime = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_handled.Split(' ')[1]);
             var timeSpan_WindowsStart = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.timewindow_start).Add(new TimeSpan(0, 0, -5, 0, 0));
@@ -431,7 +441,7 @@ namespace CargoSupport.Helpers
             return result;
         }
 
-        private static bool DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(PinCustomerModel customerModel)
+        private bool DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(PinCustomerModel customerModel)
         {
             var timeSpan_ActualDeliveryTime = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_handled.Split(' ')[1]);
             var timeSpan_WindowsStart = TimeSpan.Parse(customerModel.PinCustomerDeliveryInfo.time_estimated.Split(' ')[1]).Add(new TimeSpan(0, 0, -15, 0, 0));
@@ -440,11 +450,10 @@ namespace CargoSupport.Helpers
             return result;
         }
 
-        public static async Task<List<SlimViewModel>> ConvertDataModelsToSlimViewModels(List<DataModel> dataModels)
+        public async Task<List<SlimViewModel>> ConvertDataModelsToSlimViewModels(List<DataModel> dataModels)
         {
             var returnList = new ConcurrentBag<SlimViewModel>();
-            var qh = new QuinyxHelper();
-            var dataModelsWithNames = await qh.AddNamesToData(dataModels);
+            var dataModelsWithNames = await _qnHelper.AddNamesToData(dataModels);
 
             var groupedModels = dataModelsWithNames.GroupBy(data => data.Driver.Id);
 
@@ -471,16 +480,16 @@ namespace CargoSupport.Helpers
                         });
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    //TODO: Handle exeption here
+                    _logger.LogError(ex, $"Exception when ConvertDataModelsToSlimViewModels");
                 }
             });
 
             return returnList.ToList();
         }
 
-        public static async Task<FullViewModel> ConvertDataModelsToFullViewModel(List<DataModel> dataModels)
+        public async Task<FullViewModel> ConvertDataModelsToFullViewModel(List<DataModel> dataModels)
         {
             var returnModel = new FullViewModel();
             Task<SlimViewModel> convertSlimTask = GetSlimInformation(dataModels);
@@ -499,7 +508,7 @@ namespace CargoSupport.Helpers
             return returnModel;
         }
 
-        private static async Task<xy[]> ConvertToCustomerByData(List<DataModel> dataModels)
+        private async Task<xy[]> ConvertToCustomerByData(List<DataModel> dataModels)
         {
             return await Task.Run(() =>
             {
@@ -516,7 +525,7 @@ namespace CargoSupport.Helpers
             });
         }
 
-        private static async Task<xy[]> ConvertToDistanceByData(List<DataModel> dataModels)
+        private async Task<xy[]> ConvertToDistanceByData(List<DataModel> dataModels)
         {
             return await Task.Run(() =>
             {
@@ -533,7 +542,7 @@ namespace CargoSupport.Helpers
             });
         }
 
-        private static async Task<xy[]> ConvertToWeightByData(List<DataModel> dataModels)
+        private async Task<xy[]> ConvertToWeightByData(List<DataModel> dataModels)
         {
             return await Task.Run(() =>
             {
@@ -550,13 +559,12 @@ namespace CargoSupport.Helpers
             });
         }
 
-        private static async Task<SlimViewModel> GetSlimInformation(List<DataModel> dataModels)
+        private async Task<SlimViewModel> GetSlimInformation(List<DataModel> dataModels)
         {
-            var qh = new QuinyxHelper();
             /*
              * Only sending one datarow since the name is the same for all rows
              */
-            var singleDataModelWithDriverDetails = await qh.AddNamesToData(new List<DataModel>() { dataModels[0] });
+            var singleDataModelWithDriverDetails = await _qnHelper.AddNamesToData(new List<DataModel>() { dataModels[0] });
 
             var returnModel = new SlimViewModel()
             {
@@ -576,7 +584,7 @@ namespace CargoSupport.Helpers
             return returnModel;
         }
 
-        private static async Task<xyz[]> ConvertToCustomerPositionData(List<DataModel> dataModels)
+        private async Task<xyz[]> ConvertToCustomerPositionData(List<DataModel> dataModels)
         {
             return await Task.Run(() =>
             {

@@ -7,11 +7,21 @@ using CargoSupport.Enums;
 using CargoSupport.Models.DatabaseModels;
 using System.Threading.Tasks;
 using RestSharp;
+using Microsoft.Extensions.Logging;
 
 namespace CargoSupport.Helpers
 {
     public class QuinyxHelper
     {
+        private readonly ILogger _logger;
+        private readonly DataConversionHelper _dh;
+
+        public QuinyxHelper(ILoggerFactory logger)
+        {
+            _dh = new DataConversionHelper(logger);
+            _logger = logger.CreateLogger("QuinyxHelper");
+        }
+
         public async Task<List<QuinyxModel>> GetAllDriversSorted(DateTime date, bool clearNames = true)
         {
             var getDriversTask = GetDrivers(date, date);
@@ -116,7 +126,7 @@ namespace CargoSupport.Helpers
             for (int i = quinyxResult.Count - 1; i >= 0; i--)
             {
                 if (quinyxResult[i].ExtendedInformationModel.Active == 0 ||
-                    CargoSupport.Helpers.DataConversionHelper.GetQuinyxEnum(quinyxResult[i].CategoryId) != QuinyxRole.Driver)
+                    _dh.GetQuinyxEnum(quinyxResult[i].CategoryId) != QuinyxRole.Driver)
                 {
                     quinyxResult.RemoveAt(i);
                 }
