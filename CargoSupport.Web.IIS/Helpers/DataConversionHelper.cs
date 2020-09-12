@@ -11,33 +11,32 @@ using Microsoft.Extensions.Logging;
 
 namespace CargoSupport.Helpers
 {
-    public class DataConversionHelper
+    public interface IDataConversionHelper
+    {
+        Task<FullViewModel> ConvertDataModelsToFullViewModel(List<DataModel> dataModels);
+
+        AllBossesViewModel[] ConvertDataModelsToMultipleDriverTableData(List<DataModel> routesOfToday);
+
+        Task<List<SlimViewModel>> ConvertDataModelsToSlimViewModels(List<DataModel> dataModels);
+
+        DataConversionHelper.CarStatisticsModel[] ConvertDataToCarStatisticsModel(List<DataModel> routesOfToday);
+
+        SimplifiedRecordsViewModel[] ConvertDataToSimplifiedRecordsAsParalell(List<DataModel> routes);
+
+        AllBossesViewModel[] ConvertDatRowsToBossGroup(List<DataModel> routesOfToday);
+
+        TodayGraphsViewModel[] ConvertTodaysDataToGraphModelsAsParalell(List<DataModel> routesOfToday, bool splitRouteName);
+    }
+
+    public class DataConversionHelper : IDataConversionHelper
     {
         private readonly ILogger _logger;
-        private readonly QuinyxHelper _qnHelper;
+        private readonly IQuinyxHelper _quinyxHelper;
 
-        public DataConversionHelper(ILoggerFactory logger)
+        public DataConversionHelper(ILoggerFactory logger, IQuinyxHelper quinyxHelper)
         {
             _logger = logger.CreateLogger("DataConversionHelper");
-            _qnHelper = new QuinyxHelper(logger);
-        }
-
-        public QuinyxRole GetQuinyxEnum(int categoryId)
-        {
-            /*
-             * 226245 .Eftermiddag
-             * 226233 - .Förmiddag
-             */
-
-            if (categoryId.Equals(226245) ||
-                categoryId.Equals(226233))
-            {
-                return QuinyxRole.Driver;
-            }
-            else
-            {
-                return QuinyxRole.Other;
-            }
+            _quinyxHelper = quinyxHelper;
         }
 
         public class CarStatisticsModel
@@ -453,9 +452,8 @@ namespace CargoSupport.Helpers
         public async Task<List<SlimViewModel>> ConvertDataModelsToSlimViewModels(List<DataModel> dataModels)
         {
             var returnList = new ConcurrentBag<SlimViewModel>();
-            var dataModelsWithNames = await _qnHelper.AddNamesToData(dataModels);
 
-            var groupedModels = dataModelsWithNames.GroupBy(data => data.Driver.Id);
+            var groupedModels = dataModels.GroupBy(data => data.Driver.Id);
 
             Parallel.ForEach(groupedModels, group =>
             {
@@ -492,7 +490,7 @@ namespace CargoSupport.Helpers
         public async Task<FullViewModel> ConvertDataModelsToFullViewModel(List<DataModel> dataModels)
         {
             var returnModel = new FullViewModel();
-            Task<SlimViewModel> convertSlimTask = GetSlimInformation(dataModels);
+            Task<SlimViewModel> convertSlimTask = GetSlimInformation(dataModels, _quinyxHelper);
             Task<xyz[]> convertTask = ConvertToCustomerPositionData(dataModels);
             Task<xy[]> convertKiloTask = ConvertToWeightByData(dataModels);
             Task<xy[]> convertDistanceTask = ConvertToDistanceByData(dataModels);
@@ -559,12 +557,12 @@ namespace CargoSupport.Helpers
             });
         }
 
-        private async Task<SlimViewModel> GetSlimInformation(List<DataModel> dataModels)
+        private async Task<SlimViewModel> GetSlimInformation(List<DataModel> dataModels, IQuinyxHelper _quinyxHelper)
         {
             /*
              * Only sending one datarow since the name is the same for all rows
              */
-            var singleDataModelWithDriverDetails = await _qnHelper.AddNamesToData(new List<DataModel>() { dataModels[0] });
+            var singleDataModelWithDriverDetails = await _quinyxHelper.AddNamesToData(new List<DataModel>() { dataModels[0] });
 
             var returnModel = new SlimViewModel()
             {

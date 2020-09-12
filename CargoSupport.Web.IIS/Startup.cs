@@ -1,3 +1,4 @@
+using CargoSupport.Helpers;
 using CargoSupport.Hubs;
 using CargoSupport.Services;
 using Microsoft.AspNetCore.Builder;
@@ -24,6 +25,11 @@ namespace CargoSupport.Web.IIS
             //    .AddAuthentication(NegotiateDefaults.AuthenticationScheme)
             //    .AddNegotiate();
             services.AddHostedService<PinUpdateService>();
+
+            //Dependency Injection
+            services.AddScoped<IDataConversionHelper, DataConversionHelper>();
+            services.AddScoped<IQuinyxHelper, QuinyxHelper>();
+
             services.AddControllersWithViews();
             services.AddSignalR();
 

@@ -23,14 +23,14 @@ namespace CargoSupport.Web.IIS.Controllers.API
     public class UpsertController : ControllerBase
     {
         private readonly IHubContext<ChatHub> _chatHub;
+        private readonly IQuinyxHelper _quinyxHelper;
         private readonly ILogger _logger;
-        private readonly QuinyxHelper _qnHelper;
 
-        public UpsertController(IHubContext<ChatHub> chatHub, ILoggerFactory logger)
+        public UpsertController(IHubContext<ChatHub> chatHub, ILoggerFactory logger, IQuinyxHelper quinyxHelper)
         {
             _chatHub = chatHub;
+            _quinyxHelper = quinyxHelper;
             _logger = logger.CreateLogger("UpsertController");
-            _qnHelper = new QuinyxHelper(logger);
         }
 
         [HttpPost]
@@ -107,7 +107,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
         {
             if (newDriverID != fallBackDriver.Id)
             {
-                var driversThatWorksOnThisDate = _qnHelper.GetAllDriversSorted(date);
+                var driversThatWorksOnThisDate = _quinyxHelper.GetAllDriversSorted(date);
                 var matchingDriver = driversThatWorksOnThisDate.Result
                     .FirstOrDefault(dr => dr.Id.Equals(newDriverID));
 

@@ -22,14 +22,15 @@ namespace CargoSupport.Web.Controllers.API
     public class PublicController : ControllerBase
     {
         private readonly MongoDbHelper _dbHelper;
-        private readonly QuinyxHelper _qnHelper;
+        private readonly IQuinyxHelper _quinyxHelper;
+
         //private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PublicController(ILoggerFactory logger/*IHttpContextAccessor httpContextAccessor*/)
+        public PublicController(ILoggerFactory logger, IQuinyxHelper quinyxHelper/*IHttpContextAccessor httpContextAccessor*/)
         {
             //_httpContextAccessor = httpContextAccessor;
             _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
-            _qnHelper = new QuinyxHelper(logger);
+            _quinyxHelper = quinyxHelper;
         }
 
         [HttpGet]
@@ -48,7 +49,7 @@ namespace CargoSupport.Web.Controllers.API
             }
 
             var carOptionsTask = _dbHelper.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
-            var driversThatWorksOnThisDateTask = _qnHelper.GetAllDriversSortedToArray(date, false);
+            var driversThatWorksOnThisDateTask = _quinyxHelper.GetAllDriversSortedToArray(date, false);
             var dataBaseResTask = ConvertToTransport(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
 
             await Task.WhenAll(carOptionsTask, driversThatWorksOnThisDateTask, dataBaseResTask);
@@ -107,7 +108,7 @@ namespace CargoSupport.Web.Controllers.API
 
         private async Task<List<StorageViewModel>> ConvertToStorage(List<DataModel> allRoutes)
         {
-            allRoutes = await _qnHelper.AddNamesToData(allRoutes);
+            allRoutes = await _quinyxHelper.AddNamesToData(allRoutes);
             var returnModels = new List<StorageViewModel>();
             for (int i = 0; i < allRoutes.Count; i++)
             {
@@ -132,7 +133,7 @@ namespace CargoSupport.Web.Controllers.API
 
         private async Task<TransportViewModel[]> ConvertToTransport(List<DataModel> allRoutes)
         {
-            allRoutes = await _qnHelper.AddNamesToData(allRoutes);
+            allRoutes = await _quinyxHelper.AddNamesToData(allRoutes);
             var returnModels = new ConcurrentBag<TransportViewModel>();
             Parallel.ForEach(allRoutes, route =>
             {
@@ -162,7 +163,7 @@ namespace CargoSupport.Web.Controllers.API
 
         private async Task<List<TransportViewModel>> ConvertToPublic(List<DataModel> allRoutes)
         {
-            allRoutes = await _qnHelper.AddNamesToData(allRoutes);
+            allRoutes = await _quinyxHelper.AddNamesToData(allRoutes);
             var returnModels = new List<TransportViewModel>();
             for (int i = 0; i < allRoutes.Count; i++)
             {

@@ -11,14 +11,29 @@ using Microsoft.Extensions.Logging;
 
 namespace CargoSupport.Helpers
 {
-    public class QuinyxHelper
+    public interface IQuinyxHelper
+    {
+        Task<List<DataModel>> AddNamesToData(List<DataModel> Data);
+
+        Task<List<QuinyxModel>> GetAllDriversSorted(DateTime date, bool clearNames = true);
+
+        Task<QuinyxModel[]> GetAllDriversSortedToArray(DateTime date, bool clearNames = true);
+
+        Task<List<int>> GetAllDriversWithReportingTo(string reportingTo);
+
+        Task<List<QuinyxModel>> GetDrivers(DateTime from, DateTime to);
+
+        Task<List<ExtendedInformationModel>> GetExtraInformationForDrivers();
+
+        Task<List<BasicQuinyxModel>> GetNonSchedualedDrivers();
+    }
+
+    public class QuinyxHelper : IQuinyxHelper
     {
         private readonly ILogger _logger;
-        private readonly DataConversionHelper _dh;
 
         public QuinyxHelper(ILoggerFactory logger)
         {
-            _dh = new DataConversionHelper(logger);
             _logger = logger.CreateLogger("QuinyxHelper");
         }
 
@@ -126,7 +141,7 @@ namespace CargoSupport.Helpers
             for (int i = quinyxResult.Count - 1; i >= 0; i--)
             {
                 if (quinyxResult[i].ExtendedInformationModel.Active == 0 ||
-                    _dh.GetQuinyxEnum(quinyxResult[i].CategoryId) != QuinyxRole.Driver)
+                    GetQuinyxEnum(quinyxResult[i].CategoryId) != QuinyxRole.Driver)
                 {
                     quinyxResult.RemoveAt(i);
                 }
@@ -138,6 +153,24 @@ namespace CargoSupport.Helpers
                 quinyxResult[i].endTime = endTime;
             }
             return quinyxResult;
+        }
+
+        public QuinyxRole GetQuinyxEnum(int categoryId)
+        {
+            /*
+             * 226245 .Eftermiddag
+             * 226233 - .Förmiddag
+             */
+
+            if (categoryId.Equals(226245) ||
+                categoryId.Equals(226233))
+            {
+                return QuinyxRole.Driver;
+            }
+            else
+            {
+                return QuinyxRole.Other;
+            }
         }
 
         public async Task<List<BasicQuinyxModel>> GetNonSchedualedDrivers()
