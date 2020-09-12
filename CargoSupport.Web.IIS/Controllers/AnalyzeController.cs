@@ -15,15 +15,17 @@ namespace CargoSupport.Web.IIS.Controllers
 {
     public class AnalyzeController : Controller
     {
-        private readonly ILogger<AnalyzeController> _logger;
+        private readonly ILogger _logger;
         private readonly MongoDbHelper _dbHelper;
         private readonly QuinyxHelper _qh;
+        private readonly DataConversionHelper _dh;
 
-        public AnalyzeController(ILogger<AnalyzeController> logger)
+        public AnalyzeController(ILoggerFactory logger)
         {
             _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
-            _qh = new QuinyxHelper();
-            _logger = logger;
+            _qh = new QuinyxHelper(logger);
+            _dh = new DataConversionHelper(logger);
+            _logger = logger.CreateLogger("AnalyzeController");
         }
 
         public async Task<ActionResult> Index()
@@ -50,7 +52,7 @@ namespace CargoSupport.Web.IIS.Controllers
             }
 
             List<DataModel> allRoutes = await _dbHelper.GetAllRecordsByDriverId(Constants.MongoDb.OutputScreenTableName, id);
-            var analyzeModels = await CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToFullViewModel(allRoutes);
+            var analyzeModels = await _dh.ConvertDataModelsToFullViewModel(allRoutes);
             ViewBag.DataTable = JsonSerializer.Serialize(analyzeModels);
             return View(allRoutes);
         }
@@ -96,7 +98,7 @@ namespace CargoSupport.Web.IIS.Controllers
             }
 
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
-            var res = await CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToSlimViewModels(analyzeModels);
+            var res = await _dh.ConvertDataModelsToSlimViewModels(analyzeModels);
             return Ok(res);
         }
 
@@ -134,7 +136,7 @@ namespace CargoSupport.Web.IIS.Controllers
             }
 
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
-            var res = CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModelsAsParalell(analyzeModels, splitData);
+            var res = _dh.ConvertTodaysDataToGraphModelsAsParalell(analyzeModels, splitData);
             return Ok(res);
         }
 
@@ -163,7 +165,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
             analyzeModels = analyzeModels.Where(data => data.Driver.Id == driverId).ToList();
-            var res = CargoSupport.Helpers.DataConversionHelper.ConvertTodaysDataToGraphModelsAsParalell(analyzeModels, true);
+            var res = _dh.ConvertTodaysDataToGraphModelsAsParalell(analyzeModels, true);
             return Ok(res);
         }
 
@@ -192,7 +194,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
             analyzeModels = analyzeModels.Where(data => data.Driver.Id == driverId).ToList();
-            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataToSimplifiedRecordsAsParalell(analyzeModels);
+            var res = _dh.ConvertDataToSimplifiedRecordsAsParalell(analyzeModels);
             return Ok(res);
         }
 
@@ -231,7 +233,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
             List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
 
-            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataToCarStatisticsModel(analyzeModels);
+            var res = _dh.ConvertDataToCarStatisticsModel(analyzeModels);
             return Ok(res);
         }
 
@@ -277,7 +279,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
                 if (staffCatId == 28899)
                 {
-                    var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId);
+                    var res = _dh.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId);
                     return Ok(res);
                 }
                 else
@@ -286,7 +288,7 @@ namespace CargoSupport.Web.IIS.Controllers
                      * Since all external drivers are grouped by same section id, we need extra grouping to correctly seperate by external company
                      */
                     matchingRecordsBySectionId = matchingRecordsBySectionId.Where(d => d.Driver.ExtendedInformationModel.StaffCat == staffCatId).ToList();
-                    var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId);
+                    var res = _dh.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId);
                     return Ok(res);
                 }
             }
@@ -295,7 +297,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 var matchingRecordsInDatabase = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
                 var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
 
-                var res = CargoSupport.Helpers.DataConversionHelper.ConvertDatRowsToBossGroup(recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null).ToList());
+                var res = _dh.ConvertDatRowsToBossGroup(recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null).ToList());
                 return Ok(res);
             }
         }
@@ -327,7 +329,7 @@ namespace CargoSupport.Web.IIS.Controllers
             matchingRecordsInDatabase = matchingRecordsInDatabase.Where(rec => rec.Driver.Id.Equals(driverId)).ToList();
             var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
 
-            var res = CargoSupport.Helpers.DataConversionHelper.ConvertDataModelsToMultipleDriverTableData(recordsWithDriverNames);
+            var res = _dh.ConvertDataModelsToMultipleDriverTableData(recordsWithDriverNames);
             return Ok(res);
         }
     }

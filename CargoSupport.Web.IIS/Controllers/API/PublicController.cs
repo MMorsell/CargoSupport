@@ -11,6 +11,7 @@ using static CargoSupport.Helpers.AuthorizeHelper;
 using System.Linq;
 using CargoSupport.Models.QuinyxModels;
 using System.Collections.Concurrent;
+using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,11 +25,11 @@ namespace CargoSupport.Web.Controllers.API
         private readonly QuinyxHelper _qnHelper;
         //private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PublicController(/*IHttpContextAccessor httpContextAccessor*/)
+        public PublicController(ILoggerFactory logger/*IHttpContextAccessor httpContextAccessor*/)
         {
             //_httpContextAccessor = httpContextAccessor;
             _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
-            _qnHelper = new QuinyxHelper();
+            _qnHelper = new QuinyxHelper(logger);
         }
 
         [HttpGet]

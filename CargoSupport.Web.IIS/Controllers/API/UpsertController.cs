@@ -13,6 +13,7 @@ using CargoSupport.ViewModels.Public;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers.API
@@ -22,10 +23,14 @@ namespace CargoSupport.Web.IIS.Controllers.API
     public class UpsertController : ControllerBase
     {
         private readonly IHubContext<ChatHub> _chatHub;
+        private readonly ILogger _logger;
+        private readonly QuinyxHelper _qnHelper;
 
-        public UpsertController(IHubContext<ChatHub> chatHub)
+        public UpsertController(IHubContext<ChatHub> chatHub, ILoggerFactory logger)
         {
             _chatHub = chatHub;
+            _logger = logger.CreateLogger("UpsertController");
+            _qnHelper = new QuinyxHelper(logger);
         }
 
         [HttpPost]
@@ -98,12 +103,11 @@ namespace CargoSupport.Web.IIS.Controllers.API
             }
         }
 
-        private static QuinyxModel TryGetDriverInfo(int newDriverID, DateTime date, QuinyxModel fallBackDriver)
+        private QuinyxModel TryGetDriverInfo(int newDriverID, DateTime date, QuinyxModel fallBackDriver)
         {
             if (newDriverID != fallBackDriver.Id)
             {
-                var qh = new QuinyxHelper();
-                var driversThatWorksOnThisDate = qh.GetAllDriversSorted(date);
+                var driversThatWorksOnThisDate = _qnHelper.GetAllDriversSorted(date);
                 var matchingDriver = driversThatWorksOnThisDate.Result
                     .FirstOrDefault(dr => dr.Id.Equals(newDriverID));
 
