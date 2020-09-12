@@ -33,7 +33,7 @@ namespace CargoSupport.Helpers
             //{
             //    return true;
             //}
-            return true;
+            return false;
         }
 
         public static async Task<bool> AddOrUpdateUserRoleLevel(WhitelistModel authModel, ClaimsPrincipal userWithPermissionsToAdd)
