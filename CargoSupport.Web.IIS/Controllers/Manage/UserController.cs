@@ -4,22 +4,19 @@ using CargoSupport.Enums;
 using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.ViewModels.Manange;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers.Manage
 {
+    [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
     public class UserController : Controller
     {
         [Route("User")]
         public async Task<ActionResult> Index()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             var db = new CargoSupport.Helpers.MongoDbHelper(Constants.MongoDb.DatabaseName);
             var allUsers = await db.GetAllRecords<WhitelistModel>(Constants.MongoDb.WhitelistTable);
             return View(new UpsertUserViewModel() { CurrentUser = new WhitelistModel(), ExistingUsers = allUsers });
@@ -34,11 +31,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateAsync(WhitelistModel newUserModel)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             if (await AddOrUpdateUserRoleLevel(newUserModel, HttpContext.User))
             {
                 return RedirectToAction("Index");
@@ -51,10 +43,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<ActionResult> EditAsync(string id)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
             var db = new CargoSupport.Helpers.MongoDbHelper(Constants.MongoDb.DatabaseName);
             var existingUser = await db.GetRecordById<WhitelistModel>(Constants.MongoDb.WhitelistTable, id);
 
@@ -70,11 +58,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditAsync(WhitelistModel newUserModel)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             if (await AddOrUpdateUserRoleLevel(newUserModel, HttpContext.User))
             {
                 return RedirectToAction("Index");
@@ -87,10 +70,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<ActionResult> DeleteAsync(string id)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
             var db = new CargoSupport.Helpers.MongoDbHelper(Constants.MongoDb.DatabaseName);
             var existingUser = await db.GetRecordById<WhitelistModel>(Constants.MongoDb.WhitelistTable, id);
 

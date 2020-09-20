@@ -12,6 +12,7 @@ using System.Linq;
 using CargoSupport.Models.QuinyxModels;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,13 +35,9 @@ namespace CargoSupport.Web.Controllers.API
         }
 
         [HttpGet]
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
         public async Task<ActionResult> GetTransport(string dateString)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             DateTime.TryParse(dateString, out DateTime date);
 
             if (date.ToString(@"yyyy-MM-dd") != dateString)
@@ -69,13 +66,9 @@ namespace CargoSupport.Web.Controllers.API
         }
 
         [HttpGet]
+        [Authorize(Roles = Constants.MinRoleLevel.MedarbetareAndUp)]
         public async Task<ActionResult> GetPublic(string dateString)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             DateTime.TryParse(dateString, out DateTime date);
 
             if (date.ToString(@"yyyy-MM-dd") != dateString)
@@ -88,13 +81,9 @@ namespace CargoSupport.Web.Controllers.API
         }
 
         [HttpGet]
+        [Authorize(Roles = Constants.MinRoleLevel.PlockAndUp)]
         public async Task<ActionResult> GetStorage(string dateString)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             DateTime.TryParse(dateString, out DateTime date);
 
             if (date.ToString(@"yyyy-MM-dd") != dateString)
@@ -106,6 +95,7 @@ namespace CargoSupport.Web.Controllers.API
             return Ok(res.Result.ToArray());
         }
 
+        [Authorize(Roles = Constants.MinRoleLevel.PlockAndUp)]
         private async Task<List<StorageViewModel>> ConvertToStorage(List<DataModel> allRoutes)
         {
             allRoutes = await _quinyxHelper.AddNamesToData(allRoutes);
@@ -131,6 +121,7 @@ namespace CargoSupport.Web.Controllers.API
             return returnModels;
         }
 
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
         private async Task<TransportViewModel[]> ConvertToTransport(List<DataModel> allRoutes)
         {
             allRoutes = await _quinyxHelper.AddNamesToData(allRoutes);
@@ -161,6 +152,7 @@ namespace CargoSupport.Web.Controllers.API
             return returnModels.ToArray();
         }
 
+        [Authorize(Roles = Constants.MinRoleLevel.MedarbetareAndUp)]
         private async Task<List<TransportViewModel>> ConvertToPublic(List<DataModel> allRoutes)
         {
             allRoutes = await _quinyxHelper.AddNamesToData(allRoutes);

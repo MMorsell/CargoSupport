@@ -4,22 +4,19 @@ using CargoSupport.Enums;
 using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.ViewModels.Manange;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers.Manage
 {
+    [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
     public class CarController : Controller
     {
         [Route("Car")]
         public async Task<ActionResult> Index()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             var db = new CargoSupport.Helpers.MongoDbHelper(Constants.MongoDb.DatabaseName);
             var allCars = await db.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
             return View(new UpsertCarViewModel() { CurrentCar = new CarModel(), ExistingCars = allCars });
@@ -34,11 +31,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateAsync(CarModel newCarModel)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             if (await AddOrUpdateCarModel(newCarModel, HttpContext.User))
             {
                 return RedirectToAction("Index");
@@ -52,10 +44,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         // GET: CarController/Edit/5
         public async Task<ActionResult> EditAsync(string id)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
             var db = new CargoSupport.Helpers.MongoDbHelper(Constants.MongoDb.DatabaseName);
             var existingCar = await db.GetRecordById<CarModel>(Constants.MongoDb.CarTableName, id);
 
@@ -72,11 +60,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditAsync(CarModel newCarModel)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             if (await AddOrUpdateCarModel(newCarModel, HttpContext.User))
             {
                 return RedirectToAction("Index");

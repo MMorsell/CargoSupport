@@ -22,9 +22,6 @@ namespace CargoSupport.Web.IIS.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<MongoIdentityRole> _roleManager;
-        //private readonly IHttpContextAccessor _httpContextAccessor;
-
-        //private readonly IScheduler _scheduler;
 
         public HomeController(
             ILogger<HomeController> logger,
@@ -41,46 +38,18 @@ namespace CargoSupport.Web.IIS.Controllers
 
         public async Task<IActionResult> Transport()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-            //var a2 = Environment.UserName;
-            //string email = a.FindFirstValue(ClaimTypes.Email); // Always null. Not returning logged in user's Email
-            //string userName = a.FindFirstValue(ClaimTypes.Name); // Returning logged in user's UserName
-            //string userId = a.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            //string UserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            //var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             return View();
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Constants.MinRoleLevel.PlockAndUp)]
         public async Task<IActionResult> Plock()
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var isInRole = await _userManager.IsInRoleAsync(user, "Admin");
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
-            //var a = _httpContextAccessor.HttpContext.User;
-            //string email = a.FindFirstValue(ClaimTypes.Email); // Always null. Not returning logged in user's Email
-            //string userName = a.FindFirstValue(ClaimTypes.Name); // Returning logged in user's UserName
-            //string userId = a.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            //string UserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            //var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             return View();
         }
 
+        [Authorize(Roles = Constants.MinRoleLevel.MedarbetareAndUp)]
         public async Task<IActionResult> Medarbetare()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
             return View();
         }
 

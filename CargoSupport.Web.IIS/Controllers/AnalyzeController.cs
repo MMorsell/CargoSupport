@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CargoSupport.Enums;
 using CargoSupport.Helpers;
 using CargoSupport.Models.DatabaseModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,7 @@ using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers
 {
+    [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
     public class AnalyzeController : Controller
     {
         private readonly ILogger _logger;
@@ -30,22 +32,12 @@ namespace CargoSupport.Web.IIS.Controllers
 
         public async Task<ActionResult> Index()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             return View();
         }
 
         [Route("[controller]/AllData/{id:int}")]
         public async Task<IActionResult> AllData(int id)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             if (id <= 0)
             {
                 return BadRequest();
@@ -60,11 +52,6 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("[controller]/DriverDiscreteData/{id:int}")]
         public async Task<IActionResult> DriverDiscreteData(int id)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             if (id <= 0)
             {
                 return BadRequest();
@@ -78,11 +65,6 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetSlim")]
         public async Task<ActionResult> GetSlim(string fromDate, string toDate)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             DateTime.TryParse(fromDate, out DateTime from);
 
             if (from.ToString(@"yyyy-MM-dd") != fromDate)
@@ -105,11 +87,6 @@ namespace CargoSupport.Web.IIS.Controllers
 
         public async Task<ActionResult> TodayGraphs()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             return View();
         }
 
@@ -117,11 +94,6 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetTodayGraphs")]
         public async Task<ActionResult> GetTodayGraphs(string fromDate, string toDate, bool splitData)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             DateTime.TryParse(fromDate, out DateTime from);
 
             if (from.ToString(@"yyyy-MM-dd") != fromDate)
@@ -145,11 +117,6 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetTodayGraphsForDriver")]
         public async Task<ActionResult> GetTodayGraphsForDriver(string fromDate, string toDate, int driverId)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             DateTime.TryParse(fromDate, out DateTime from);
 
             if (from.ToString(@"yyyy-MM-dd") != fromDate)
@@ -174,11 +141,6 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetSimplifiedRecordsForDriver")]
         public async Task<ActionResult> GetSimplifiedRecordsForDriver(string fromDate, string toDate, int driverId)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             DateTime.TryParse(fromDate, out DateTime from);
 
             if (from.ToString(@"yyyy-MM-dd") != fromDate)
@@ -201,11 +163,6 @@ namespace CargoSupport.Web.IIS.Controllers
 
         public async Task<ActionResult> CarStats()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             return View();
         }
 
@@ -213,11 +170,6 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetCarStats")]
         public async Task<ActionResult> GetCarStats(string fromDate, string toDate)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             DateTime.TryParse(fromDate, out DateTime from);
 
             if (from.ToString(@"yyyy-MM-dd") != fromDate)
@@ -240,11 +192,6 @@ namespace CargoSupport.Web.IIS.Controllers
 
         public async Task<ActionResult> DataByGroup()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             return View();
         }
 
@@ -252,11 +199,6 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetUnderBoss")]
         public async Task<ActionResult> GetUnderBoss(int? sectionId, int? staffCatId, string fromDate, string toDate)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             DateTime.TryParse(fromDate, out DateTime from);
 
             if (from.ToString(@"yyyy-MM-dd") != fromDate)
@@ -307,11 +249,6 @@ namespace CargoSupport.Web.IIS.Controllers
         [Route("api/[controller]/GetSingleDriverUnderBoss")]
         public async Task<ActionResult> GetSingleDriverUnderBoss(int driverId, string fromDate, string toDate)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             DateTime.TryParse(fromDate, out DateTime from);
 
             if (from.ToString(@"yyyy-MM-dd") != fromDate)

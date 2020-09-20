@@ -9,40 +9,8 @@ namespace CargoSupport.Helpers
 {
     public static class AuthorizeHelper
     {
-        public static async Task<bool> IsNotAuthorized(List<RoleLevel> authRoleLevels, ClaimsPrincipal user)
-        {
-            //string userName = user.FindFirstValue(ClaimTypes.Name);
-
-            //if (userName == "")
-            //{
-            //    return false;
-            //}
-
-            //var dbConnection = new MongoDbHelper(Constants.MongoDb.DatabaseName);
-
-            //var wlRecords = await dbConnection.GetAllRecords<WhitelistModel>(Constants.MongoDb.WhitelistTable);
-
-            //var matchingRecord = wlRecords.FirstOrDefault(rec => rec.NameWithDomain.Equals(userName));
-
-            //if (matchingRecord == null)
-            //{
-            //    return false;
-            //}
-
-            //if (authRoleLevels.Contains(matchingRecord.RoleLevel))
-            //{
-            //    return true;
-            //}
-            return false;
-        }
-
         public static async Task<bool> AddOrUpdateUserRoleLevel(WhitelistModel authModel, ClaimsPrincipal userWithPermissionsToAdd)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, userWithPermissionsToAdd))
-            {
-                return false;
-            }
-
             if (authModel.NameWithDomain == "")
             {
                 return false;
@@ -66,11 +34,6 @@ namespace CargoSupport.Helpers
 
         public static async Task<bool> AddOrUpdateCarModel(CarModel carModel, ClaimsPrincipal userWithPermissionsToAdd)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, userWithPermissionsToAdd))
-            {
-                return false;
-            }
-
             if (carModel.Name.Trim() == "")
             {
                 return false;

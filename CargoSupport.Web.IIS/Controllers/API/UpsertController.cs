@@ -10,6 +10,7 @@ using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.QuinyxModels;
 using CargoSupport.ViewModels;
 using CargoSupport.ViewModels.Public;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -34,13 +35,9 @@ namespace CargoSupport.Web.IIS.Controllers.API
         }
 
         [HttpPost]
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
         public async Task<ActionResult> UpsertTransport([FromBody] TransportViewModel transportViewModel)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             var dbConnection = new MongoDbHelper(Constants.MongoDb.DatabaseName);
 
             var existingRecord = await dbConnection.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, transportViewModel._Id);
@@ -120,13 +117,9 @@ namespace CargoSupport.Web.IIS.Controllers.API
         }
 
         [HttpPost]
+        [Authorize(Roles = Constants.MinRoleLevel.PlockAndUp)]
         public async Task<ActionResult> UpsertStorage([FromBody] StorageViewModel storageViewModel)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             var dbConnection = new MongoDbHelper(Constants.MongoDb.DatabaseName);
 
             var existingRecord = await dbConnection.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, storageViewModel._Id);

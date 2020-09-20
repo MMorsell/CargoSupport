@@ -9,29 +9,23 @@ using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
 using CargoSupport.ViewModels.Manange;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers.Manage
 {
+    [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
     public class ManageController : Controller
     {
         public async Task<IActionResult> GetFromPin()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
             return View();
         }
 
         [HttpPost]
         public async Task<ActionResult> GetFromPin(PinIdModel model)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
             var ph = new PinHelper();
             List<PinRouteModel> routes = await ph.RetrieveRoutesFromActualPin(model.PinId);
 
@@ -49,21 +43,12 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> UpdatePinDataByOrder()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
             return View();
         }
 
         [HttpPost]
         public async Task<ActionResult> UpdatePinDataByOrder(PinIdModel model)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             DateTime.TryParse(model.Date, out DateTime date);
 
             if (model.Date != date.ToString(@"yyyy-MM-dd"))
@@ -90,10 +75,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> AddResourceRoute()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
             var ph = new PinHelper();
 
             var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now, DateTime.Now);
@@ -105,11 +86,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddResourceRoute(OrderOptionViewModel orderOptionViewModel)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             if (orderOptionViewModel.SelectedOrderId == "Välj")
             {
                 return BadRequest("Att koppla resursturen till 'Välj' går inte");
@@ -137,10 +113,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> DeleteRoutesByOrderId()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
             var ph = new PinHelper();
 
             var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
@@ -152,11 +124,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteRoutesByOrderId(OrderOptionViewModel orderOptionViewModel)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             if (orderOptionViewModel.SelectedOrderId == "Välj")
             {
                 return BadRequest("Att ta bort 'Välj' går inte");
@@ -183,10 +150,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> MoveOrderDateById()
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
             var ph = new PinHelper();
 
             var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
@@ -198,11 +161,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> MoveOrderDateById(OrderOptionViewModel orderOptionViewModel)
         {
-            if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
-            {
-                return Unauthorized();
-            }
-
             if (orderOptionViewModel.SelectedOrderId == "Välj")
             {
                 return BadRequest("Att koppla resursturen till 'Välj går inte'");

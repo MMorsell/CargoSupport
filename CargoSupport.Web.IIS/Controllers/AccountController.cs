@@ -110,7 +110,7 @@ namespace CargoSupport.Web.IIS.Controllers
             if (!adminRoleExists)
             {
                 _logger.LogInformation("Adding Admin role");
-                await _roleManager.CreateAsync(new MongoIdentityRole { Name = "Admin" });
+                //await _roleManager.CreateAsync(new ApplicationUser { Name = "Admin" });
             }
 
             ViewData["ReturnUrl"] = returnUrl;
