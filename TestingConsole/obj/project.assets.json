@@ -11,10 +11,10 @@
           "lib/netstandard2.1/DnsClient.dll": {}
         }
       },
-      "Microsoft.AspNetCore.Authentication.Negotiate/3.1.7": {
+      "Microsoft.AspNetCore.Authentication.Negotiate/3.1.8": {
         "type": "package",
         "dependencies": {
-          "Microsoft.AspNetCore.Connections.Abstractions": "3.1.7"
+          "Microsoft.AspNetCore.Connections.Abstractions": "3.1.8"
         },
         "compile": {
           "lib/netcoreapp3.1/Microsoft.AspNetCore.Authentication.Negotiate.dll": {}
@@ -26,11 +26,11 @@
           "Microsoft.AspNetCore.App"
         ]
       },
-      "Microsoft.AspNetCore.Connections.Abstractions/3.1.7": {
+      "Microsoft.AspNetCore.Connections.Abstractions/3.1.8": {
         "type": "package",
         "dependencies": {
-          "Microsoft.AspNetCore.Http.Features": "3.1.7",
-          "System.IO.Pipelines": "4.7.1"
+          "Microsoft.AspNetCore.Http.Features": "3.1.8",
+          "System.IO.Pipelines": "4.7.2"
         },
         "compile": {
           "lib/netcoreapp3.1/Microsoft.AspNetCore.Connections.Abstractions.dll": {}
@@ -39,11 +39,11 @@
           "lib/netcoreapp3.1/Microsoft.AspNetCore.Connections.Abstractions.dll": {}
         }
       },
-      "Microsoft.AspNetCore.Http.Features/3.1.7": {
+      "Microsoft.AspNetCore.Http.Features/3.1.8": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Extensions.Primitives": "3.1.7",
-          "System.IO.Pipelines": "4.7.1"
+          "Microsoft.Extensions.Primitives": "3.1.8",
+          "System.IO.Pipelines": "4.7.2"
         },
         "compile": {
           "lib/netcoreapp3.1/Microsoft.AspNetCore.Http.Features.dll": {}
@@ -52,7 +52,7 @@
           "lib/netcoreapp3.1/Microsoft.AspNetCore.Http.Features.dll": {}
         }
       },
-      "Microsoft.Extensions.Primitives/3.1.7": {
+      "Microsoft.Extensions.Primitives/3.1.8": {
         "type": "package",
         "compile": {
           "lib/netcoreapp3.1/Microsoft.Extensions.Primitives.dll": {}
@@ -90,7 +90,7 @@
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "MongoDB.Bson/2.11.0": {
+      "MongoDB.Bson/2.11.2": {
         "type": "package",
         "compile": {
           "lib/netstandard2.0/MongoDB.Bson.dll": {}
@@ -99,11 +99,11 @@
           "lib/netstandard2.0/MongoDB.Bson.dll": {}
         }
       },
-      "MongoDB.Driver/2.11.0": {
+      "MongoDB.Driver/2.11.2": {
         "type": "package",
         "dependencies": {
-          "MongoDB.Bson": "2.11.0",
-          "MongoDB.Driver.Core": "2.11.0",
+          "MongoDB.Bson": "2.11.2",
+          "MongoDB.Driver.Core": "2.11.2",
           "MongoDB.Libmongocrypt": "1.0.0"
         },
         "compile": {
@@ -113,11 +113,11 @@
           "lib/netstandard2.0/MongoDB.Driver.dll": {}
         }
       },
-      "MongoDB.Driver.Core/2.11.0": {
+      "MongoDB.Driver.Core/2.11.2": {
         "type": "package",
         "dependencies": {
           "DnsClient": "1.3.1",
-          "MongoDB.Bson": "2.11.0",
+          "MongoDB.Bson": "2.11.2",
           "MongoDB.Libmongocrypt": "1.0.0",
           "SharpCompress": "0.23.0",
           "System.Buffers": "4.4.0"
@@ -226,7 +226,7 @@
           "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         }
       },
-      "RestSharp/106.11.4": {
+      "RestSharp/106.11.5": {
         "type": "package",
         "compile": {
           "lib/netstandard2.0/RestSharp.dll": {}
@@ -674,7 +674,7 @@
           "lib/netstandard1.3/System.IO.FileSystem.Primitives.dll": {}
         }
       },
-      "System.IO.Pipelines/4.7.1": {
+      "System.IO.Pipelines/4.7.2": {
         "type": "package",
         "compile": {
           "ref/netcoreapp2.0/System.IO.Pipelines.dll": {}
@@ -1391,10 +1391,10 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v3.1",
         "dependencies": {
-          "Microsoft.AspNetCore.Authentication.Negotiate": "3.1.7",
-          "MongoDB.Driver": "2.11.0",
+          "Microsoft.AspNetCore.Authentication.Negotiate": "3.1.8",
+          "MongoDB.Driver": "2.11.2",
           "Newtonsoft.Json": "12.0.3",
-          "RestSharp": "106.11.4"
+          "RestSharp": "106.11.5"
         },
         "compile": {
           "bin/placeholder/CargoSupport.Web.IIS.dll": {}
@@ -1431,10 +1431,10 @@
         "lib/netstandard2.1/DnsClient.xml"
       ]
     },
-    "Microsoft.AspNetCore.Authentication.Negotiate/3.1.7": {
-      "sha512": "OZb+u/qlXV3e1QyIkrJjcUqpXO9GD9nKeI69SPRXTydQYOXJSjVMUIH8QZZBLjesb9Jqdsagi3tjtEA1WmWTzg==",
+    "Microsoft.AspNetCore.Authentication.Negotiate/3.1.8": {
+      "sha512": "EUJk/i9ReZ4ok+v9KyW8UrnTEC2efOUEsZvAu18cceXAY7/hkGBjQti+jMpxzyDdGsC8uOm0+eOO8Uq6zWizAA==",
       "type": "package",
-      "path": "microsoft.aspnetcore.authentication.negotiate/3.1.7",
+      "path": "microsoft.aspnetcore.authentication.negotiate/3.1.8",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1442,14 +1442,14 @@
         "THIRD-PARTY-NOTICES.TXT",
         "lib/netcoreapp3.1/Microsoft.AspNetCore.Authentication.Negotiate.dll",
         "lib/netcoreapp3.1/Microsoft.AspNetCore.Authentication.Negotiate.xml",
-        "microsoft.aspnetcore.authentication.negotiate.3.1.7.nupkg.sha512",
+        "microsoft.aspnetcore.authentication.negotiate.3.1.8.nupkg.sha512",
         "microsoft.aspnetcore.authentication.negotiate.nuspec"
       ]
     },
-    "Microsoft.AspNetCore.Connections.Abstractions/3.1.7": {
-      "sha512": "Gtsi0mok+xtGQjJoyJDmzk98pgGzf0tLTEUCnNgeNHP4+0js1DKFtqfILL2IGwgtCLvdEJz4asj7hhpAMgpJNw==",
+    "Microsoft.AspNetCore.Connections.Abstractions/3.1.8": {
+      "sha512": "SLNQW5G3U4fNaWh/8cWJDAWf5b7Ud0mKavOF7+fv8YRlse8NkTUfH8CM++g4ERnx45nE+UwqVdLEispCjyMo1g==",
       "type": "package",
-      "path": "microsoft.aspnetcore.connections.abstractions/3.1.7",
+      "path": "microsoft.aspnetcore.connections.abstractions/3.1.8",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1461,14 +1461,14 @@
         "lib/netstandard2.0/Microsoft.AspNetCore.Connections.Abstractions.xml",
         "lib/netstandard2.1/Microsoft.AspNetCore.Connections.Abstractions.dll",
         "lib/netstandard2.1/Microsoft.AspNetCore.Connections.Abstractions.xml",
-        "microsoft.aspnetcore.connections.abstractions.3.1.7.nupkg.sha512",
+        "microsoft.aspnetcore.connections.abstractions.3.1.8.nupkg.sha512",
         "microsoft.aspnetcore.connections.abstractions.nuspec"
       ]
     },
-    "Microsoft.AspNetCore.Http.Features/3.1.7": {
-      "sha512": "gOIh/ATcFrVvFxQK1CvfeIla4bOVHnXIhzImQrBvFVtemNIoMy7kD4d+/U/4833nhAU0t8JjNS3lG9DCywOnfQ==",
+    "Microsoft.AspNetCore.Http.Features/3.1.8": {
+      "sha512": "hPBe3ATzZxUqA6QaIKf9IVQa//Eake3jeqfwHyq95n0fe7j7v6hWc9QGGWQquA3psN7epz029jjTS4zvFLC32g==",
       "type": "package",
-      "path": "microsoft.aspnetcore.http.features/3.1.7",
+      "path": "microsoft.aspnetcore.http.features/3.1.8",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1478,14 +1478,14 @@
         "lib/netcoreapp3.1/Microsoft.AspNetCore.Http.Features.xml",
         "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll",
         "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.xml",
-        "microsoft.aspnetcore.http.features.3.1.7.nupkg.sha512",
+        "microsoft.aspnetcore.http.features.3.1.8.nupkg.sha512",
         "microsoft.aspnetcore.http.features.nuspec"
       ]
     },
-    "Microsoft.Extensions.Primitives/3.1.7": {
-      "sha512": "sa17s3vDAXTuIVGxuJcK713i0B0iaUoiwY4Sl2SLHhMqM8snznn0YVGiZAVkoKEUFWjvIg1Z/JNmAicBamI4mg==",
+    "Microsoft.Extensions.Primitives/3.1.8": {
+      "sha512": "XcIoXQhT0kwnEhOKv/LmpWR6yF6QWmBTy9Fcsz4aHuCOgTJ7Zd23ELtUA4BfwlYoFlSedavS+vURz9tNekd44g==",
       "type": "package",
-      "path": "microsoft.extensions.primitives/3.1.7",
+      "path": "microsoft.extensions.primitives/3.1.8",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1494,7 +1494,7 @@
         "lib/netcoreapp3.1/Microsoft.Extensions.Primitives.xml",
         "lib/netstandard2.0/Microsoft.Extensions.Primitives.dll",
         "lib/netstandard2.0/Microsoft.Extensions.Primitives.xml",
-        "microsoft.extensions.primitives.3.1.7.nupkg.sha512",
+        "microsoft.extensions.primitives.3.1.8.nupkg.sha512",
         "microsoft.extensions.primitives.nuspec"
       ]
     },
@@ -1568,10 +1568,10 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "MongoDB.Bson/2.11.0": {
-      "sha512": "mrmEJaxej5DYu4OFosja1nn9nep2UL38pWvzyyZbDo735pgbOPDEsQJ9v0uSkNK1uywdDHMp1gc0cDA6gFivvg==",
+    "MongoDB.Bson/2.11.2": {
+      "sha512": "7vJoaUKPPnW6Ej0r4UHV8DeYD0/SKk/73WlDfc5JMRJRjTj3jRUtGIXwpaFYq3wT8MRHmLwbM/KvkEAb7deHRw==",
       "type": "package",
-      "path": "mongodb.bson/2.11.0",
+      "path": "mongodb.bson/2.11.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1582,15 +1582,15 @@
         "lib/netstandard1.5/MongoDB.Bson.xml",
         "lib/netstandard2.0/MongoDB.Bson.dll",
         "lib/netstandard2.0/MongoDB.Bson.xml",
-        "mongodb.bson.2.11.0.nupkg.sha512",
+        "mongodb.bson.2.11.2.nupkg.sha512",
         "mongodb.bson.nuspec",
         "packageIcon.png"
       ]
     },
-    "MongoDB.Driver/2.11.0": {
-      "sha512": "Wr/UWKtbD7hpcEG9iywzG7fqUM8Oxxsv47C+VGQMU/AXQGe8n9yxUfwfgN2djnT8hbqrd1GOR+9iZZiR1Il/LQ==",
+    "MongoDB.Driver/2.11.2": {
+      "sha512": "4DT/VcE/6sw73tInWmQ1C92p1kHgKiuRx/DgYRtaUUILRaAdL8X1Gl3f8FXNMwH2rzH+KhOYCliYK7/+XWWZIw==",
       "type": "package",
-      "path": "mongodb.driver/2.11.0",
+      "path": "mongodb.driver/2.11.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1601,15 +1601,15 @@
         "lib/netstandard1.5/MongoDB.Driver.xml",
         "lib/netstandard2.0/MongoDB.Driver.dll",
         "lib/netstandard2.0/MongoDB.Driver.xml",
-        "mongodb.driver.2.11.0.nupkg.sha512",
+        "mongodb.driver.2.11.2.nupkg.sha512",
         "mongodb.driver.nuspec",
         "packageIcon.png"
       ]
     },
-    "MongoDB.Driver.Core/2.11.0": {
-      "sha512": "2QvanNbk0ZR0vFx9YISoy404x/n6hZ8bK59SmqTdx/YUs3psvjq0fHTxGCXrY9pgjgAmbQCs+9s+Ldag3zvA/Q==",
+    "MongoDB.Driver.Core/2.11.2": {
+      "sha512": "e5/q9bqGEfGSsAq9Gn6+qWKEPs0s/U41tgfcWNtwAEpyg/btWO4RkeV0Jv8tG/KaXey1E151npmDPcwTrg7qjQ==",
       "type": "package",
-      "path": "mongodb.driver.core/2.11.0",
+      "path": "mongodb.driver.core/2.11.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1634,7 +1634,7 @@
         "lib/netstandard1.5/MongoDB.Driver.Core.xml",
         "lib/netstandard2.0/MongoDB.Driver.Core.dll",
         "lib/netstandard2.0/MongoDB.Driver.Core.xml",
-        "mongodb.driver.core.2.11.0.nupkg.sha512",
+        "mongodb.driver.core.2.11.2.nupkg.sha512",
         "mongodb.driver.core.nuspec",
         "packageIcon.png",
         "runtimes/win/native/libzstd.dll",
@@ -1702,10 +1702,10 @@
         "packageIcon.png"
       ]
     },
-    "RestSharp/106.11.4": {
-      "sha512": "vx35q52cM3UQNOiN3UqSQ9U7I5UeoyzVmjsWKQxOxn6FVu+n01+SNwhxc/jvf92WPBmmwzTV4VYTeTg4KviJdA==",
+    "RestSharp/106.11.5": {
+      "sha512": "/DgzFdYoUcWGIsspNG1AvxdTcCxbrItgAQLW30by5AQ6jhnC46WgOK5B38UFIHYJNm7+YIWM+rdEMyXSrdO6Jw==",
       "type": "package",
-      "path": "restsharp/106.11.4",
+      "path": "restsharp/106.11.5",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1713,7 +1713,7 @@
         "lib/net452/RestSharp.xml",
         "lib/netstandard2.0/RestSharp.dll",
         "lib/netstandard2.0/RestSharp.xml",
-        "restsharp.106.11.4.nupkg.sha512",
+        "restsharp.106.11.5.nupkg.sha512",
         "restsharp.nuspec",
         "restsharp.png"
       ]
@@ -2863,25 +2863,29 @@
         "system.io.filesystem.primitives.nuspec"
       ]
     },
-    "System.IO.Pipelines/4.7.1": {
-      "sha512": "TyMTasnXQt7U4k13RQ7tA3CrfWEkvWjR635SFfnKVwwMOgClLE5mdHSkG2D13BLIdNwbPTGVQnhQB8Rk7f53Rg==",
+    "System.IO.Pipelines/4.7.2": {
+      "sha512": "rGIIhoY3lUdn9rWeuGdgeZZ0P+SpJ1wZI5g8TnXqgvuhFgUP7iP9Nt5FZebYInQZQxqnwjPxdYYBE5l/8PJmqQ==",
       "type": "package",
-      "path": "system.io.pipelines/4.7.1",
+      "path": "system.io.pipelines/4.7.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/System.IO.Pipelines.dll",
+        "lib/net461/System.IO.Pipelines.xml",
         "lib/netcoreapp3.0/System.IO.Pipelines.dll",
         "lib/netcoreapp3.0/System.IO.Pipelines.xml",
         "lib/netstandard1.3/System.IO.Pipelines.dll",
         "lib/netstandard1.3/System.IO.Pipelines.xml",
         "lib/netstandard2.0/System.IO.Pipelines.dll",
         "lib/netstandard2.0/System.IO.Pipelines.xml",
+        "ref/net461/System.IO.Pipelines.dll",
+        "ref/net461/System.IO.Pipelines.xml",
         "ref/netcoreapp2.0/System.IO.Pipelines.dll",
         "ref/netcoreapp2.0/System.IO.Pipelines.xml",
-        "system.io.pipelines.4.7.1.nupkg.sha512",
+        "system.io.pipelines.4.7.2.nupkg.sha512",
         "system.io.pipelines.nuspec",
         "useSharedDesignerContext.txt",
         "version.txt"
@@ -5090,7 +5094,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
       }
     }
   }
