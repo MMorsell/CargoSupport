@@ -8,6 +8,10 @@ using static CargoSupport.Helpers.AuthorizeHelper;
 using CargoSupport.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using CargoSupport.Models.Auth;
+using AspNetCore.Identity.MongoDbCore.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace CargoSupport.Web.IIS.Controllers
 {
@@ -15,16 +19,22 @@ namespace CargoSupport.Web.IIS.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly MongoDbHelper _dbHelper;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<MongoIdentityRole> _roleManager;
         //private readonly IHttpContextAccessor _httpContextAccessor;
 
         //private readonly IScheduler _scheduler;
 
-        public HomeController(ILogger<HomeController> logger /*, IHttpContextAccessor httpContextAccessor*//*, IScheduler factory*/)
+        public HomeController(
+            ILogger<HomeController> logger,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<MongoIdentityRole> roleManager)
         {
-            //var th = new CargoSupport.Web.Helpers.TaskHelper(_scheduler);
-            //th.CheckAvailability().Wait();
-            //_httpContextAccessor = httpContextAccessor;
-
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
             _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
             _logger = logger;
         }
@@ -45,8 +55,11 @@ namespace CargoSupport.Web.IIS.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Plock()
         {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var isInRole = await _userManager.IsInRoleAsync(user, "Admin");
             if (await IsNotAuthorized(new List<RoleLevel> { RoleLevel.SuperUser }, HttpContext.User))
             {
                 return Unauthorized();

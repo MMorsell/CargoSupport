@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AspNetCore.Identity.MongoDbCore.Models;
 using CargoSupport.Models.Auth;
 using CargoSupport.Models.Auth.AccountViewModels;
 using CargoSupport.Services;
@@ -11,7 +12,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace CargoSupport.Web.IIS.Controllers
 {
@@ -20,6 +20,7 @@ namespace CargoSupport.Web.IIS.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<MongoIdentityRole> _roleManager;
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
@@ -27,12 +28,14 @@ namespace CargoSupport.Web.IIS.Controllers
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+            RoleManager<MongoIdentityRole> roleManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
             ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
@@ -103,6 +106,13 @@ namespace CargoSupport.Web.IIS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
+            bool adminRoleExists = await _roleManager.RoleExistsAsync("Admin");
+            if (!adminRoleExists)
+            {
+                _logger.LogInformation("Adding Admin role");
+                await _roleManager.CreateAsync(new MongoIdentityRole { Name = "Admin" });
+            }
+
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
@@ -110,6 +120,10 @@ namespace CargoSupport.Web.IIS.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    var currentUser = await _userManager.FindByNameAsync(user.UserName);
+
+                    var roleresult = await _userManager.AddToRoleAsync(currentUser, "Admin");
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

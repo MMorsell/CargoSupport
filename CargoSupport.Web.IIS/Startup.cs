@@ -36,15 +36,14 @@ namespace CargoSupport.Web.IIS
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
-            //var mongoSettings = Configuration.GetSection(nameof(MongoDbSettings));
+            // Add db services and auth.
             var settings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
-
             services.AddSingleton<MongoDbSettings>(settings);
 
             services.AddIdentity<ApplicationUser, MongoIdentityRole>()
                     .AddMongoDbStores<ApplicationUser, MongoIdentityRole, Guid>(settings.ConnectionString, settings.DatabaseName)
                     .AddSignInManager()
+                    .AddRoleManager<RoleManager<MongoIdentityRole>>()
                     .AddDefaultTokenProviders();
 
             //Dependency Injection and services

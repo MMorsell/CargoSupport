@@ -44,7 +44,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             }
             await ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes);
 
-            return View("../Home/Transport");
+            return RedirectToAction(nameof(HomeController.Transport), "Home");
         }
 
         public async Task<IActionResult> UpdatePinDataByOrder()
@@ -85,7 +85,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 }
             }
 
-            return View("../Home/Transport");
+            return RedirectToAction(nameof(HomeController.Transport), "Home");
         }
 
         public async Task<IActionResult> AddResourceRoute()
@@ -132,7 +132,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
             var ph = new PinHelper();
             await ph.InsertNewResourceRoute($"Resurs {numberOfResourceRoutes + 1}", date, orderOptionViewModel.SelectedOrderId, existingRoute.PinRouteModel.ParentOrderName);
-            return View("../Home/Transport");
+            return RedirectToAction(nameof(HomeController.Transport), "Home");
         }
 
         public async Task<IActionResult> DeleteRoutesByOrderId()
@@ -178,7 +178,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 await db.DeleteRecord<DataModel>(Constants.MongoDb.OutputScreenTableName, route._Id);
             }
 
-            return View("../Home/Transport");
+            return RedirectToAction(nameof(HomeController.Transport), "Home");
         }
 
         public async Task<IActionResult> MoveOrderDateById()
@@ -232,7 +232,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 await db.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, route);
             }
 
-            return View("../Home/Transport");
+            return RedirectToAction(nameof(HomeController.Transport), "Home");
         }
     }
 }
