@@ -106,13 +106,6 @@ namespace CargoSupport.Web.IIS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
-            bool adminRoleExists = await _roleManager.RoleExistsAsync("Admin");
-            if (!adminRoleExists)
-            {
-                _logger.LogInformation("Adding Admin role");
-                //await _roleManager.CreateAsync(new ApplicationUser { Name = "Admin" });
-            }
-
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {

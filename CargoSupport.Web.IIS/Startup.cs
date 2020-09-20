@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CargoSupport.Models.Auth;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace CargoSupport.Web.IIS
 {
@@ -70,7 +71,7 @@ namespace CargoSupport.Web.IIS
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -102,6 +103,38 @@ namespace CargoSupport.Web.IIS
                     name: "default",
                     pattern: "{controller=Home}/{action=Transport}/{id?}");
             });
+
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<MongoIdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            VerifyRolesAndSuperUserExist(UserManager, RoleManager).Wait();
+        }
+
+        private async Task VerifyRolesAndSuperUserExist(UserManager<ApplicationUser> _userManager, RoleManager<MongoIdentityRole> _roleManager)
+        {
+            foreach (var role in Constants.MinRoleLevel.AllRoles)
+            {
+                bool roleExist = await _roleManager.RoleExistsAsync(role);
+                if (!roleExist)
+                {
+                    await _roleManager.CreateAsync(new MongoIdentityRole { Name = role });
+                }
+            }
+
+            var user = new ApplicationUser { UserName = "Superuser", Email = "Superuser@live.se" };
+
+            var result = await _userManager.CreateAsync(user, "TodoPassword.123");
+            if (result.Succeeded)
+            {
+                var currentUser = await _userManager.FindByNameAsync(user.UserName);
+
+                await _userManager.AddToRoleAsync(currentUser, Constants.MinRoleLevel.SuperUserAndUp);
+            }
+            else
+            {
+                //TODO: Update function to reset superuser password, and better handling if user already exists in database, i.e fake error
+                //throw new Exception(result.Errors.ToString());
+            }
         }
     }
 }

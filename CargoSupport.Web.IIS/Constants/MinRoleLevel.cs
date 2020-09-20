@@ -1,4 +1,5 @@
 ﻿using DnsClient.Protocol;
+using System.Collections.Generic;
 
 namespace CargoSupport.Constants
 {
@@ -15,5 +16,7 @@ namespace CargoSupport.Constants
         public const string TransportLedareAndUp = SuperUser + "," + Gruppchef + "," + TransportLedare;
         public const string MedarbetareAndUp = SuperUser + "," + Gruppchef + "," + TransportLedare + "," + Medarbetare;
         public const string PlockAndUp = SuperUser + "," + Plock;
+
+        public static List<string> AllRoles => new List<string>() { SuperUser, Gruppchef, TransportLedare, Medarbetare, Plock };
     }
 }
