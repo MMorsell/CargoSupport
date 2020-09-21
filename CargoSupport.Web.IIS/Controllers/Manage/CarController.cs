@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CargoSupport.Enums;
+using CargoSupport.Interfaces;
 using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.ViewModels.Manange;
@@ -14,11 +15,17 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
     [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
     public class CarController : Controller
     {
+        private readonly IMongoDbService _dbService;
+
+        public CarController(IMongoDbService dbService)
+        {
+            this._dbService = dbService;
+        }
+
         [Route("Car")]
         public async Task<ActionResult> Index()
         {
-            var db = new CargoSupport.Helpers.MongoDbHelper(Constants.MongoDb.DatabaseName);
-            var allCars = await db.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
+            var allCars = await _dbService.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
             return View(new UpsertCarViewModel() { CurrentCar = new CarModel(), ExistingCars = allCars });
         }
 
@@ -31,7 +38,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateAsync(CarModel newCarModel)
         {
-            if (await AddOrUpdateCarModel(newCarModel, HttpContext.User))
+            if (await AddOrUpdateCarModel(newCarModel, HttpContext.User, _dbService))
             {
                 return RedirectToAction("Index");
             }
@@ -44,8 +51,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         // GET: CarController/Edit/5
         public async Task<ActionResult> EditAsync(string id)
         {
-            var db = new CargoSupport.Helpers.MongoDbHelper(Constants.MongoDb.DatabaseName);
-            var existingCar = await db.GetRecordById<CarModel>(Constants.MongoDb.CarTableName, id);
+            var existingCar = await _dbService.GetRecordById<CarModel>(Constants.MongoDb.CarTableName, id);
 
             if (existingCar == null)
             {
@@ -60,7 +66,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditAsync(CarModel newCarModel)
         {
-            if (await AddOrUpdateCarModel(newCarModel, HttpContext.User))
+            if (await AddOrUpdateCarModel(newCarModel, HttpContext.User, _dbService))
             {
                 return RedirectToAction("Index");
             }

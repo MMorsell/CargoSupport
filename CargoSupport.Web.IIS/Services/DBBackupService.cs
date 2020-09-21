@@ -9,12 +9,12 @@ namespace CargoSupport.Services
 {
     public class DBBackupService : IHostedService
     {
-        private readonly MongoDbHelper _db;
+        private readonly MongoDbService _db;
         private Timer _timer;
 
         public DBBackupService()
         {
-            this._db = new MongoDbHelper(Constants.MongoDb.DatabaseName);
+            this._db = new MongoDbService(Constants.MongoDb.DatabaseName);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

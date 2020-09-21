@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using System;
 using CargoSupport.Helpers;
 using CargoSupport.Hubs;
 using CargoSupport.Services;
@@ -7,20 +9,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AspNetCore.Identity.MongoDbCore.Infrastructure;
 using AspNetCore.Identity.MongoDbCore.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Hosting;
+using CargoSupport.Models.Auth;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Hosting;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using CargoSupport.Models.Auth;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
+using CargoSupport.Interfaces;
 
 namespace CargoSupport.Web.IIS
 {
@@ -48,6 +47,7 @@ namespace CargoSupport.Web.IIS
                     .AddDefaultTokenProviders();
 
             //Dependency Injection and services
+            services.AddScoped<IMongoDbService, MongoDbService>();
             services.AddHostedService<PinUpdateService>();
             services.AddScoped<IDataConversionHelper, DataConversionHelper>();
             services.AddScoped<IQuinyxHelper, QuinyxHelper>();

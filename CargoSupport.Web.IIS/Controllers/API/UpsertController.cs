@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CargoSupport.Enums;
 using CargoSupport.Helpers;
 using CargoSupport.Hubs;
+using CargoSupport.Interfaces;
 using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.QuinyxModels;
@@ -24,13 +25,15 @@ namespace CargoSupport.Web.IIS.Controllers.API
     public class UpsertController : ControllerBase
     {
         private readonly IHubContext<ChatHub> _chatHub;
-        private readonly IQuinyxHelper _quinyxHelper;
         private readonly ILogger _logger;
+        private readonly IQuinyxHelper _quinyxHelper;
+        private readonly IMongoDbService _dbService;
 
-        public UpsertController(IHubContext<ChatHub> chatHub, ILoggerFactory logger, IQuinyxHelper quinyxHelper)
+        public UpsertController(IHubContext<ChatHub> chatHub, ILoggerFactory logger, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
         {
             _chatHub = chatHub;
             _quinyxHelper = quinyxHelper;
+            this._dbService = dbService;
             _logger = logger.CreateLogger("UpsertController");
         }
 
@@ -38,21 +41,19 @@ namespace CargoSupport.Web.IIS.Controllers.API
         [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
         public async Task<ActionResult> UpsertTransport([FromBody] TransportViewModel transportViewModel)
         {
-            var dbConnection = new MongoDbHelper(Constants.MongoDb.DatabaseName);
-
-            var existingRecord = await dbConnection.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, transportViewModel._Id);
+            var existingRecord = await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, transportViewModel._Id);
 
             if (existingRecord == null)
             {
                 return NotFound();
             }
 
-            await UpsertTransportProperties(transportViewModel, dbConnection, existingRecord);
+            await UpsertTransportProperties(transportViewModel, existingRecord);
 
             return Ok();
         }
 
-        private async Task UpsertTransportProperties(TransportViewModel transportViewModel, MongoDbHelper dbConnection, DataModel existingRecord)
+        private async Task UpsertTransportProperties(TransportViewModel transportViewModel, DataModel existingRecord)
         {
             var update = false;
             if (transportViewModel.Driver.Id != 0)
@@ -95,7 +96,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
 
             if (update)
             {
-                await dbConnection.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
+                await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
                 await _chatHub.Clients.All.SendAsync("ReceiveMessage");
             }
         }
@@ -120,21 +121,19 @@ namespace CargoSupport.Web.IIS.Controllers.API
         [Authorize(Roles = Constants.MinRoleLevel.PlockAndUp)]
         public async Task<ActionResult> UpsertStorage([FromBody] StorageViewModel storageViewModel)
         {
-            var dbConnection = new MongoDbHelper(Constants.MongoDb.DatabaseName);
-
-            var existingRecord = await dbConnection.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, storageViewModel._Id);
+            var existingRecord = await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, storageViewModel._Id);
 
             if (existingRecord == null)
             {
                 return NotFound();
             }
 
-            await UpsertStorageProperties(storageViewModel, dbConnection, existingRecord);
+            await UpsertStorageProperties(storageViewModel, existingRecord);
 
             return Ok();
         }
 
-        private async Task UpsertStorageProperties(StorageViewModel storageViewModel, MongoDbHelper dbConnection, DataModel existingRecord)
+        private async Task UpsertStorageProperties(StorageViewModel storageViewModel, DataModel existingRecord)
         {
             var update = false;
             if (storageViewModel.NumberOfColdBoxes.Signature != null)
@@ -165,7 +164,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
 
             if (update)
             {
-                await dbConnection.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
+                await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
                 await _chatHub.Clients.All.SendAsync("ReceiveMessage");
             }
         }

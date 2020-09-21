@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using CargoSupport.Enums;
-using CargoSupport.Helpers;
+using CargoSupport.Interfaces;
 using CargoSupport.Models.DatabaseModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using static CargoSupport.Helpers.AuthorizeHelper;
@@ -18,15 +16,15 @@ namespace CargoSupport.Web.IIS.Controllers
     public class AnalyzeController : Controller
     {
         private readonly ILogger _logger;
-        private readonly MongoDbHelper _dbHelper;
         private readonly IQuinyxHelper _qh;
+        private readonly IMongoDbService _dbService;
         private readonly IDataConversionHelper _dataConversionHelper;
 
-        public AnalyzeController(ILoggerFactory logger, IDataConversionHelper dataConversionHelper, IQuinyxHelper quinyxHelper)
+        public AnalyzeController(ILoggerFactory logger, IDataConversionHelper dataConversionHelper, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
         {
-            _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
             _logger = logger.CreateLogger("AnalyzeController");
             _qh = quinyxHelper;
+            _dbService = dbService;
             _dataConversionHelper = dataConversionHelper;
         }
 
@@ -43,7 +41,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 return BadRequest();
             }
 
-            List<DataModel> allRoutes = await _dbHelper.GetAllRecordsByDriverId(Constants.MongoDb.OutputScreenTableName, id);
+            List<DataModel> allRoutes = await _dbService.GetAllRecordsByDriverId(Constants.MongoDb.OutputScreenTableName, id);
             var analyzeModels = await _dataConversionHelper.ConvertDataModelsToFullViewModel(allRoutes);
             ViewBag.DataTable = JsonSerializer.Serialize(analyzeModels);
             return View(allRoutes);
@@ -79,7 +77,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
             }
 
-            List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
             analyzeModels = await _qh.AddNamesToData(analyzeModels);
             var res = await _dataConversionHelper.ConvertDataModelsToSlimViewModels(analyzeModels);
             return Ok(res);
@@ -108,7 +106,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
             }
 
-            List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
             var res = _dataConversionHelper.ConvertTodaysDataToGraphModelsAsParalell(analyzeModels, splitData);
             return Ok(res);
         }
@@ -131,7 +129,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
             }
 
-            List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
             analyzeModels = analyzeModels.Where(data => data.Driver.Id == driverId).ToList();
             var res = _dataConversionHelper.ConvertTodaysDataToGraphModelsAsParalell(analyzeModels, true);
             return Ok(res);
@@ -155,7 +153,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
             }
 
-            List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
             analyzeModels = analyzeModels.Where(data => data.Driver.Id == driverId).ToList();
             var res = _dataConversionHelper.ConvertDataToSimplifiedRecordsAsParalell(analyzeModels);
             return Ok(res);
@@ -184,7 +182,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
             }
 
-            List<DataModel> analyzeModels = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
 
             var res = _dataConversionHelper.ConvertDataToCarStatisticsModel(analyzeModels);
             return Ok(res);
@@ -215,7 +213,7 @@ namespace CargoSupport.Web.IIS.Controllers
 
             if (sectionId != null)
             {
-                var matchingRecordsInDatabase = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+                var matchingRecordsInDatabase = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
                 var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
 
                 var matchingRecordsBySectionId = recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.Section == sectionId).ToList();
@@ -237,7 +235,7 @@ namespace CargoSupport.Web.IIS.Controllers
             }
             else
             {
-                var matchingRecordsInDatabase = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+                var matchingRecordsInDatabase = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
                 var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
 
                 var res = _dataConversionHelper.ConvertDatRowsToBossGroup(recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null).ToList());
@@ -263,7 +261,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 return BadRequest($"toDate is not valid, expecting 2020-01-01, recieved: '{toDate}'");
             }
 
-            var matchingRecordsInDatabase = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            var matchingRecordsInDatabase = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
             matchingRecordsInDatabase = matchingRecordsInDatabase.Where(rec => rec.Driver.Id.Equals(driverId)).ToList();
             var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
 

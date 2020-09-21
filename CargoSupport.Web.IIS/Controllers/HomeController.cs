@@ -5,37 +5,17 @@ using CargoSupport.Models;
 using CargoSupport.Helpers;
 using Microsoft.AspNetCore.Http;
 using static CargoSupport.Helpers.AuthorizeHelper;
-using CargoSupport.Enums;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using CargoSupport.Models.Auth;
 using AspNetCore.Identity.MongoDbCore.Models;
 using Microsoft.AspNetCore.Identity;
+using CargoSupport.Interfaces;
 
 namespace CargoSupport.Web.IIS.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly MongoDbHelper _dbHelper;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<MongoIdentityRole> _roleManager;
-
-        public HomeController(
-            ILogger<HomeController> logger,
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            RoleManager<MongoIdentityRole> roleManager)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _roleManager = roleManager;
-            _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
-            _logger = logger;
-        }
-
         public async Task<IActionResult> Transport()
         {
             return View();

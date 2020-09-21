@@ -8,26 +8,10 @@ using CargoSupport.ViewModels.Analyze;
 using System.Collections.Concurrent;
 using CargoSupport.Models.PinModels;
 using Microsoft.Extensions.Logging;
+using CargoSupport.Interfaces;
 
 namespace CargoSupport.Helpers
 {
-    public interface IDataConversionHelper
-    {
-        Task<FullViewModel> ConvertDataModelsToFullViewModel(List<DataModel> dataModels);
-
-        AllBossesViewModel[] ConvertDataModelsToMultipleDriverTableData(List<DataModel> routesOfToday);
-
-        Task<List<SlimViewModel>> ConvertDataModelsToSlimViewModels(List<DataModel> dataModels);
-
-        DataConversionHelper.CarStatisticsModel[] ConvertDataToCarStatisticsModel(List<DataModel> routesOfToday);
-
-        SimplifiedRecordsViewModel[] ConvertDataToSimplifiedRecordsAsParalell(List<DataModel> routes);
-
-        AllBossesViewModel[] ConvertDatRowsToBossGroup(List<DataModel> routesOfToday);
-
-        TodayGraphsViewModel[] ConvertTodaysDataToGraphModelsAsParalell(List<DataModel> routesOfToday, bool splitRouteName);
-    }
-
     public class DataConversionHelper : IDataConversionHelper
     {
         private readonly ILogger _logger;

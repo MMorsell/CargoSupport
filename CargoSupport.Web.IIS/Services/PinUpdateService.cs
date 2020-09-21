@@ -1,4 +1,5 @@
 ﻿using CargoSupport.Helpers;
+using CargoSupport.Interfaces;
 using CargoSupport.Models.PinModels;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -14,11 +15,13 @@ namespace CargoSupport.Services
         private readonly PinHelper _ph;
         private Timer _timer;
         private readonly ILogger _logger;
+        private readonly IMongoDbService _dbService;
 
-        public PinUpdateService(ILoggerFactory logger)
+        public PinUpdateService(ILoggerFactory logger, IMongoDbService dbService)
         {
             _logger = logger.CreateLogger("PinUpdateService");
-            this._ph = new PinHelper();
+            this._dbService = dbService;
+            this._ph = new PinHelper(_dbService);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

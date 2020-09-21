@@ -8,26 +8,10 @@ using CargoSupport.Models.DatabaseModels;
 using System.Threading.Tasks;
 using RestSharp;
 using Microsoft.Extensions.Logging;
+using CargoSupport.Interfaces;
 
 namespace CargoSupport.Helpers
 {
-    public interface IQuinyxHelper
-    {
-        Task<List<DataModel>> AddNamesToData(List<DataModel> Data);
-
-        Task<List<QuinyxModel>> GetAllDriversSorted(DateTime date, bool clearNames = true);
-
-        Task<QuinyxModel[]> GetAllDriversSortedToArray(DateTime date, bool clearNames = true);
-
-        Task<List<int>> GetAllDriversWithReportingTo(string reportingTo);
-
-        Task<List<QuinyxModel>> GetDrivers(DateTime from, DateTime to);
-
-        Task<List<ExtendedInformationModel>> GetExtraInformationForDrivers();
-
-        Task<List<BasicQuinyxModel>> GetNonSchedualedDrivers();
-    }
-
     public class QuinyxHelper : IQuinyxHelper
     {
         private readonly ILogger _logger;

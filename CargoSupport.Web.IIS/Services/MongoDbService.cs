@@ -1,20 +1,20 @@
 ﻿using CargoSupport.Extensions;
+using CargoSupport.Interfaces;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
-using CargoSupport.Models.QuinyxModels;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CargoSupport.Helpers
+namespace CargoSupport.Services
 {
-    public class MongoDbHelper
+    public class MongoDbService : IMongoDbService
     {
         private readonly IMongoDatabase _database;
 
-        public MongoDbHelper(string databaseName)
+        public MongoDbService(string databaseName)
         {
             _database = new MongoClient(Constants.MongoDb.ConnectionString).GetDatabase(databaseName);
         }

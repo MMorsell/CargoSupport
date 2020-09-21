@@ -1,5 +1,6 @@
 ﻿using CargoSupport.Extensions;
 using CargoSupport.Helpers;
+using CargoSupport.Interfaces;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
 using CargoSupport.Models.QuinyxModels;
@@ -12,13 +13,13 @@ namespace CargoSupport.Helpers
 {
     public class PinHelper
     {
-        private readonly MongoDbHelper _dbHelper;
         private readonly ApiRequestHelper _apiRequestHelper;
+        private readonly IMongoDbService _dbService;
 
-        public PinHelper()
+        public PinHelper(IMongoDbService dbService)
         {
-            _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
             _apiRequestHelper = new ApiRequestHelper();
+            _dbService = dbService;
         }
 
         /// <summary>
@@ -55,19 +56,19 @@ namespace CargoSupport.Helpers
                     Driver = new QuinyxModel()
                 });
             }
-            await _dbHelper.InsertMultipleRecords(Constants.MongoDb.OutputScreenTableName, dbModelCollection);
+            await _dbService.InsertMultipleRecords(Constants.MongoDb.OutputScreenTableName, dbModelCollection);
         }
 
         public async Task UpdateExistingRecordsIfThereIsOne(List<PinRouteModel> pinRouteModels)
         {
             foreach (var pinModel in pinRouteModels)
             {
-                var existingRecord = await _dbHelper.GetRecordByPinId(Constants.MongoDb.OutputScreenTableName, pinModel);
+                var existingRecord = await _dbService.GetRecordByPinId(Constants.MongoDb.OutputScreenTableName, pinModel);
 
                 if (existingRecord != null)
                 {
                     existingRecord.PinRouteModel = pinModel;
-                    await _dbHelper.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
+                    await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
                 }
             }
         }
@@ -88,12 +89,12 @@ namespace CargoSupport.Helpers
             newResourceRoute.PinRouteModel.ParentOrderId = parentOrderIdToBindTo;
             newResourceRoute.PinRouteModel.ParentOrderName = parentOrderName;
 
-            await _dbHelper.InsertRecord(Constants.MongoDb.OutputScreenTableName, newResourceRoute);
+            await _dbService.InsertRecord(Constants.MongoDb.OutputScreenTableName, newResourceRoute);
         }
 
         public async Task<List<string>> GetAllOrderIdsAsStringForThisDay(DateTime date)
         {
-            var allRecords = await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date);
+            var allRecords = await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date);
 
             var res = allRecords.Select(rec => rec.PinRouteModel.ParentOrderId).Distinct().ToList();
             return res;
@@ -103,7 +104,7 @@ namespace CargoSupport.Helpers
         {
             foreach (var pinModel in pinRouteModels)
             {
-                var existingRecord = await _dbHelper.GetRecordByPinId(Constants.MongoDb.OutputScreenTableName, pinModel);
+                var existingRecord = await _dbService.GetRecordByPinId(Constants.MongoDb.OutputScreenTableName, pinModel);
 
                 if (existingRecord != null)
                 {
@@ -116,7 +117,7 @@ namespace CargoSupport.Helpers
         public async Task<Dictionary<string, string>> GetAllUniqueRoutesBetweenDatesWithNames(DateTime from, DateTime to)
         {
             var returnDictionary = new Dictionary<string, string>();
-            var allRecords = await _dbHelper.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            var allRecords = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
 
             var allIds = allRecords.Select(rec => rec.PinRouteModel.ParentOrderId).Where(r => r != null && r != "" && r != "0").Distinct().ToList();
             var allNames = allRecords.Select(rec => rec.PinRouteModel.ParentOrderName).Where(r => r != null && r != "" && r != "0").Distinct().ToList();

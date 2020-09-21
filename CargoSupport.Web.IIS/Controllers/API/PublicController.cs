@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CargoSupport.Helpers;
 using CargoSupport.Models.DatabaseModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CargoSupport.ViewModels.Public;
-using CargoSupport.Enums;
-using static CargoSupport.Helpers.AuthorizeHelper;
 using System.Linq;
 using CargoSupport.Models.QuinyxModels;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using CargoSupport.Interfaces;
 
 namespace CargoSupport.Web.Controllers.API
 {
@@ -22,16 +17,15 @@ namespace CargoSupport.Web.Controllers.API
     [ApiController]
     public class PublicController : ControllerBase
     {
-        private readonly MongoDbHelper _dbHelper;
+        private readonly ILoggerFactory _logger;
         private readonly IQuinyxHelper _quinyxHelper;
+        private readonly IMongoDbService _dbService;
 
-        //private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public PublicController(ILoggerFactory logger, IQuinyxHelper quinyxHelper/*IHttpContextAccessor httpContextAccessor*/)
+        public PublicController(ILoggerFactory logger, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
         {
-            //_httpContextAccessor = httpContextAccessor;
-            _dbHelper = new MongoDbHelper(Constants.MongoDb.DatabaseName);
+            this._logger = logger;
             _quinyxHelper = quinyxHelper;
+            this._dbService = dbService;
         }
 
         [HttpGet]
@@ -45,9 +39,9 @@ namespace CargoSupport.Web.Controllers.API
                 return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
             }
 
-            var carOptionsTask = _dbHelper.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
+            var carOptionsTask = _dbService.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
             var driversThatWorksOnThisDateTask = _quinyxHelper.GetAllDriversSortedToArray(date, false);
-            var dataBaseResTask = ConvertToTransport(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
+            var dataBaseResTask = ConvertToTransport(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
 
             await Task.WhenAll(carOptionsTask, driversThatWorksOnThisDateTask, dataBaseResTask);
             return Ok(new ReturnModel
@@ -76,7 +70,7 @@ namespace CargoSupport.Web.Controllers.API
                 return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
             }
 
-            var res = ConvertToPublic(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
+            var res = ConvertToPublic(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
             return Ok(res.Result.ToArray());
         }
 
@@ -91,7 +85,7 @@ namespace CargoSupport.Web.Controllers.API
                 return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
             }
 
-            var res = ConvertToStorage(await _dbHelper.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
+            var res = ConvertToStorage(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
             return Ok(res.Result.ToArray());
         }
 
