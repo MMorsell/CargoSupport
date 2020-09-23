@@ -12,13 +12,6 @@ using AspNetCore.Identity.MongoDbCore.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
 using CargoSupport.Models.Auth;
-
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-using Microsoft.Extensions.Logging;
 using CargoSupport.Interfaces;
 
 namespace CargoSupport.Web.IIS
@@ -57,7 +50,7 @@ namespace CargoSupport.Web.IIS
             services.AddControllersWithViews();
             services.AddSignalR();
 
-            //services.AddHttpContextAccessor();
+            services.AddHttpContextAccessor();
 
             services.AddCors(options =>
             {

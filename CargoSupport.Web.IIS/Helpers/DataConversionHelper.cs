@@ -1,5 +1,4 @@
-﻿using CargoSupport.Enums;
-using CargoSupport.Models.DatabaseModels;
+﻿using CargoSupport.Models.DatabaseModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -433,7 +432,7 @@ namespace CargoSupport.Helpers
             return result;
         }
 
-        public async Task<List<SlimViewModel>> ConvertDataModelsToSlimViewModels(List<DataModel> dataModels)
+        public List<SlimViewModel> ConvertDataModelsToSlimViewModels(List<DataModel> dataModels)
         {
             var returnList = new ConcurrentBag<SlimViewModel>();
 
@@ -475,10 +474,10 @@ namespace CargoSupport.Helpers
         {
             var returnModel = new FullViewModel();
             Task<SlimViewModel> convertSlimTask = GetSlimInformation(dataModels, _quinyxHelper);
-            Task<xyz[]> convertTask = ConvertToCustomerPositionData(dataModels);
-            Task<xy[]> convertKiloTask = ConvertToWeightByData(dataModels);
-            Task<xy[]> convertDistanceTask = ConvertToDistanceByData(dataModels);
-            Task<xy[]> convertCustomerTask = ConvertToCustomerByData(dataModels);
+            Task<Xyz[]> convertTask = ConvertToCustomerPositionData(dataModels);
+            Task<Xy[]> convertKiloTask = ConvertToWeightByData(dataModels);
+            Task<Xy[]> convertDistanceTask = ConvertToDistanceByData(dataModels);
+            Task<Xy[]> convertCustomerTask = ConvertToCustomerByData(dataModels);
 
             await Task.WhenAll(convertTask, convertSlimTask, convertKiloTask, convertDistanceTask, convertCustomerTask);
 
@@ -490,14 +489,14 @@ namespace CargoSupport.Helpers
             return returnModel;
         }
 
-        private async Task<xy[]> ConvertToCustomerByData(List<DataModel> dataModels)
+        private async Task<Xy[]> ConvertToCustomerByData(List<DataModel> dataModels)
         {
             return await Task.Run(() =>
             {
-                var customerDataTempList = new ConcurrentBag<xy>();
+                var customerDataTempList = new ConcurrentBag<Xy>();
                 Parallel.ForEach(dataModels, dataRow =>
                 {
-                    customerDataTempList.Add(new xy
+                    customerDataTempList.Add(new Xy
                     {
                         x = dataRow.DateOfRoute.ToString(@"yyyy-MM-dd"),
                         y = dataRow.PinRouteModel.NumberOfCustomers
@@ -507,14 +506,14 @@ namespace CargoSupport.Helpers
             });
         }
 
-        private async Task<xy[]> ConvertToDistanceByData(List<DataModel> dataModels)
+        private async Task<Xy[]> ConvertToDistanceByData(List<DataModel> dataModels)
         {
             return await Task.Run(() =>
             {
-                var customerDataTempList = new ConcurrentBag<xy>();
+                var customerDataTempList = new ConcurrentBag<Xy>();
                 Parallel.ForEach(dataModels, dataRow =>
                 {
-                    customerDataTempList.Add(new xy
+                    customerDataTempList.Add(new Xy
                     {
                         x = dataRow.DateOfRoute.ToString(@"yyyy-MM-dd"),
                         y = Math.Round((dataRow.PinRouteModel.DistanceInMeters / 10000), 1),
@@ -524,14 +523,14 @@ namespace CargoSupport.Helpers
             });
         }
 
-        private async Task<xy[]> ConvertToWeightByData(List<DataModel> dataModels)
+        private async Task<Xy[]> ConvertToWeightByData(List<DataModel> dataModels)
         {
             return await Task.Run(() =>
             {
-                var customerDataTempList = new ConcurrentBag<xy>();
+                var customerDataTempList = new ConcurrentBag<Xy>();
                 Parallel.ForEach(dataModels, dataRow =>
                 {
-                    customerDataTempList.Add(new xy
+                    customerDataTempList.Add(new Xy
                     {
                         x = dataRow.DateOfRoute.ToString(@"yyyy-MM-dd"),
                         y = dataRow.PinRouteModel.Weight,
@@ -566,16 +565,16 @@ namespace CargoSupport.Helpers
             return returnModel;
         }
 
-        private async Task<xyz[]> ConvertToCustomerPositionData(List<DataModel> dataModels)
+        private async Task<Xyz[]> ConvertToCustomerPositionData(List<DataModel> dataModels)
         {
             return await Task.Run(() =>
             {
-                var customerDataTempList = new ConcurrentBag<xyz>();
+                var customerDataTempList = new ConcurrentBag<Xyz>();
                 Parallel.ForEach(dataModels, dataRow =>
                 {
                     Parallel.ForEach(dataRow.PinRouteModel.Customers, customer =>
                     {
-                        customerDataTempList.Add(new xyz
+                        customerDataTempList.Add(new Xyz
                         {
                             x = dataRow.DateOfRoute.ToString(@"yyyy-MM-dd"),
                             y = customer.position_lat,

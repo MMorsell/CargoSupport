@@ -28,7 +28,7 @@ namespace CargoSupport.Web.IIS.Controllers
             _dataConversionHelper = dataConversionHelper;
         }
 
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
             return View();
         }
@@ -48,7 +48,7 @@ namespace CargoSupport.Web.IIS.Controllers
         }
 
         [Route("[controller]/DriverDiscreteData/{id:int}")]
-        public async Task<IActionResult> DriverDiscreteData(int id)
+        public IActionResult DriverDiscreteData(int id)
         {
             if (id <= 0)
             {
@@ -79,11 +79,11 @@ namespace CargoSupport.Web.IIS.Controllers
 
             List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
             analyzeModels = await _qh.AddNamesToData(analyzeModels);
-            var res = await _dataConversionHelper.ConvertDataModelsToSlimViewModels(analyzeModels);
+            var res = _dataConversionHelper.ConvertDataModelsToSlimViewModels(analyzeModels);
             return Ok(res);
         }
 
-        public async Task<ActionResult> TodayGraphs()
+        public ActionResult TodayGraphs()
         {
             return View();
         }
@@ -159,7 +159,7 @@ namespace CargoSupport.Web.IIS.Controllers
             return Ok(res);
         }
 
-        public async Task<ActionResult> CarStats()
+        public ActionResult CarStats()
         {
             return View();
         }
@@ -188,7 +188,7 @@ namespace CargoSupport.Web.IIS.Controllers
             return Ok(res);
         }
 
-        public async Task<ActionResult> DataByGroup()
+        public ActionResult DataByGroup()
         {
             return View();
         }

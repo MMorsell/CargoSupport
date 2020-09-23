@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CargoSupport.Models
 {
@@ -9,17 +6,17 @@ namespace CargoSupport.Models
     {
         public PickingVerifyBooleanModel()
         {
-            _timestamp = DateTime.Now;
+            Timestamp = DateTime.Now;
         }
 
         public PickingVerifyBooleanModel(bool input)
         {
             Value = input;
-            _timestamp = DateTime.Now;
+            Timestamp = DateTime.Now;
         }
 
-        public DateTime _timestamp;
         public bool Value { get; set; } = false;
         public string Signature { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }

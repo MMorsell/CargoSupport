@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CargoSupport.Enums;
-using CargoSupport.Helpers;
 using CargoSupport.Hubs;
 using CargoSupport.Interfaces;
 using CargoSupport.Models;
@@ -12,11 +10,9 @@ using CargoSupport.Models.QuinyxModels;
 using CargoSupport.ViewModels;
 using CargoSupport.ViewModels.Public;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers.API
 {

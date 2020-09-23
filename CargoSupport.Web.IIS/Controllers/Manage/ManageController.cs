@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CargoSupport.Enums;
 using CargoSupport.Extensions;
 using CargoSupport.Helpers;
 using CargoSupport.Interfaces;
@@ -12,7 +11,6 @@ using CargoSupport.Models.PinModels;
 using CargoSupport.ViewModels.Manange;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers.Manage
 {
@@ -26,7 +24,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             this._dbService = dbService;
         }
 
-        public async Task<IActionResult> GetFromPin()
+        public IActionResult GetFromPin()
         {
             return View();
         }
@@ -42,14 +40,13 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             if (anyExistingIdOfRouteInDatabase != 0)
             {
                 return BadRequest($"This order has already been downloaded from Pin");
-                //return View("Error", new ErrorViewModel { Message = $"Åtgärden misslyckades eftersom någon av orderns rutter redan fanns i systemet: ruttid:'{anyExistingIdOfRouteInDatabase}' hittades" });
             }
             await ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes);
 
             return RedirectToAction(nameof(HomeController.Transport), "Home");
         }
 
-        public async Task<IActionResult> UpdatePinDataByOrder()
+        public IActionResult UpdatePinDataByOrder()
         {
             return View();
         }

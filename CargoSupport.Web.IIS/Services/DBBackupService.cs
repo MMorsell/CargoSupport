@@ -1,6 +1,6 @@
-﻿using CargoSupport.Helpers;
-using CargoSupport.Models.DatabaseModels;
+﻿using CargoSupport.Models.DatabaseModels;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,11 +10,13 @@ namespace CargoSupport.Services
     public class DBBackupService : IHostedService
     {
         private readonly MongoDbService _db;
+        private readonly ILogger _logger;
         private Timer _timer;
 
-        public DBBackupService()
+        public DBBackupService(ILoggerFactory logger)
         {
             this._db = new MongoDbService(Constants.MongoDb.DatabaseName);
+            this._logger = logger.CreateLogger("DBBackupService");
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -59,12 +61,11 @@ namespace CargoSupport.Services
         {
             try
             {
-                //TODO:Verify that this is working and running at 24:00
                 _db.BackupData<DataModel>(Constants.MongoDb.OutputScreenTableName, Constants.MongoDb.BackupCollectionName).Wait();
             }
             catch (Exception ex)
             {
-                //TODO: add logging for exception
+                _logger.LogError(ex, $"Exception when backing up database");
             }
         }
     }

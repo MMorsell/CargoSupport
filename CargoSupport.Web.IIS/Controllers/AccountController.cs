@@ -115,7 +115,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 {
                     var currentUser = await _userManager.FindByNameAsync(user.UserName);
 
-                    var roleresult = await _userManager.AddToRoleAsync(currentUser, "Admin");
+                    await _userManager.AddToRoleAsync(currentUser, "Admin");
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link

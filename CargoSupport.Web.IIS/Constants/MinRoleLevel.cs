@@ -1,5 +1,4 @@
-﻿using DnsClient.Protocol;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CargoSupport.Constants
 {

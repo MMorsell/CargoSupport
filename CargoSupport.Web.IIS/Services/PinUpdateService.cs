@@ -15,13 +15,11 @@ namespace CargoSupport.Services
         private readonly PinHelper _ph;
         private Timer _timer;
         private readonly ILogger _logger;
-        private readonly IMongoDbService _dbService;
 
         public PinUpdateService(ILoggerFactory logger, IMongoDbService dbService)
         {
             _logger = logger.CreateLogger("PinUpdateService");
-            this._dbService = dbService;
-            this._ph = new PinHelper(_dbService);
+            this._ph = new PinHelper(dbService);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

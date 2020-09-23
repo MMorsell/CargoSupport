@@ -12,7 +12,7 @@ namespace CargoSupport.Interfaces
 
         AllBossesViewModel[] ConvertDataModelsToMultipleDriverTableData(List<DataModel> routesOfToday);
 
-        Task<List<SlimViewModel>> ConvertDataModelsToSlimViewModels(List<DataModel> dataModels);
+        List<SlimViewModel> ConvertDataModelsToSlimViewModels(List<DataModel> dataModels);
 
         DataConversionHelper.CarStatisticsModel[] ConvertDataToCarStatisticsModel(List<DataModel> routesOfToday);
 
