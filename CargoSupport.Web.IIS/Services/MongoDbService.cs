@@ -19,6 +19,11 @@ namespace CargoSupport.Services
             _database = new MongoClient(Constants.MongoDb.ConnectionString).GetDatabase(databaseName);
         }
 
+        public MongoDbService()
+        {
+            _database = new MongoClient(Constants.MongoDb.ConnectionString).GetDatabase(Constants.MongoDb.DatabaseName);
+        }
+
         public async Task InsertRecord<T>(string tableName, T record)
         {
             var collection = _database.GetCollection<T>(tableName);
