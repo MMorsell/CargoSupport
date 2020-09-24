@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
 using CargoSupport.Models.Auth;
 using CargoSupport.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace CargoSupport.Web.IIS
 {
@@ -32,6 +33,13 @@ namespace CargoSupport.Web.IIS
             // Add db services and auth.
             var settings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
             services.AddSingleton<MongoDbSettings>(settings);
+
+            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            //        .AddCookie(options =>
+            //        {
+            //            options.LoginPath = "/Account/Login/"; // auth redirect
+            //            options.ExpireTimeSpan = new TimeSpan(0, 0, 0, 20);
+            //        });
 
             services.AddIdentity<ApplicationUser, MongoIdentityRole>()
                     .AddMongoDbStores<ApplicationUser, MongoIdentityRole, Guid>(settings.ConnectionString, settings.DatabaseName)

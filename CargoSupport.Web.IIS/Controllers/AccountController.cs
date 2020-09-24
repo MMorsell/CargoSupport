@@ -67,7 +67,8 @@ namespace CargoSupport.Web.IIS.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(1, "User logged in.");
-                    return RedirectToLocal(returnUrl);
+
+                    return await GetDefaultViewDependingOnRoleLevel(model.Email);
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -567,6 +568,38 @@ namespace CargoSupport.Web.IIS.Controllers
             {
                 return RedirectToAction(nameof(HomeController.Transport), "Home");
             }
+        }
+
+        private async Task<RedirectToActionResult> GetDefaultViewDependingOnRoleLevel(string email)
+        {
+            var currentUser = await _userManager.FindByEmailAsync(email);
+
+            if (await _userManager.IsInRoleAsync(currentUser, Constants.MinRoleLevel.Plock))
+            {
+                return RedirectToAction(nameof(HomeController.Plock), "Home");
+            }
+
+            if (await _userManager.IsInRoleAsync(currentUser, Constants.MinRoleLevel.Medarbetare))
+            {
+                return RedirectToAction(nameof(HomeController.Medarbetare), "Home");
+            }
+
+            if (await _userManager.IsInRoleAsync(currentUser, Constants.MinRoleLevel.TransportLedare))
+            {
+                return RedirectToAction(nameof(HomeController.Transport), "Home");
+            }
+
+            if (await _userManager.IsInRoleAsync(currentUser, Constants.MinRoleLevel.Gruppchef))
+            {
+                return RedirectToAction(nameof(AnalyzeController.DataByGroup), "Analyze");
+            }
+
+            if (await _userManager.IsInRoleAsync(currentUser, Constants.MinRoleLevel.SuperUser))
+            {
+                return RedirectToAction(nameof(AnalyzeController.TodayGraphs), "Analyze");
+            }
+
+            return RedirectToAction(nameof(HomeController.Plock), "Home");
         }
 
         #endregion Helpers

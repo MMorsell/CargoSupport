@@ -4,11 +4,11 @@ namespace CargoSupport.Constants
 {
     public static class MinRoleLevel
     {
-        private const string SuperUser = "SuperUser";
-        private const string Gruppchef = "GC_trp";
-        private const string TransportLedare = "TL_trp";
-        private const string Medarbetare = "Medarbetare_Trp";
-        private const string Plock = "Plock";
+        public const string SuperUser = "SuperUser";
+        public const string Gruppchef = "GC_trp";
+        public const string TransportLedare = "TL_trp";
+        public const string Medarbetare = "Medarbetare_Trp";
+        public const string Plock = "Plock";
 
         public const string SuperUserAndUp = SuperUser;
         public const string GruppChefAndUp = SuperUser + "," + Gruppchef;
