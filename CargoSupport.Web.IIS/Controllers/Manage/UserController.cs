@@ -1,22 +1,37 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using AspNetCore.Identity.MongoDbCore.Models;
 using CargoSupport.Interfaces;
 using CargoSupport.Models;
+using CargoSupport.Models.Auth;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.ViewModels.Manange;
+using CargoSupport.Web.IIS.ViewModels.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers.Manage
 {
-    [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+    //[Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
     public class UserController : Controller
     {
         private readonly IMongoDbService _dbService;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<MongoIdentityRole> _roleManager;
 
-        public UserController(IMongoDbService dbService)
+        public UserController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<MongoIdentityRole> roleManager,
+            IMongoDbService dbService)
         {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
             this._dbService = dbService;
         }
 
@@ -29,7 +44,9 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public ActionResult Create()
         {
-            return View();
+            var allRoles = _roleManager.Roles.AsEnumerable().Select(role => role.Name).ToList();
+
+            return View(new CreateViewModel() { Roles = allRoles });
         }
 
         [HttpPost]
