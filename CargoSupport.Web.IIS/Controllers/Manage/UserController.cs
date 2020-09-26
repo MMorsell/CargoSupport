@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore;
 using AspNetCore.Identity.MongoDbCore.Models;
 using CargoSupport.Interfaces;
 using CargoSupport.Models;
@@ -12,6 +13,7 @@ using CargoSupport.Web.IIS.ViewModels.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers.Manage
@@ -47,52 +49,18 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             return View(userViewModels);
         }
 
-        public ActionResult Create()
-        {
-            var allRoles = _roleManager.Roles.AsEnumerable().Select(role => role.Name).ToList();
+        //Client does not want editable users
+        //public async Task<ActionResult> EditAsync(string id)
+        //{
+        //    var existingUser = await _userManager.FindByIdAsync(id);
 
-            return View(new CreateViewModel() { Roles = allRoles });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateAsync(WhitelistModel newUserModel)
-        {
-            if (await AddOrUpdateUserRoleLevel(newUserModel, HttpContext.User, _dbService))
-            {
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                return View("Error", new ErrorViewModel { Message = "Åtgärden misslyckades" });
-            }
-        }
-
-        public async Task<ActionResult> EditAsync(string id)
-        {
-            var existingUser = await _dbService.GetRecordById<WhitelistModel>(Constants.MongoDb.WhitelistTable, id);
-
-            if (existingUser == null)
-            {
-                return NotFound();
-            }
-
-            return View(existingUser);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditAsync(WhitelistModel newUserModel)
-        {
-            if (await AddOrUpdateUserRoleLevel(newUserModel, HttpContext.User, _dbService))
-            {
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                return View("Error", new ErrorViewModel { Message = "Åtgärden misslyckades" });
-            }
-        }
+        //    if (existingUser == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    ViewBag.Roles = new SelectList(_roleManager.Roles, "ROLEID", "ROLENAME");
+        //    return View(await existingUser.ConvertToUserViewModel(_userManager));
+        //}
 
         public async Task<ActionResult> DeleteAsync(string id)
         {
@@ -104,15 +72,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             }
 
             return View(await existingUser.ConvertToUserViewModel(_userManager));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteAsync(WhitelistModel newUserModel)
-        {
-            await _dbService.DeleteRecord<WhitelistModel>(Constants.MongoDb.WhitelistTable, newUserModel._Id);
-
-            return RedirectToAction("Index");
         }
     }
 }

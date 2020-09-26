@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNetCore.Identity.MongoDbCore.Models;
+using CargoSupport.Helpers;
 using CargoSupport.Interfaces;
 using CargoSupport.Models.Auth;
 using CargoSupport.Models.Auth.AccountViewModels;
@@ -94,18 +95,24 @@ namespace CargoSupport.Web.IIS.Controllers
         //
         // GET: /Account/Register
         [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Register(string returnUrl = null)
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+        public async Task<IActionResult> Register(string returnUrl = null)
         {
+            var currentUser = this.User;
+
+            var id = _userManager.GetUserId(currentUser);
+            var currentUserObject = await _userManager.FindByIdAsync(id);
+            _roleManager.GetAllRolesToDictionary(currentUserObject);
             ViewData["ReturnUrl"] = returnUrl;
+            ViewBag.Roles = new SelectList(_roleManager.GetAllRolesToDictionary(currentUserObject), "Key", "Value");
             return View();
         }
 
         //
         // POST: /Account/Register
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -116,8 +123,8 @@ namespace CargoSupport.Web.IIS.Controllers
                 if (result.Succeeded)
                 {
                     var currentUser = await _userManager.FindByNameAsync(user.UserName);
-
-                    await _userManager.AddToRoleAsync(currentUser, "Admin");
+                    var role = await _roleManager.FindByIdAsync(model.RoleId);
+                    await _userManager.AddToRoleAsync(currentUser, role.Name);
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
@@ -139,8 +146,8 @@ namespace CargoSupport.Web.IIS.Controllers
         //
         // POST: /Account/DeleteAccount
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
         public async Task<IActionResult> DeleteAccount(string id, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -164,7 +171,7 @@ namespace CargoSupport.Web.IIS.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            return RedirectToAction(nameof(HomeController.Transport), "Home");
+            return RedirectToAction(nameof(AccountController.Login));
         }
 
         //
@@ -172,6 +179,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
         public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             // Request a redirect to the external login provider.
@@ -183,6 +191,7 @@ namespace CargoSupport.Web.IIS.Controllers
         //
         // GET: /Account/ExternalLoginCallback
         [HttpGet]
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
         [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
         {
@@ -230,6 +239,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
         public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl = null)
         {
             if (ModelState.IsValid)

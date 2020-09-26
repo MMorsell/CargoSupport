@@ -9,7 +9,6 @@
     <tr>
         <th>Namn med domän</th>
         <th>Behörighetsnivå</th>
-        <th>Redigera användare</th>
         <th>Ta bort användare</th>
     </tr>
     @foreach (var user in Model)
@@ -17,7 +16,6 @@
         <tr>
             <td><input disabled asp-for="@user.UserName" type="text" /></td>
             <td><input disabled asp-for="@user.RolesCombined" type="text" /></td>
-            <td>@*<a asp-action="Edit" asp-route-id="@user._Id" class="btn btn-outline-warning">Redigera</a>*@</td>
             <td><a asp-action="Delete" asp-route-id="@user.IdAsString" class="btn btn-outline-danger">Ta bort</a></td>
         </tr>
     }

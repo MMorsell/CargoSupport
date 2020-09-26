@@ -28,12 +28,12 @@
             <div class="form-group">
                 <button type="submit" class="btn btn-primary btn-block">Logga in</button>
             </div>
-            <p>
-                <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Registrera ny anv&auml;ndare</a>
-            </p>
-            <p>
-                <a asp-action="ForgotPassword">Glömt l&ouml;senord?</a>
-            </p>
+            @*<p>
+                    <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Registrera ny anv&auml;ndare</a>
+                </p>
+                <p>
+                    <a asp-action="ForgotPassword">Glömt l&ouml;senord?</a>
+                </p>*@
         </form>
         @*<form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
                 <h4>Use a local account to log in.</h4>

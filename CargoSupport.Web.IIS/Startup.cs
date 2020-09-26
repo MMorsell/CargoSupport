@@ -122,7 +122,7 @@ namespace CargoSupport.Web.IIS
                 }
             }
 
-            var user = new ApplicationUser { UserName = "Superuser", Email = "Superuser@live.se" };
+            var user = new ApplicationUser { UserName = "Superuser@live.se", Email = "Superuser@live.se" };
 
             var result = await _userManager.CreateAsync(user, "TodoPassword.123");
             if (result.Succeeded)

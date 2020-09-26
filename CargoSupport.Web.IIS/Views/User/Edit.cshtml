@@ -1,4 +1,4 @@
-﻿@model CargoSupport.Models.DatabaseModels.WhitelistModel;
+﻿@model CargoSupport.ViewModels.Manange.UserViewModel;
 @{
     ViewData["Title"] = "Redigera användare";
 }
@@ -6,15 +6,17 @@
 <form method="post" enctype="multipart/form-data" asp-action="Edit">
     <table>
         <tr>
-            <td><input hidden asp-for="@Model._Id" type="text" /></td>
+            <td><input hidden asp-for="@Model.IdAsString" type="text" /></td>
         </tr>
         <tr>
             <td>Namn med domän</td>
-            <td><input asp-for="@Model.NameWithDomain" type="text" /></td>
+            <td><input asp-for="@Model.UserName" type="text" /></td>
         </tr>
         <tr>
             <td>Behörighetsnivå</td>
-            <td><select class="selectpicker show-tick" asp-for="@Model.RoleLevel" asp-items="Html.GetEnumSelectList<CargoSupport.Enums.RoleLevel>()"></select></td>
+            @Html.ListBoxFor(m => m.RolesCombined, (ViewBag.Roles as SelectList), new { @class = "chosen-select", data_placeholder = "Agent(s)." })
+
+            <td>@*<select class="selectpicker show-tick" asp-for="@Model.RoleLevel" asp-items="Html.Get<CargoSupport.Enums.RoleLevel>()"></select>*@</td>
         </tr>
         <tr>
             <td><input class="btn btn-outline-success" type="submit" value="Spara" /></td>
