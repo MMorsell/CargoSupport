@@ -144,7 +144,7 @@
             console.log('Submitting form...');
             $.ajax({
                 type: 'POST',
-                url: '/api/Upsert/UpsertStorage',
+                url: '/api/v1/Upsert/UpsertStorage',
                 //dataType: 'json',
                 contentType: dataType,
                 data: jsonData,
@@ -242,7 +242,7 @@
             table = $('#dataTable').DataTable({
                 pageLength: 250,
                 "ajax": {
-                    "url": '/api/public/GetStorage',
+                    "url": '/api/v1/public/GetStorage',
                     "data": {
                         "dateString": function () { return formatDate(ajaxDate) }
                     },

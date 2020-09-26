@@ -44,7 +44,7 @@
             table = $('#dataTable').DataTable({
                 pageLength: 250,
                 "ajax": {
-                    "url": '/api/Analyze/GetSlim',
+                    "url": '/api/v1/Analyze/GetSlim',
                     "data": {
                         "fromDate": function () { return fromDate.format(timeFormat) },
                         "toDate": function () { return toDate.format(timeFormat) }

@@ -13,17 +13,17 @@ using CargoSupport.Interfaces;
 
 namespace CargoSupport.Web.Controllers.API
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/v1/public/[action]")]
     [ApiController]
-    public class PublicController : ControllerBase
+    public class Public : ControllerBase
     {
-        private readonly ILoggerFactory _logger;
+        private readonly ILogger _logger;
         private readonly IQuinyxHelper _quinyxHelper;
         private readonly IMongoDbService _dbService;
 
-        public PublicController(ILoggerFactory logger, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
+        public Public(ILoggerFactory logger, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
         {
-            this._logger = logger;
+            this._logger = logger.CreateLogger("PublicApiv1");
             _quinyxHelper = quinyxHelper;
             this._dbService = dbService;
         }

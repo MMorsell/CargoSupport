@@ -16,21 +16,21 @@ using Microsoft.Extensions.Logging;
 
 namespace CargoSupport.Web.IIS.Controllers.API
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/v1/upsert/[action]")]
     [ApiController]
-    public class UpsertController : ControllerBase
+    public class Upsert : ControllerBase
     {
         private readonly IHubContext<ChatHub> _chatHub;
         private readonly ILogger _logger;
         private readonly IQuinyxHelper _quinyxHelper;
         private readonly IMongoDbService _dbService;
 
-        public UpsertController(IHubContext<ChatHub> chatHub, ILoggerFactory logger, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
+        public Upsert(IHubContext<ChatHub> chatHub, ILoggerFactory logger, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
         {
             _chatHub = chatHub;
             _quinyxHelper = quinyxHelper;
             this._dbService = dbService;
-            _logger = logger.CreateLogger("UpsertController");
+            _logger = logger.CreateLogger("UpsertApiv1");
         }
 
         [HttpPost]

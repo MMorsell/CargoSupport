@@ -95,7 +95,7 @@
             console.log('Submitting form...');
             $.ajax({
                 type: 'POST',
-                url: '/api/Upsert/UpsertTransport',
+                url: '/api/v1/Upsert/UpsertTransport',
                 contentType: dataType,
                 data: jsonData,
                 error: function (jqXHR, exception) {
@@ -223,7 +223,7 @@
             table = $('#dataTable').DataTable({
                 pageLength: 250,
                 "ajax": {
-                    "url": '/api/public/GetTransport',
+                    "url": '/api/v1/public/GetTransport',
                     "data": {
                         "dateString": function () { return formatDate(ajaxDate) }
                     },

@@ -30,7 +30,7 @@
             table = $('#dataTable').DataTable({
                 pageLength: 250,
                 "ajax": {
-                    "url": '/api/public/GetPublic',
+                    "url": '/api/v1/public/GetPublic',
                     "data": {
                         "dateString": function () { return formatDate(ajaxDate) }
                     },

@@ -8,7 +8,7 @@ namespace CargoSupport.Web.IIS.Controllers
 {
     public class HomeController : Controller
     {
-        //[Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
         public IActionResult Transport()
         {
             return View();
