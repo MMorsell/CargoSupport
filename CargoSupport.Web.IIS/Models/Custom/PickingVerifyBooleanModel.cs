@@ -6,17 +6,17 @@ namespace CargoSupport.Models
     {
         public PickingVerifyBooleanModel()
         {
-            Timestamp = DateTime.Now;
+            _timestamp = DateTime.Now;
         }
 
         public PickingVerifyBooleanModel(bool input)
         {
             Value = input;
-            Timestamp = DateTime.Now;
+            _timestamp = DateTime.Now;
         }
 
+        public DateTime _timestamp;
         public bool Value { get; set; } = false;
         public string Signature { get; set; }
-        public DateTime Timestamp { get; set; }
     }
 }
