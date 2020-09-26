@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Terminalsvy</title>
+    <title>@ViewData["Title"] - EHL</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowreorder/1.2.7/css/rowReorder.bootstrap4.min.css">
@@ -22,47 +22,12 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Transport">Terminalsvy</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Home">EHL</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <p class="nav navbar-text navbar-right">Välkommen, @User.Identity.Name!</p>
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Transport">Transportledare</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Plock">Plock</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Medarbetare">Medarbetare</a>
-                        </li>
-                        <li class="nav-item">
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Admin
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" asp-area="" asp-controller="User" asp-action="Index">Användare</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Car" asp-action="Index">Bilar</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="GetFromPin">Hämta från pin</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="UpdatePinDataByOrder">Uppdatera pin-statistik</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="DeleteRoutesByOrderId">Radera order</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="MoveOrderDateById">Byt dag på order</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="Index">Analysera</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="DataByGroup">Analysera på anställningsnivå</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="TodayGraphs">Statistik för dagen</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="CarStats">Körstatistik bilar</a>
-                            </div>
-                            @await Html.PartialAsync("_LoginPartial")
-                        </li>
-                    </ul>
-                </div>
+                @await Html.PartialAsync("_LoginPartial")
             </div>
         </nav>
     </header>

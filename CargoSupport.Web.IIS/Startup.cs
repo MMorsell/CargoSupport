@@ -102,7 +102,7 @@ namespace CargoSupport.Web.IIS
 
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Transport}/{id?}");
+                    pattern: "{controller=Account}/{action=Home}/{id?}");
             });
 
             var RoleManager = serviceProvider.GetRequiredService<RoleManager<MongoIdentityRole>>();

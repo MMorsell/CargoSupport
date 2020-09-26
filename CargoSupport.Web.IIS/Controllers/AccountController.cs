@@ -8,7 +8,6 @@ using CargoSupport.Helpers;
 using CargoSupport.Interfaces;
 using CargoSupport.Models.Auth;
 using CargoSupport.Models.Auth.AccountViewModels;
-using CargoSupport.ViewModels.Manange;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -132,7 +131,7 @@ namespace CargoSupport.Web.IIS.Controllers
                     //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                     //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
                     //    "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
-                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    //await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User created a new account with password.");
                     return RedirectToLocal(returnUrl);
                 }
@@ -599,6 +598,15 @@ namespace CargoSupport.Web.IIS.Controllers
             {
                 return RedirectToAction(nameof(HomeController.Transport), "Home");
             }
+        }
+
+        public async Task<IActionResult> Home()
+        {
+            var currentUser = this.User;
+
+            var id = _userManager.GetUserId(currentUser);
+            var currentUserObject = await _userManager.FindByIdAsync(id);
+            return await GetDefaultViewDependingOnRoleLevel(currentUserObject.Email);
         }
 
         private async Task<RedirectToActionResult> GetDefaultViewDependingOnRoleLevel(string email)

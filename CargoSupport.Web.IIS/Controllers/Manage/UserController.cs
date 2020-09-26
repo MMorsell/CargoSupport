@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AspNetCore;
 using AspNetCore.Identity.MongoDbCore.Models;
 using CargoSupport.Interfaces;
-using CargoSupport.Models;
 using CargoSupport.Models.Auth;
-using CargoSupport.Models.DatabaseModels;
 using CargoSupport.ViewModels.Manange;
-using CargoSupport.Web.IIS.ViewModels.Auth;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers.Manage
 {
-    //[Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+    [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
     public class UserController : Controller
     {
         private readonly IMongoDbService _dbService;
