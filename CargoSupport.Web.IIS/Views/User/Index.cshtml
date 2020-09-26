@@ -1,9 +1,9 @@
-﻿@model CargoSupport.ViewModels.Manange.UpsertUserViewModel;
+﻿@model List<CargoSupport.ViewModels.Manange.UserViewModel>;
 @{
     ViewData["Title"] = "Användare";
 }
 
-<td><a asp-action="Create" class="btn btn-outline-success">Lägg till ny användare</a></td>
+<td><a asp-controller="Account" asp-action="Register" class="btn btn-outline-success">Lägg till ny användare</a></td>
 
 <table class="table">
     <tr>
@@ -12,13 +12,13 @@
         <th>Redigera användare</th>
         <th>Ta bort användare</th>
     </tr>
-    @foreach (var user in Model.ExistingUsers)
+    @foreach (var user in Model)
     {
         <tr>
-            <td><input disabled asp-for="@user.NameWithDomain" type="text" /></td>
-            <td><select class="selectpicker show-tick" disabled asp-for="@user.RoleLevel" asp-items="Html.GetEnumSelectList<CargoSupport.Enums.RoleLevel>()"></select></td>
-            <td><a asp-action="Edit" asp-route-id="@user._Id" class="btn btn-outline-warning">Redigera</a></td>
-            <td><a asp-action="Delete" asp-route-id="@user._Id" class="btn btn-outline-danger">Ta bort</a></td>
+            <td><input disabled asp-for="@user.UserName" type="text" /></td>
+            <td><input disabled asp-for="@user.RolesCombined" type="text" /></td>
+            <td>@*<a asp-action="Edit" asp-route-id="@user._Id" class="btn btn-outline-warning">Redigera</a>*@</td>
+            <td><a asp-action="Delete" asp-route-id="@user.IdAsString" class="btn btn-outline-danger">Ta bort</a></td>
         </tr>
     }
 </table>

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AspNetCore.Identity.MongoDbCore.Models;
 using CargoSupport.Interfaces;
@@ -7,7 +9,6 @@ using CargoSupport.Models.Auth;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.ViewModels.Manange;
 using CargoSupport.Web.IIS.ViewModels.Auth;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -38,8 +39,12 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [Route("User")]
         public async Task<ActionResult> Index()
         {
-            var allUsers = await _dbService.GetAllRecords<WhitelistModel>(Constants.MongoDb.WhitelistTable);
-            return View(new UpsertUserViewModel() { CurrentUser = new WhitelistModel(), ExistingUsers = allUsers });
+            var userViewModels = new List<UserViewModel>();
+            foreach (var user in _userManager.Users.ToList())
+            {
+                userViewModels.Add(await user.ConvertToUserViewModel(_userManager));
+            }
+            return View(userViewModels);
         }
 
         public ActionResult Create()
@@ -91,14 +96,14 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<ActionResult> DeleteAsync(string id)
         {
-            var existingUser = await _dbService.GetRecordById<WhitelistModel>(Constants.MongoDb.WhitelistTable, id);
+            var existingUser = await _userManager.FindByIdAsync(id);
 
             if (existingUser == null)
             {
                 return NotFound();
             }
 
-            return View(existingUser);
+            return View(await existingUser.ConvertToUserViewModel(_userManager));
         }
 
         [HttpPost]

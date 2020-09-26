@@ -1,21 +1,18 @@
-﻿@model CargoSupport.Models.DatabaseModels.WhitelistModel;
+﻿@model CargoSupport.ViewModels.Manange.UserViewModel;
 @{
     ViewData["Title"] = "Ta bort användare";
 }
 
 <h2>Vill du verkligen ta bort denna användare?</h2>
-<form method="post" enctype="multipart/form-data" asp-action="Delete">
+<form method="post" class="form-horizontal" role="form" asp-route-id="@Model.IdAsString" asp-route-returnurl="@ViewData["ReturnUrl"]" asp-controller="Account" asp-action="DeleteAccount">
     <table>
         <tr>
-            <td><input hidden asp-for="@Model._Id" type="text" /></td>
+            <td>Användarnamn</td>
+            <td><input disabled asp-for="UserName" type="text" /></td>
         </tr>
         <tr>
-            <td>Namn med domän</td>
-            <td><input disabled asp-for="@Model.NameWithDomain" type="text" /></td>
-        </tr>
-        <tr>
-            <td>Behörighetsnivå</td>
-            <td><select class="selectpicker show-tick" disabled asp-for="@Model.RoleLevel" asp-items="Html.GetEnumSelectList<CargoSupport.Enums.RoleLevel>()"></select></td>
+            <td>Behörighetsnivåer</td>
+            <td><input disabled asp-for="RolesCombined" type="text" /></td>
         </tr>
         <tr>
             <td><input class="btn btn-outline-danger" type="submit" value="Bekräfta borttagning" /></td>

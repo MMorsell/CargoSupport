@@ -7,6 +7,7 @@ using AspNetCore.Identity.MongoDbCore.Models;
 using CargoSupport.Interfaces;
 using CargoSupport.Models.Auth;
 using CargoSupport.Models.Auth.AccountViewModels;
+using CargoSupport.ViewModels.Manange;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -133,6 +134,26 @@ namespace CargoSupport.Web.IIS.Controllers
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        //
+        // POST: /Account/DeleteAccount
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAccount(string id, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            if (ModelState.IsValid)
+            {
+                var result = await _userManager.DeleteAsync(await _userManager.FindByIdAsync(id));
+                if (result.Succeeded)
+                {
+                    return RedirectToLocal(returnUrl);
+                }
+                AddErrors(result);
+            }
+            return RedirectToAction(nameof(HomeController.Transport), "Home");
         }
 
         //
