@@ -627,12 +627,12 @@ namespace CargoSupport.Web.IIS.Controllers
 
             if (await _userManager.IsInRoleAsync(currentUser, Constants.MinRoleLevel.TransportLedare))
             {
-                return RedirectToAction(nameof(HomeController.Transport), "Home");
+                return RedirectToAction(nameof(AnalyzeController.TodayGraphs), "Analyze");
             }
 
             if (await _userManager.IsInRoleAsync(currentUser, Constants.MinRoleLevel.Gruppchef))
             {
-                return RedirectToAction(nameof(AnalyzeController.DataByGroup), "Analyze");
+                return RedirectToAction(nameof(AnalyzeController.TodayGraphs), "Analyze");
             }
 
             if (await _userManager.IsInRoleAsync(currentUser, Constants.MinRoleLevel.SuperUser))

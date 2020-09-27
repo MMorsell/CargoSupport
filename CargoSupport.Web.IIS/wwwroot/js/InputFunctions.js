@@ -289,7 +289,12 @@ $('#downloadPdf').click(function (event) {
             pdfctxY += canvasHeight + buffer;
         }
     });
+    let from = document.getElementById('calendar-from-graphs-discrete').value;
+    let to = document.getElementById('calendar-to-graphs-discrete').value;
 
+    let oldValue = document.getElementById('mainName').innerText;
+
+    document.getElementById('mainName').innerText = oldValue + ', ' + from + ' till ' + to;
     // create new pdf and add our new canvas as an image
     //var pdf = new jsPDF('l', 'pt', [reportPageWidth, reportPageHeight]);
     var doc = new jsPDF('l', 'pt', [reportPageWidth, reportPageHeight]);
@@ -308,8 +313,6 @@ $('#downloadPdf').click(function (event) {
 
     // Save the PDF
     doc.save('sample-document.pdf');
-    //pdf.addImage($(pdfCanvas)[0], 'PNG', 0, 0);
 
-    //// download the pdf
-    //pdf.save('filename.pdf');
+    document.getElementById('mainName').innerText = oldValue;
 });
