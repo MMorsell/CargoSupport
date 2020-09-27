@@ -8,18 +8,20 @@
 <table class="table">
     <tr>
         <th>Bilens namn eller nummer</th>
+        <th>Bilens registeringsnummer</th>
         <th>Maxvikt för bilen</th>
         <th>Påställd/Kan användas</th>
         <th>Redigera bil</th>
     </tr>
     @foreach (var car in Model.ExistingCars)
     {
-        <tr>
-            <td><input disabled asp-for="@car.Name" type="text" /></td>
-            <td><input disabled asp-for="@car.MaxWeight" type="number" /></td>
-            <td><input disabled asp-for="@car.CanBeSelected" /></td>
-            <td><a asp-action="Edit" asp-route-id="@car._Id" class="btn btn-outline-warning">Redigera bil</a></td>
-        </tr>
+    <tr>
+        <td><input disabled asp-for="@car.Name" type="text" /></td>
+        <td><input disabled asp-for="@car.RegistrationNumber" type="text" /></td>
+        <td><input disabled asp-for="@car.MaxWeight" type="number" /></td>
+        <td><input disabled asp-for="@car.CanBeSelected" /></td>
+        <td><a asp-action="Edit" asp-route-id="@car._Id" class="btn btn-outline-warning">Redigera bil</a></td>
+    </tr>
     }
 </table>
 

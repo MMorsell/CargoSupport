@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
 using CargoSupport.Models.Auth;
 using CargoSupport.Interfaces;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace CargoSupport.Web.IIS
 {
@@ -88,7 +87,7 @@ namespace CargoSupport.Web.IIS
 
             app.UseDeveloperExceptionPage();
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

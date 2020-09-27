@@ -50,6 +50,10 @@
               "target": "Package",
               "version": "[2.14.0, )"
             },
+            "Microsoft.AspNet.Identity.Core": {
+              "target": "Package",
+              "version": "[2.2.3, )"
+            },
             "Microsoft.AspNetCore.Authentication.Negotiate": {
               "target": "Package",
               "version": "[3.1.8, )"

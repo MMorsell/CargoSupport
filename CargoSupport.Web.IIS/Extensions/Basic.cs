@@ -1,6 +1,10 @@
 ﻿using CargoSupport.Models.QuinyxModels;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
+using System.Security.Principal;
+using CargoSupport.Models.Auth;
 
 namespace CargoSupport.Extensions
 {
@@ -47,6 +51,18 @@ namespace CargoSupport.Extensions
                 minute ?? dateTime.Minute,
                 second ?? dateTime.Second
             );
+        }
+
+        //public static string GetFreshProfilePicture(IIdentity identity, UserManager<ApplicationUser> userManager)
+        //{
+        //    return userManager.FindById(identity.GetUserId()).ProfilePicture;
+        //}
+
+        public static string GetCustomPropertyFromIdentity(this IIdentity identity, string propertyName)
+        {
+            var claim = ((ClaimsIdentity)identity).FindFirst(propertyName);
+            // Test for null to avoid issues during local testing
+            return (claim != null) ? claim.Value : string.Empty;
         }
     }
 }
