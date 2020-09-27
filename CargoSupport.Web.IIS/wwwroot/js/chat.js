@@ -9,8 +9,8 @@ connection.on("ReceiveMessage", function (user, message) {
     reloadDatatableAjax();
 });
 
-connection.on("Upsert", function (updaterRecordId) {
-    alert(updaterRecordId)
+connection.on("Upsert", function (updateModel) {
+    updateSingleRecord(updateModel);
 });
 
 connection.start().then(function () {

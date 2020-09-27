@@ -66,3 +66,91 @@ function driverId() {
         return Id;
     }
 }
+
+function getDataTableIndexByRowInternalId(internalId) {
+    let foundindex = -1;
+    debugger;
+    table.column(0)
+        .data()
+        .filter(function (value, index) {
+            if (value === internalId) {
+                foundindex = index;
+            }
+        });
+    return table.rows().indexes()[foundindex];
+}
+
+function updateSingleRecord(newObject) {
+    if (window.location.href.includes('Transport')) {
+        var object = table.rows(getDataTableIndexByRowInternalId(newObject._Id)).data();
+        debugger;
+
+        //Transport view only cares about updates with these properties
+        if (newObject.preRideAnnotation !== null) {
+        }
+        if (newObject.postRideAnnotation !== null) {
+        }
+        if (newObject.portNumber !== null) {
+        }
+        if (newObject.carNumber !== null) {
+        }
+        if (newObject.loadingLevel !== null) {
+        }
+        if (newObject.driver !== null) {
+        }
+        if (newObject.numberOfColdBoxes !== null) {
+        }
+        if (newObject.restPicking !== null) {
+        }
+        if (newObject.numberOfFrozenBoxes !== null) {
+        }
+        if (newObject.numberOfBreadBoxes !== null) {
+        }
+        if (newObject.controlIsDone !== null) {
+        }
+        console.log('updated single record')
+    } else if (window.location.href.includes('Plock')) {
+        var object = table.rows(getDataTableIndexByRowInternalId(newObject._Id)).data();
+
+        //Plock view only cares about updates with these properties
+        if (newObject.numberOfColdBoxes !== null) {
+        }
+        if (newObject.restPicking !== null) {
+        }
+        if (newObject.numberOfFrozenBoxes !== null) {
+        }
+        if (newObject.numberOfBreadBoxes !== null) {
+        }
+        if (newObject.controlIsDone !== null) {
+        }
+        debugger;
+        console.log('updated single record')
+    }
+    else {
+        var object = table.rows(getDataTableIndexByRowInternalId(newObject._Id)).data();
+
+        //Medarbetare view only cares about updates with these properties
+        if (newObject.preRideAnnotation !== null) {
+        }
+        if (newObject.portNumber !== null) {
+        }
+        if (newObject.carNumber !== null) {
+        }
+        if (newObject.loadingLevel !== null) {
+        }
+        if (newObject.driver !== null) {
+        }
+        if (newObject.numberOfColdBoxes !== null) {
+        }
+        if (newObject.restPicking !== null) {
+        }
+        if (newObject.numberOfFrozenBoxes !== null) {
+        }
+        if (newObject.numberOfBreadBoxes !== null) {
+        }
+        if (newObject.controlIsDone !== null) {
+        }
+        debugger;
+        console.log('updated single record')
+    }
+}

@@ -74,5 +74,9 @@
                 $(this).addClass("stickyHeader");
             })
         });
+        setInterval(function () {
+            console.log('auto-reloading')
+            table.ajax.reload(null, false);
+        }, 300000);
     </script>
 }

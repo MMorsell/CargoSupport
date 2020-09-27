@@ -35,7 +35,7 @@
     <script src="~/js/chat.js"></script>
     <script>
         let table;
-
+        const mainApiEndpoint = '/api/v1/public/GetTransport';
         async function updateRow(thisRef) {
             var dataRef = table.row($(thisRef).parents('tr')).data();
             /*
@@ -224,7 +224,7 @@
             table = $('#dataTable').DataTable({
                 pageLength: 250,
                 "ajax": {
-                    "url": '/api/v1/public/GetTransport',
+                    "url": mainApiEndpoint,
                     "data": {
                         "dateString": function () { return formatDate(ajaxDate) }
                     },
@@ -281,5 +281,9 @@
             })
 
         });
+        setInterval(function () {
+            console.log('auto-reloading')
+            table.ajax.reload(null, false);
+        }, 300000);
     </script>
 }
