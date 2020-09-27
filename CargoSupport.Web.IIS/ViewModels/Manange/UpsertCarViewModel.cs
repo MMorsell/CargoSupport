@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace CargoSupport.ViewModels.Manange
 {
-    public class UpsertUserViewModel
+    public class UpsertCarViewModel
     {
-        public UpsertUserViewModel()
+        public UpsertCarViewModel()
         {
-            ExistingUsers = new List<WhitelistModel>();
+            ExistingCars = new List<CarModel>();
         }
 
-        public WhitelistModel CurrentUser { get; set; }
-        public List<WhitelistModel> ExistingUsers { get; set; }
+        public CarModel CurrentCar { get; set; }
+        public List<CarModel> ExistingCars { get; set; }
     }
 }

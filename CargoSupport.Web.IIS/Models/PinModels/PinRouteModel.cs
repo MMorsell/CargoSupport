@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace CargoSupport.Models.PinModels
@@ -11,9 +12,11 @@ namespace CargoSupport.Models.PinModels
         public string ParentOrderName { get; set; }
 
         [JsonProperty("id")]
+        [Required]
         public int RouteId { get; set; }
 
         [JsonProperty("name")]
+        [Required]
         public string RouteName { get; set; }
 
         [JsonProperty("url")]
@@ -24,12 +27,15 @@ namespace CargoSupport.Models.PinModels
          */
 
         [JsonProperty("customer")]
+        [Required]
         public List<PinCustomerModel> Customers { get; set; } = new List<PinCustomerModel>();
 
         [JsonProperty("route_info")]
+        [Required]
         public PinRouteInfoModel RouteInfoModel { get; set; } = new PinRouteInfoModel();
 
         [JsonProperty("order")]
+        [Required]
         public PinOrderInfoModel PinOrderInfoModel { get; set; } = new PinOrderInfoModel();
 
         /*

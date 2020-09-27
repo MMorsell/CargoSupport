@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CargoSupport.Models.DatabaseModels
 {
@@ -26,11 +27,15 @@ namespace CargoSupport.Models.DatabaseModels
         /*
          * From Pin
          */
+
+        [Required]
         public PinRouteModel PinRouteModel { get; set; }
 
         /*
          * From Quinyx
          */
+
+        [Required]
         public QuinyxModel Driver { get; set; }
 
         /*

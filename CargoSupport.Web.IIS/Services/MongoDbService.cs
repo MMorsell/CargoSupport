@@ -61,15 +61,6 @@ namespace CargoSupport.Services
                             new ReplaceOptions { IsUpsert = true });
         }
 
-        public async Task UpsertWhitelistRecordById(string tableName, WhitelistModel whiteListModel)
-        {
-            var collection = _database.GetCollection<WhitelistModel>(tableName);
-
-            await collection.ReplaceOneAsync(p => p._Id == whiteListModel._Id,
-                            whiteListModel,
-                            new ReplaceOptions { IsUpsert = true });
-        }
-
         public async Task<T> GetRecordByStringId<T>(string tableName, string id)
         {
             var collection = _database.GetCollection<T>(tableName);

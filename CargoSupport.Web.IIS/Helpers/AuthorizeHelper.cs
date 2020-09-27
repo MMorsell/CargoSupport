@@ -35,6 +35,7 @@ namespace CargoSupport.Helpers
             {
                 IdAsString = user.Id.ToString(),
                 UserName = user.UserName,
+                FullName = user.FullName,
                 RolesCombined = GetAllRolesCombined(allRoles)
             };
         }
@@ -52,34 +53,8 @@ namespace CargoSupport.Helpers
             }
         }
 
-        public static async Task<bool> AddOrUpdateUserRoleLevel(WhitelistModel authModel, ClaimsPrincipal userWithPermissionsToAdd, IMongoDbService dbService)
+        public static async Task<bool> AddOrUpdateCarModel(CarModel carModel, IMongoDbService dbService)
         {
-            if (authModel.NameWithDomain == "")
-            {
-                return false;
-            }
-
-            var matchingRecord = await dbService.GetRecordById<WhitelistModel>(Constants.MongoDb.WhitelistTable, authModel._Id);
-
-            if (matchingRecord == null)
-            {
-                await dbService.InsertRecord(Constants.MongoDb.WhitelistTable, authModel);
-                return true;
-            }
-            else
-            {
-                await dbService.UpsertWhitelistRecordById(Constants.MongoDb.WhitelistTable, authModel);
-                return true;
-            }
-        }
-
-        public static async Task<bool> AddOrUpdateCarModel(CarModel carModel, ClaimsPrincipal userWithPermissionsToAdd, IMongoDbService dbService)
-        {
-            if (carModel.Name.Trim() == "")
-            {
-                return false;
-            }
-
             var matchingRecord = await dbService.GetRecordById<CarModel>(Constants.MongoDb.CarTableName, carModel._Id);
 
             if (matchingRecord == null)

@@ -36,9 +36,16 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateAsync(CarModel newCarModel)
         {
-            if (await AddOrUpdateCarModel(newCarModel, HttpContext.User, _dbService))
+            if (ModelState.IsValid)
             {
-                return RedirectToAction("Index");
+                if (await AddOrUpdateCarModel(newCarModel, _dbService))
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View("Error", new ErrorViewModel { Message = "Åtgärden misslyckades" });
+                }
             }
             else
             {
@@ -64,9 +71,16 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditAsync(CarModel newCarModel)
         {
-            if (await AddOrUpdateCarModel(newCarModel, HttpContext.User, _dbService))
+            if (ModelState.IsValid)
             {
-                return RedirectToAction("Index");
+                if (await AddOrUpdateCarModel(newCarModel, _dbService))
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View("Error", new ErrorViewModel { Message = "Åtgärden misslyckades" });
+                }
             }
             else
             {

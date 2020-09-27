@@ -8,6 +8,7 @@
 <table class="table">
     <tr>
         <th>Namn med domän</th>
+        <th>Namn</th>
         <th>Behörighetsnivå</th>
         <th>Ta bort användare</th>
     </tr>
@@ -15,6 +16,7 @@
     {
         <tr>
             <td><input disabled asp-for="@user.UserName" type="text" /></td>
+            <td><input disabled asp-for="@user.FullName" type="text" /></td>
             <td><input disabled asp-for="@user.RolesCombined" type="text" /></td>
             <td><a asp-action="Delete" asp-route-id="@user.IdAsString" class="btn btn-outline-danger">Ta bort</a></td>
         </tr>
