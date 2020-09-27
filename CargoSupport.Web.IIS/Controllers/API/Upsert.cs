@@ -93,7 +93,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
             if (update)
             {
                 await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
-                await _chatHub.Clients.All.SendAsync("ReceiveMessage");
+                await _chatHub.Clients.AllExcept(transportViewModel.HubId).SendAsync("Upsert", existingRecord._Id);
             }
         }
 
@@ -161,7 +161,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
             if (update)
             {
                 await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
-                await _chatHub.Clients.All.SendAsync("ReceiveMessage");
+                await _chatHub.Clients.AllExcept(storageViewModel.HubId).SendAsync("Upsert", existingRecord._Id);
             }
         }
     }

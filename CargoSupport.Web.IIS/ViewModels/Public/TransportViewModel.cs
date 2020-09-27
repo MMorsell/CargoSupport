@@ -113,5 +113,6 @@ namespace CargoSupport.ViewModels.Public
         public int NumberOfBreadBoxes { get; set; }
         public bool ControlIsDone { get; set; }
         public double Kilos { get; set; }
+        public string HubId { get; set; }
     }
 }

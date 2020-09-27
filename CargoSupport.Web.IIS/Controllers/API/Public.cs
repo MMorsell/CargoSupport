@@ -52,6 +52,16 @@ namespace CargoSupport.Web.Controllers.API
             });
         }
 
+        [HttpGet]
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+        public async Task<ActionResult> GetTransportSingleRecord(string recordId)
+        {
+            var dataBaseResTask = await ConvertToTransport(
+                new List<DataModel> { await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, recordId) });
+
+            return Ok(dataBaseResTask.ToArray());
+        }
+
         public class ReturnModel
         {
             public TransportViewModel[] data { get; set; }
@@ -75,6 +85,14 @@ namespace CargoSupport.Web.Controllers.API
         }
 
         [HttpGet]
+        [Authorize(Roles = Constants.MinRoleLevel.MedarbetareAndUp)]
+        public async Task<ActionResult> GetPublicSingleRecord(string recordId)
+        {
+            var res = await ConvertToPublic(new List<DataModel> { await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, recordId) });
+            return Ok(res.ToArray());
+        }
+
+        [HttpGet]
         [Authorize(Roles = Constants.MinRoleLevel.PlockAndUp)]
         public async Task<ActionResult> GetStorage(string dateString)
         {
@@ -87,6 +105,14 @@ namespace CargoSupport.Web.Controllers.API
 
             var res = ConvertToStorage(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
             return Ok(res.Result.ToArray());
+        }
+
+        [HttpGet]
+        [Authorize(Roles = Constants.MinRoleLevel.PlockAndUp)]
+        public async Task<ActionResult> GetStorageSingleRecord(string recordId)
+        {
+            var res = await ConvertToStorage(new List<DataModel> { await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, recordId) });
+            return Ok(res.ToArray());
         }
 
         [Authorize(Roles = Constants.MinRoleLevel.PlockAndUp)]

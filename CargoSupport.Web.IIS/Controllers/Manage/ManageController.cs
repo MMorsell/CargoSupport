@@ -30,6 +30,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> GetFromPin(PinIdModel model)
         {
             var ph = new PinHelper(_dbService);
@@ -52,6 +53,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdatePinDataByOrder(PinIdModel model)
         {
             DateTime.TryParse(model.Date, out DateTime date);

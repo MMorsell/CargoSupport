@@ -36,7 +36,7 @@
     <script>
         let table;
 
-        function updateRow(thisRef) {
+        async function updateRow(thisRef) {
             var dataRef = table.row($(thisRef).parents('tr')).data();
             /*
              * Updatetypes
@@ -56,7 +56,8 @@
                 portNumber: -1,
                 carNumber: null,
                 loadingLevel: -1,
-                driver: {}
+                driver: {},
+                hubId: await connection.invoke('GetConnectionId')
             };
 
             switch (thisRef.id) {

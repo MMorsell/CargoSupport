@@ -113,6 +113,7 @@
                 numberOfFrozenBoxes: {},
                 numberOfBreadBoxes: {},
                 controlIsDone: {},
+                hubId: await connection.invoke('GetConnectionId')
             };
             switch (thisRef.id) {
                 case 'numberOfColdBoxes_input':

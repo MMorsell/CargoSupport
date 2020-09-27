@@ -103,5 +103,6 @@ namespace CargoSupport.ViewModels.Public
         public PickingVerifyIntModel NumberOfFrozenBoxes { get; set; }
         public PickingVerifyIntModel NumberOfBreadBoxes { get; set; }
         public PickingVerifyBooleanModel ControlIsDone { get; set; }
+        public string HubId { get; set; }
     }
 }

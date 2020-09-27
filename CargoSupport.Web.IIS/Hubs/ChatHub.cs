@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CargoSupport.Hubs
@@ -11,6 +8,16 @@ namespace CargoSupport.Hubs
         public async Task SendMessage(string user, string message)
         {
             await Clients.All.SendAsync("ReceiveMessage", user, message);
+        }
+
+        public async Task SendUpsertSignal(string id)
+        {
+            await Clients.All.SendAsync("Upsert", id);
+        }
+
+        public string GetConnectionId()
+        {
+            return Context.ConnectionId;
         }
     }
 }

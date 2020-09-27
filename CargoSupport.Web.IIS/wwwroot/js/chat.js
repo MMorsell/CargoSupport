@@ -9,6 +9,10 @@ connection.on("ReceiveMessage", function (user, message) {
     reloadDatatableAjax();
 });
 
+connection.on("Upsert", function (updaterRecordId) {
+    alert(updaterRecordId)
+});
+
 connection.start().then(function () {
     //document.getElementById("sendButton").disabled = false;
 }).catch(function (err) {
