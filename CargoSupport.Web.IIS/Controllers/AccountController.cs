@@ -94,16 +94,11 @@ namespace CargoSupport.Web.IIS.Controllers
         //
         // GET: /Account/Register
         [HttpGet]
-        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+        [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndUp)]
         public async Task<IActionResult> Register(string returnUrl = null)
         {
-            var currentUser = this.User;
-
-            var id = _userManager.GetUserId(currentUser);
-            var currentUserObject = await _userManager.FindByIdAsync(id);
-            _roleManager.GetAllRolesToDictionary(currentUserObject);
             ViewData["ReturnUrl"] = returnUrl;
-            ViewBag.Roles = new SelectList(_roleManager.GetAllRolesToDictionary(currentUserObject), "Key", "Value");
+            ViewBag.Roles = new SelectList(_roleManager.GetAllRolesToDictionary(), "Key", "Value");
             return View();
         }
 
@@ -111,7 +106,7 @@ namespace CargoSupport.Web.IIS.Controllers
         // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+        [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndUp)]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -146,7 +141,7 @@ namespace CargoSupport.Web.IIS.Controllers
         // POST: /Account/DeleteAccount
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+        [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndUp)]
         public async Task<IActionResult> DeleteAccount(string id, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -178,7 +173,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+        [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndUp)]
         public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             // Request a redirect to the external login provider.
@@ -190,7 +185,7 @@ namespace CargoSupport.Web.IIS.Controllers
         //
         // GET: /Account/ExternalLoginCallback
         [HttpGet]
-        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+        [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndUp)]
         [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
         {
@@ -238,7 +233,7 @@ namespace CargoSupport.Web.IIS.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+        [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndUp)]
         public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl = null)
         {
             if (ModelState.IsValid)

@@ -14,37 +14,12 @@ namespace CargoSupport.Helpers
 {
     public static class AuthorizeHelper
     {
-        public static Dictionary<string, string> GetAllRolesToDictionary(this RoleManager<MongoIdentityRole> roleManager, ApplicationUser currentUser)
+        public static Dictionary<string, string> GetAllRolesToDictionary(this RoleManager<MongoIdentityRole> roleManager)
         {
-            var allRoles = roleManager.Roles
+            return roleManager.Roles
                 .AsEnumerable() //Need this for anonymous select to work
                 .Select(p => new { key = p.Id.ToString(), value = p.Name })
                 .ToDictionary(kvp => kvp.key, kvp => kvp.value);
-
-            var superUserRole = allRoles.FirstOrDefault(
-                role => role.Value.Equals(Constants.MinRoleLevel.SuperUser, StringComparison.CurrentCultureIgnoreCase));
-
-            var gcUserRole = allRoles.FirstOrDefault(
-                role => role.Value.Equals(Constants.MinRoleLevel.Gruppchef, StringComparison.CurrentCultureIgnoreCase));
-
-            var transportLeaderRole = allRoles.FirstOrDefault(
-                role => role.Value.Equals(Constants.MinRoleLevel.TransportLedare, StringComparison.CurrentCultureIgnoreCase));
-
-            if (!roleManager.UserIsInRole(new Guid(superUserRole.Key), currentUser))
-            {
-                allRoles.Remove(superUserRole.Key);
-
-                if (!roleManager.UserIsInRole(new Guid(gcUserRole.Key), currentUser))
-                {
-                    allRoles.Remove(gcUserRole.Key);
-                }
-
-                if (!roleManager.UserIsInRole(new Guid(transportLeaderRole.Key), currentUser))
-                {
-                    allRoles.Remove(transportLeaderRole.Key);
-                }
-            }
-            return allRoles;
         }
 
         public static bool UserIsInRole(this RoleManager<MongoIdentityRole> roleManager, Guid roleId, ApplicationUser currentUser)

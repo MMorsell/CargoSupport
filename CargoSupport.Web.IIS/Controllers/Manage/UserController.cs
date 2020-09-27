@@ -12,7 +12,7 @@ using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers.Manage
 {
-    [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+    [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndUp)]
     public class UserController : Controller
     {
         private readonly IMongoDbService _dbService;
@@ -32,8 +32,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             this._dbService = dbService;
         }
 
-        [Route("User")]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Users()
         {
             var userViewModels = new List<UserViewModel>();
             foreach (var user in _userManager.Users.ToList())

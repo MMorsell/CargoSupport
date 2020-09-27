@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CargoSupport.Interfaces;
@@ -8,7 +6,6 @@ using CargoSupport.Models.DatabaseModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using static CargoSupport.Helpers.AuthorizeHelper;
 
 namespace CargoSupport.Web.IIS.Controllers
 {
@@ -28,12 +25,14 @@ namespace CargoSupport.Web.IIS.Controllers
             _dataConversionHelper = dataConversionHelper;
         }
 
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
         public ActionResult Index()
         {
             return View();
         }
 
         [Route("[controller]/AllData/{id:int}")]
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
         public async Task<IActionResult> AllData(int id)
         {
             if (id <= 0)
@@ -47,7 +46,20 @@ namespace CargoSupport.Web.IIS.Controllers
             return View(allRoutes);
         }
 
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+        public ActionResult TodayGraphs()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
+        public ActionResult CarStats()
+        {
+            return View();
+        }
+
         [Route("[controller]/DriverDiscreteData/{id:int}")]
+        [Authorize(Roles = Constants.MinRoleLevel.GruppChefAndUp)]
         public IActionResult DriverDiscreteData(int id)
         {
             if (id <= 0)
@@ -59,16 +71,7 @@ namespace CargoSupport.Web.IIS.Controllers
             return View();
         }
 
-        public ActionResult TodayGraphs()
-        {
-            return View();
-        }
-
-        public ActionResult CarStats()
-        {
-            return View();
-        }
-
+        [Authorize(Roles = Constants.MinRoleLevel.GruppChefAndUp)]
         public ActionResult DataByGroup()
         {
             return View();

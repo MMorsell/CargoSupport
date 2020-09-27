@@ -69,6 +69,7 @@ namespace CargoSupport.Web.IIS
                                                           "http://127.0.0.1:5500");
                                   });
             });
+            services.AddApplicationInsightsTelemetry();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,7 +88,7 @@ namespace CargoSupport.Web.IIS
 
             app.UseDeveloperExceptionPage();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
