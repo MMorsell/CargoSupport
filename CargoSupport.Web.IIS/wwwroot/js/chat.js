@@ -9,9 +9,8 @@ connection.on("ReceiveMessage", function (user, message) {
     reloadDatatableAjax();
 });
 
-connection.on("Upsert", function (updateModel) {
-    reloadDatatableAjax();
-    //updateSingleRecord(updateModel);
+connection.on("Upsert", function (upsertDirectory) {
+    updateSingleRecord(upsertDirectory);
 });
 
 connection.start().then(function () {
