@@ -106,38 +106,29 @@
               controlIsDone: controlIsDone_input
              */
 
-            var object = {
-                _Id: dataRef._Id,
-                numberOfColdBoxes: {},
-                restPicking: {},
-                numberOfFrozenBoxes: {},
-                numberOfBreadBoxes: {},
-                controlIsDone: {},
-                hubId: await connection.invoke('GetConnectionId')
-            };
+            let upsertDictionary = {};
+            upsertDictionary["hubId"] = await connection.invoke('GetConnectionId');
+            upsertDictionary["_Id"] = dataRef._Id;
+            upsertDictionary['signature'] = signature;
+
             switch (thisRef.id) {
                 case 'numberOfColdBoxes_input':
-                    object.numberOfColdBoxes.Value = parseInt(thisRef.value);
-                    object.numberOfColdBoxes.Signature = signature;
+                    upsertDictionary[thisRef.id] = parseInt(thisRef.value);
                     break;
                 case 'restPicking_input':
-                    object.restPicking.Value = thisRef.checked;
-                    object.restPicking.Signature = signature;
+                    upsertDictionary[thisRef.id] = thisRef.checked;
                     break;
                 case 'numberOfFrozenBoxes_input':
-                    object.numberOfFrozenBoxes.Value = parseInt(thisRef.value);
-                    object.numberOfFrozenBoxes.Signature = signature;
+                    upsertDictionary[thisRef.id] = parseInt(thisRef.value);
                     break;
                 case 'numberOfBreadBoxes_input':
-                    object.numberOfBreadBoxes.Value = parseInt(thisRef.value);
-                    object.numberOfBreadBoxes.Signature = signature;
+                    upsertDictionary[thisRef.id] = parseInt(thisRef.value);
                     break;
                 case 'controlIsDone_input':
-                    object.controlIsDone.Value = thisRef.checked;
-                    object.controlIsDone.Signature = signature;
+                    upsertDictionary[thisRef.id] = thisRef.checked;
                     break;
             }
-            postUpdate(JSON.stringify(object));
+            postUpdate(JSON.stringify(upsertDictionary));
         }
 
         function postUpdate(jsonData) {

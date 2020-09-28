@@ -48,47 +48,43 @@
              * loadingLevel: convert_loadingLevel_toSelectbox
              */
 
-            var object = {
-                _Id: dataRef._Id,
-                routeName: dataRef.routeName,
-                preRideAnnotation: null,
-                postRideAnnotation: null,
-                portNumber: -1,
-                carNumber: null,
-                loadingLevel: -1,
-                driver: {},
-                hubId: await connection.invoke('GetConnectionId')
-            };
+            let upsertDictionary = {};
+            upsertDictionary["hubId"] = await connection.invoke('GetConnectionId');
+            upsertDictionary["_Id"] = dataRef._Id;
 
             switch (thisRef.id) {
                 case 'driver_select':
-                    object.driver.id = parseInt(thisRef.value);
+                    upsertDictionary[thisRef.id] = parseInt(thisRef.value);
                     break;
                 case 'preRideInput':
-                    object.preRideAnnotation = thisRef.value;
+                    upsertDictionary[thisRef.id] = thisRef.value;
                     break;
                 case 'postRideInput':
-                    object.postRideAnnotation = thisRef.value;
+                    upsertDictionary[thisRef.id] = thisRef.value;
                     break;
                 case 'port_selectBox':
-                    object.portNumber = parseInt(thisRef.value);
+                    upsertDictionary[thisRef.id] = thisRef.value;
                     break;
                 case 'carNumber_selectBox':
-                    object.carNumber = thisRef.value;
+                    upsertDictionary[thisRef.id] = thisRef.value;
                     break;
                 case 'convert_loadingLevel_toSelectbox':
                     switch (thisRef.value) {
-                        case 'Ej påbörjad': object.loadingLevel = 0;
+                        case 'Ej påbörjad':
+                            upsertDictionary[thisRef.id] = 0;
                             break;
-                        case 'Återanvända': object.loadingLevel = 1;
+                        case 'Återanvända':
+                            upsertDictionary[thisRef.id] = 1;
                             break;
-                        case 'Påbörjad': object.loadingLevel = 2;
+                        case 'Påbörjad':
+                            upsertDictionary[thisRef.id] = 2;
                             break;
-                        case 'Klar': object.loadingLevel = 3;
+                        case 'Klar':
+                            upsertDictionary[thisRef.id] = 3;
                             break;
                     }
             }
-            postUpdate(JSON.stringify(object));
+            postUpdate(JSON.stringify(upsertDictionary));
         }
 
         function postUpdate(jsonData) {

@@ -15,6 +15,13 @@ namespace CargoSupport.Models
             _timestamp = DateTime.Now;
         }
 
+        public PickingVerifyBooleanModel(bool input, string signature)
+        {
+            Value = input;
+            Signature = signature;
+            _timestamp = DateTime.Now;
+        }
+
         public DateTime _timestamp;
         public bool Value { get; set; } = false;
         public string Signature { get; set; }

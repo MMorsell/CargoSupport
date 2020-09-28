@@ -10,7 +10,8 @@ connection.on("ReceiveMessage", function (user, message) {
 });
 
 connection.on("Upsert", function (updateModel) {
-    updateSingleRecord(updateModel);
+    reloadDatatableAjax();
+    //updateSingleRecord(updateModel);
 });
 
 connection.start().then(function () {

@@ -81,6 +81,7 @@ function getDataTableIndexByRowInternalId(internalId) {
 }
 
 function updateSingleRecord(newObject) {
+    //table.row(5).invalidate(temp);
     if (window.location.href.includes('Transport')) {
         var object = table.rows(getDataTableIndexByRowInternalId(newObject._Id)).data();
         debugger;

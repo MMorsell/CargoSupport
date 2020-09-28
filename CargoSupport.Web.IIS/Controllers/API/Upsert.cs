@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using CargoSupport.Enums;
 using CargoSupport.Hubs;
 using CargoSupport.Interfaces;
 using CargoSupport.Models;
@@ -35,65 +37,100 @@ namespace CargoSupport.Web.IIS.Controllers.API
 
         [HttpPost]
         [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
-        public async Task<ActionResult> UpsertTransport([FromBody] TransportViewModel transportViewModel)
+        public async Task<ActionResult> UpsertTransport([FromBody] Dictionary<string, object> upsertDictionary)
         {
-            var existingRecord = await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, transportViewModel._Id);
+            //Keys
+            //* driver: driver_select
+            //* preRideAnnotation: preRideInput
+            //* postRideAnnotation: postRideInput
+            //* portNumber: port_selectBox
+            //* carNumber: carNumber_selectBox
+            //* loadingLevel: convert_loadingLevel_toSelectbox
+
+            var existingRecord = await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, upsertDictionary["_Id"].ToString());
 
             if (existingRecord == null)
             {
                 return NotFound();
             }
 
-            await UpsertTransportProperties(transportViewModel, existingRecord);
+            await UpsertTransportProperties(upsertDictionary, existingRecord);
 
             return Ok();
         }
 
-        private async Task UpsertTransportProperties(TransportViewModel transportViewModel, DataModel existingRecord)
+        private async Task UpsertTransportProperties(Dictionary<string, object> upsertDirectory, DataModel existingRecord)
         {
             var update = false;
-            if (transportViewModel.Driver.Id != 0)
+            var updateKeyValuePair = upsertDirectory.FirstOrDefault(pair => pair.Key != "hubId" && pair.Key != "_Id");
+
+            switch (updateKeyValuePair.Key.ToLowerInvariant())
             {
-                if (transportViewModel.Driver.Id == -1)
-                {
-                    existingRecord.Driver = new QuinyxModel();
-                }
-                else
-                {
-                    existingRecord.Driver = TryGetDriverInfo(transportViewModel.Driver.Id, existingRecord.DateOfRoute, existingRecord.Driver);
-                }
-                update = true;
-            }
-            else if (transportViewModel.PortNumber != -1)
-            {
-                existingRecord.PortNumber = transportViewModel.PortNumber;
-                update = true;
-            }
-            else if (transportViewModel.CarNumber != null)
-            {
-                existingRecord.CarModel = transportViewModel.CarNumber;
-                update = true;
-            }
-            else if ((int)transportViewModel.LoadingLevel != -1)
-            {
-                existingRecord.LoadingLevel = transportViewModel.LoadingLevel;
-                update = true;
-            }
-            else if (transportViewModel.PreRideAnnotation != null)
-            {
-                existingRecord.PreRideAnnotation = transportViewModel.PreRideAnnotation;
-                update = true;
-            }
-            else if (transportViewModel.PostRideAnnotation != null)
-            {
-                existingRecord.PostRideAnnotation = transportViewModel.PostRideAnnotation;
-                update = true;
+                case "driver_select":
+                    if (int.Parse(updateKeyValuePair.Value.ToString()) != 0)
+                    {
+                        if (int.Parse(updateKeyValuePair.Value.ToString()) == -1)
+                        {
+                            existingRecord.Driver = new QuinyxModel();
+                            update = true;
+                        }
+                        else
+                        {
+                            existingRecord.Driver = TryGetDriverInfo(int.Parse(updateKeyValuePair.Value.ToString()), existingRecord.DateOfRoute, existingRecord.Driver);
+                            update = true;
+                        }
+                    }
+                    break;
+
+                case "prerideinput":
+                    if (updateKeyValuePair.Value != null)
+                    {
+                        existingRecord.PreRideAnnotation = updateKeyValuePair.Value.ToString();
+                        update = true;
+                    }
+                    break;
+
+                case "postrideinput":
+                    if (updateKeyValuePair.Value != null)
+                    {
+                        existingRecord.PostRideAnnotation = updateKeyValuePair.Value.ToString();
+                        update = true;
+                    }
+                    break;
+
+                case "port_selectbox":
+                    if (int.Parse(updateKeyValuePair.Value.ToString()) != -1)
+                    {
+                        existingRecord.PortNumber = int.Parse(updateKeyValuePair.Value.ToString());
+                        update = true;
+                    }
+                    break;
+
+                case "carnumber_selectbox":
+                    if (updateKeyValuePair.Value != null)
+                    {
+                        existingRecord.CarModel = updateKeyValuePair.Value.ToString();
+                        update = true;
+                    }
+                    break;
+
+                case "convert_loadinglevel_toselectbox":
+                    if (int.Parse(updateKeyValuePair.Value.ToString()) != -1)
+                    {
+                        existingRecord.LoadingLevel = (LoadingLevel)Enum.Parse(typeof(LoadingLevel), updateKeyValuePair.Value.ToString(), true);
+                        update = true;
+                    }
+                    break;
+
+                default:
+                    _logger.LogError($"Unable to identify update property type of '{updateKeyValuePair.Key}'");
+                    break;
             }
 
             if (update)
             {
                 await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
-                await _chatHub.Clients.AllExcept(transportViewModel.HubId).SendAsync("Upsert", transportViewModel);
+                await _chatHub.Clients.AllExcept(upsertDirectory["hubId"].ToString()).SendAsync("Upsert", upsertDirectory);
             }
         }
 
@@ -115,53 +152,69 @@ namespace CargoSupport.Web.IIS.Controllers.API
 
         [HttpPost]
         [Authorize(Roles = Constants.MinRoleLevel.PlockAndUp)]
-        public async Task<ActionResult> UpsertStorage([FromBody] StorageViewModel storageViewModel)
+        public async Task<ActionResult> UpsertStorage([FromBody] Dictionary<string, object> upsertDictionary)
         {
-            var existingRecord = await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, storageViewModel._Id);
+            //Keys
+            //numberOfColdBoxes: numberOfColdBoxes_input
+            //restPicking: restPicking_input
+            //numberOfFrozenBoxes: numberOfFrozenBoxes_input
+            //numberOfBreadBoxes: numberOfBreadBoxes_input
+            //controlIsDone: controlIsDone_input
+            var existingRecord = await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, upsertDictionary["_Id"].ToString());
 
             if (existingRecord == null)
             {
                 return NotFound();
             }
 
-            await UpsertStorageProperties(storageViewModel, existingRecord);
+            await UpsertStorageProperties(upsertDictionary, existingRecord);
 
             return Ok();
         }
 
-        private async Task UpsertStorageProperties(StorageViewModel storageViewModel, DataModel existingRecord)
+        private async Task UpsertStorageProperties(Dictionary<string, object> upsertDirectory, DataModel existingRecord)
         {
             var update = false;
-            if (storageViewModel.NumberOfColdBoxes.Signature != null)
+            var signature = upsertDirectory["signature"];
+            upsertDirectory.Remove("signature");
+            var updateKeyValuePair = upsertDirectory.FirstOrDefault(pair => pair.Key != "hubId" && pair.Key != "_Id");
+
+            switch (updateKeyValuePair.Key.ToLowerInvariant())
             {
-                existingRecord.NumberOfColdBoxes.Insert(0, storageViewModel.NumberOfColdBoxes);
-                update = true;
-            }
-            else if (storageViewModel.NumberOfFrozenBoxes.Signature != null)
-            {
-                existingRecord.NumberOfFrozenBoxes.Insert(0, storageViewModel.NumberOfFrozenBoxes);
-                update = true;
-            }
-            else if (storageViewModel.NumberOfBreadBoxes.Signature != null)
-            {
-                existingRecord.NumberOfBreadBoxes.Insert(0, storageViewModel.NumberOfBreadBoxes);
-                update = true;
-            }
-            else if (storageViewModel.RestPicking.Signature != null)
-            {
-                existingRecord.RestPicking.Insert(0, storageViewModel.RestPicking);
-                update = true;
-            }
-            else if (storageViewModel.ControlIsDone.Signature != null)
-            {
-                existingRecord.ControlIsDone.Insert(0, storageViewModel.ControlIsDone);
-                update = true;
+                case "numberofcoldboxes_input":
+                    existingRecord.NumberOfColdBoxes.Insert(0, new PickingVerifyIntModel(int.Parse(updateKeyValuePair.Value.ToString()), signature.ToString()));
+                    update = true;
+                    break;
+
+                case "numberoffrozenboxes_input":
+                    existingRecord.NumberOfFrozenBoxes.Insert(0, new PickingVerifyIntModel(int.Parse(updateKeyValuePair.Value.ToString()), signature.ToString()));
+                    update = true;
+                    break;
+
+                case "numberofbreadboxes_input":
+                    existingRecord.NumberOfBreadBoxes.Insert(0, new PickingVerifyIntModel(int.Parse(updateKeyValuePair.Value.ToString()), signature.ToString()));
+                    update = true;
+                    break;
+
+                case "restpicking_input":
+                    existingRecord.RestPicking.Insert(0, new PickingVerifyBooleanModel(bool.Parse(updateKeyValuePair.Value.ToString()), signature.ToString()));
+                    update = true;
+                    break;
+
+                case "controlisdone_input":
+                    existingRecord.ControlIsDone.Insert(0, new PickingVerifyBooleanModel(bool.Parse(updateKeyValuePair.Value.ToString()), signature.ToString()));
+                    update = true;
+                    break;
+
+                default:
+                    _logger.LogError($"Unable to identify update property type of '{updateKeyValuePair.Key}'");
+                    break;
             }
 
             if (update)
             {
                 await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
-                await _chatHub.Clients.AllExcept(storageViewModel.HubId).SendAsync("Upsert", storageViewModel);
+                await _chatHub.Clients.AllExcept(upsertDirectory["hubId"].ToString()).SendAsync("Upsert", upsertDirectory);
             }
         }
     }
