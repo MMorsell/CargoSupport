@@ -72,11 +72,13 @@ namespace CargoSupport.Web.IIS.Controllers.API
                         if (int.Parse(updateKeyValuePair.Value.ToString()) == -1)
                         {
                             existingRecord.Driver = new QuinyxModel();
+                            upsertDirectory.Add("driver_fullName", "");
                             update = true;
                         }
                         else
                         {
                             existingRecord.Driver = TryGetDriverInfo(int.Parse(updateKeyValuePair.Value.ToString()), existingRecord.DateOfRoute, existingRecord.Driver);
+                            upsertDirectory.Add("driver_fullName", existingRecord.Driver.GetDriverName());
                             update = true;
                         }
                     }
@@ -138,7 +140,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
         {
             if (newDriverID != fallBackDriver.Id)
             {
-                var driversThatWorksOnThisDate = _quinyxHelper.GetAllDriversSorted(date);
+                var driversThatWorksOnThisDate = _quinyxHelper.GetAllDriversSorted(date, false);
                 var matchingDriver = driversThatWorksOnThisDate.Result
                     .FirstOrDefault(dr => dr.Id.Equals(newDriverID));
 

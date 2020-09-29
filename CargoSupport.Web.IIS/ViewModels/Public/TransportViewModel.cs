@@ -29,8 +29,9 @@ namespace CargoSupport.ViewModels.Public
             SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes, controlIsDone);
         }
 
-        public TransportViewModel(string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingLevel, string preRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyIntModel> numberOfColdBoxes, List<PickingVerifyBooleanModel> restPicking, List<PickingVerifyIntModel> numberOfFrozenBoxes, List<PickingVerifyIntModel> numberOfBreadBoxes, List<PickingVerifyBooleanModel> controlIsDone)
+        public TransportViewModel(string _id, string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingLevel, string preRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyIntModel> numberOfColdBoxes, List<PickingVerifyBooleanModel> restPicking, List<PickingVerifyIntModel> numberOfFrozenBoxes, List<PickingVerifyIntModel> numberOfBreadBoxes, List<PickingVerifyBooleanModel> controlIsDone)
         {
+            _Id = _id;
             RouteName = routeName;
             Driver = driverModel;
             CarNumber = carNumberString;
