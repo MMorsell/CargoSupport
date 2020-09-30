@@ -43,28 +43,49 @@ function toggleConnectStatus(status) {
 }
 
 const preRideInput = function (data, type, full, meta) {
-    return '<input contenteditable="true" type="text" id="preRideInput" onfocusout=updateRow(this) class="form-control" value="' +
+    return '<input contenteditable="true" type="text" id="preRideInput" onfocusout=updateRow(this) class=" form-control" value="' +
         data + '"  />';
 }
 
 const preRideInput_fat = function (data, type, full, meta) {
-    return '<textarea id="preRideInput" onfocusout=updateRow(this) style="background: white;" class="form-control" rows="5" cols="50">' + data + '</textarea >';
+    return '<textarea id="preRideInput" onfocusout=updateRow(this) style="background: white;" class=" form-control" rows="5" cols="50">' + data + '</textarea >';
 }
 
 const postRideInput = function (data, type, full, meta) {
-    return '<input contenteditable="true" type="text" id="postRideInput" onfocusout=updateRow(this) class="form-control" value="' +
+    return '<input contenteditable="true" type="text" id="postRideInput" onfocusout=updateRow(this) class=" form-control" value="' +
         data + '"  />';
 }
 
 const postRideInput_fat = function (data, type, full, meta) {
-    return '<textarea id="postRideInput" onfocusout=updateRow(this) style="background: white;" class="form-control" rows="5" cols="50">' + data + '</textarea >';
+    return '<textarea id="postRideInput" onfocusout=updateRow(this) style="background: white;" class=" form-control" rows="5" cols="50">' + data + '</textarea >';
 }
 
 const convert_loadingLevel_toSelectbox = function (data, type, full, meta) {
     var selectBox = [];
-    selectBox.push(
-        '<div><select id="convert_loadingLevel_toSelectbox" onChange=updateRow(this) class="form-control">'
-    );
+
+    switch (data) {
+        case 0:
+            selectBox.push(
+                '<div><select style="background-color: red;" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">'
+            );
+            break;
+        case 1:
+            selectBox.push(
+                '<div><select style="background-color: orange;" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">'
+            );
+            break;
+        case 2:
+            selectBox.push(
+                '<div><select style="background-color: yellow;" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">'
+            );
+            break;
+        case 3:
+            selectBox.push(
+                '<div><select style="background-color: lightgreen;" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">'
+            );
+            break;
+    }
+
     for (i = 0; i < 4; i++) {
         if (i === 0) {
             if (data === 0) {
@@ -112,20 +133,26 @@ const convert_loadingLevel_toSelectbox = function (data, type, full, meta) {
 
 const convert_loadingLevel_toValue = function (data, type, full, meta) {
     if (data === 0) {
-        return '<p>Ej påbörjad</p>';
+        return '<p style="background-color: red;" class="">Ej påbörjad</p>';
     }
 
     if (data === 1) {
-        return '<p>Återanvända</p>';
+        return '<p style="background-color: orange;" class="">Återanvända</p>';
     }
 
     if (data === 2) {
-        return '<p>Påbörjad</p>';
+        return '<p style="background-color: yellow;"class="">Påbörjad</p>';
     }
 
     if (data === 3) {
-        return '<p>Klar</p>';
+        return '<p style="background-color: lightgreen;" class="">Klar</p>';
     }
+}
+
+const renderName = function (data, type, full, meta) {
+    var thisRef = this;
+    //$(row).addClass('updateanimation');
+    return '<p>' + data + '</p>';
 }
 
 const pinstart_render = function (data, type, full, meta) {
@@ -134,7 +161,7 @@ const pinstart_render = function (data, type, full, meta) {
 
 const disabled_checkbox = function (data, type, full, meta) {
     var is_checked = data == true ? "checked" : "";
-    return '<input type="checkbox" onclick="return false" class="checkbox" ' +
+    return '<input type="checkbox" onclick="return false" class=" checkbox" ' +
         is_checked + ' />';
 }
 
@@ -153,19 +180,19 @@ const disabled_intInput = function (data, type, full, meta) {
 
 const renderEmptyIfZero = function (data, type, full, meta) {
     if (data === 0 || data === "0") {
-        return '<p></p>'
+        return '<p class=""> </p>'
     }
     else {
-        return '<p>' + data + '</p>';
+        return '<p class="">' + data + '</p>';
     }
 }
 
 const hidden_IntIfNull = function (data, type, full, meta) {
     if (data === 0) {
-        return '<p>Ej ifyllt</p>';
+        return '<p class="" >Ej ifyllt</p>';
     }
     else {
-        return '<p>' + data + '</p>';
+        return '<p class="">' + data + '</p>';
     }
 }
 
@@ -268,7 +295,6 @@ $('#downloadPdf').click(function (event) {
 
     // for each chart.js chart
     $("canvas").each(function (index) {
-        debugger;
         // get the chart height/width
         var canvasHeight = $(this).innerHeight();
         var canvasWidth = $(this).innerWidth();

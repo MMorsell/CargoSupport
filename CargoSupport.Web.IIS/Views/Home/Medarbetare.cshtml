@@ -54,7 +54,7 @@
                     },
                 },
                 columns: [
-                    { data: 'routeName', title: 'Turnamn' },
+                    { data: 'routeName', title: 'Turnamn', render: renderName },
                     { data: 'driver.fullName', title: 'Lev. Ansvarig' },
                     { data: 'pinStartTimeString', title: 'Pintid', render: pinstart_render, "visible": false, },
                     { data: 'carNumber', title: 'Bilnr', render: renderEmptyIfZero },

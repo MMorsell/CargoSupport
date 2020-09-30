@@ -124,3 +124,19 @@ body {
         height: 32px;
     }
 }
+
+/*Glow animation for updates on cells*/
+@keyframes glow {
+    from {
+        box-shadow: 0 0 10px -10px #aef4af;
+    }
+
+    to {
+        box-shadow: 0 0 10px 10px #aef4af;
+    }
+}
+
+.updateanimation {
+    animation: glow 1s infinite alternate;
+    animation-iteration-count: 2;
+}

@@ -69,7 +69,6 @@ function driverId() {
 
 function getDataTableIndexByRowInternalId(internalId) {
     let foundindex = -1;
-    debugger;
 
     for (i = 0; i < table.rows()[0].length; i++) {
         if (table.row(i).data()._Id === internalId) {
@@ -78,15 +77,18 @@ function getDataTableIndexByRowInternalId(internalId) {
         }
     }
 
-    //table.column(0)
-    //    .data()
-    //    .filter(function (value, index) {
-    //        if (value === internalId) {
-    //            foundindex = index;
-    //        }
-    //    });
     return foundindex;
-    //return table.rows().indexes()[foundindex];
+}
+
+function colorBasedOnLoadingValue(thisRef) {
+    switch (thisRef.value) {
+        case "Ej påbörjad": thisRef.style.backgroundColor = "red"; break;
+        case "Återanvända": thisRef.style.backgroundColor = "orange"; break;
+        case "Påbörjad": thisRef.style.backgroundColor = "yellow"; break;
+        case "Klar": thisRef.style.backgroundColor = "lightgreen"; break;
+    }
+
+    updateRow(thisRef)
 }
 
 function updateSingleRecord(newObject) {
@@ -94,8 +96,6 @@ function updateSingleRecord(newObject) {
     var object = table.row(index).data();
 
     if (window.location.href.includes('Transport')) {
-        debugger;
-
         //Transport view only cares about updates with these properties
         if (newObject["preRideInput"] !== undefined) {
             object.preRideAnnotation = newObject["preRideInput"];
@@ -130,8 +130,8 @@ function updateSingleRecord(newObject) {
         if (newObject["controlIsDone_input"] !== undefined) {
             object.controlIsDone = newObject["controlIsDone_input"];
         }
-        debugger;
-        table.row(index).invalidate(object);
+        $('#dataTable').dataTable().fnUpdate(object, index, undefined, false);
+        //table.row(index).invalidate(object).draw();
         console.log('updated single record')
     } else if (window.location.href.includes('Plock')) {
         //Plock view only cares about updates with these properties
@@ -153,8 +153,8 @@ function updateSingleRecord(newObject) {
         if (newObject["convert_loadingLevel_toSelectbox"] !== undefined) {
             object.loadingLevel = newObject["convert_loadingLevel_toSelectbox"];
         }
-        debugger;
-        table.row(index).invalidate(object);
+        $('#dataTable').dataTable().fnUpdate(object, index, undefined, false);
+        //table.row(index).invalidate(object).draw();
         console.log('updated single record')
     }
     else {
@@ -192,8 +192,8 @@ function updateSingleRecord(newObject) {
         if (newObject["controlIsDone_input"] !== undefined) {
             object.controlIsDone = newObject["controlIsDone_input"];
         }
-        debugger;
-        table.row(index).invalidate(object);
+        $('#dataTable').dataTable().fnUpdate(object, index, undefined, false);
+        //table.row(index).invalidate(object).draw();
         console.log('updated single record')
     }
 }

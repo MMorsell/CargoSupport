@@ -122,7 +122,7 @@
 
             var selectBox = [];
             selectBox.push(
-                '<select class="form-control" id="port_selectBox" onChange=updateRow(this)>'
+                '<select class=" form-control" id="port_selectBox" onChange=updateRow(this)>'
             );
 
             if (data === 0) {
@@ -151,7 +151,7 @@
 
             var selectBox = [];
             selectBox.push(
-                '<select class="form-control" id="carNumber_selectBox" onChange=updateRow(this)>'
+                '<select class=" form-control" id="carNumber_selectBox" onChange=updateRow(this)>'
             );
 
             selectBox.push(
@@ -179,14 +179,13 @@
         }
 
         const current_Driver = function (driverObject, type, full, meta) {
-
             if (type === 'sort' || type === 'filter') {
                 return driverObject.fullName;
             }
 
             var selectBox = [];
             selectBox.push(
-                '<select class="form-control" id="driver_select" onChange=updateRow(this)>'
+                '<select class=" form-control" id="driver_select" onChange=updateRow(this)>'
             );
 
             if (driverObject.id === -1) {
@@ -253,7 +252,7 @@
                         data: '_Id', title: 'ID', "visible": false,
                         "searchable": false
                     },
-                    { data: 'routeName', title: 'Turnamn' },
+                    { data: 'routeName', title: 'Turnamn', render: renderName },
                     { data: 'pinStartTimeString', title: 'Pintid', render: pinstart_render },
                     { data: 'driver', title: 'Lev. Ansvarig', render: current_Driver },
                     { data: 'carNumber', title: 'Bilnr', render: carNumber_selectBox },
@@ -268,6 +267,10 @@
                     { data: 'numberOfBreadBoxes', title: 'Bröd', render: hidden_IntIfNull },
                     { data: 'controlIsDone', title: 'Kontroll', render: disabled_checkbox },
                 ],
+                "rowCallback": function (row, data) {
+                    debugger;
+                    $(row).addClass("updateanimation");
+                },
                 "order": [[2, "asc"]],
 
             })
