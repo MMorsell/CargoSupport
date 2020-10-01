@@ -131,7 +131,9 @@ function updateSingleRecord(newObject) {
             object.controlIsDone = newObject["controlIsDone_input"];
         }
         $('#dataTable').dataTable().fnUpdate(object, index, undefined, false);
-        //table.row(index).invalidate(object).draw();
+        $("tr:eq( " + (index + 1) + " )").removeClass("updateanimation");
+        setTimeout(function () { $("tr:eq( " + (index + 1) + " )").addClass("updateanimation"); }, 100);
+        
         console.log('updated single record')
     } else if (window.location.href.includes('Plock')) {
         //Plock view only cares about updates with these properties
@@ -154,7 +156,8 @@ function updateSingleRecord(newObject) {
             object.loadingLevel = newObject["convert_loadingLevel_toSelectbox"];
         }
         $('#dataTable').dataTable().fnUpdate(object, index, undefined, false);
-        //table.row(index).invalidate(object).draw();
+        $("tr:eq( " + (index + 1) + " )").removeClass("updateanimation");
+        setTimeout(function () { $("tr:eq( " + (index + 1) + " )").addClass("updateanimation"); }, 100);
         console.log('updated single record')
     }
     else {
@@ -193,7 +196,8 @@ function updateSingleRecord(newObject) {
             object.controlIsDone = newObject["controlIsDone_input"];
         }
         $('#dataTable').dataTable().fnUpdate(object, index, undefined, false);
-        //table.row(index).invalidate(object).draw();
+        $("tr:eq( " + (index + 1) + " )").removeClass("updateanimation");
+        setTimeout(function () { $("tr:eq( " + (index + 1) + " )").addClass("updateanimation"); }, 100);
         console.log('updated single record')
     }
 }

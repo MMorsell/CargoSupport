@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
 using CargoSupport.Models.Auth;
 using CargoSupport.Interfaces;
+using Serilog;
+using System.Linq;
 
 namespace CargoSupport.Web.IIS
 {
@@ -29,9 +31,10 @@ namespace CargoSupport.Web.IIS
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Log.Logger.Debug($"Start ConfigureServices");
             // Add db services and auth.
             var settings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
-            services.AddSingleton<MongoDbSettings>(settings);
+            services.AddSingleton(settings);
 
             //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             //        .AddCookie(options =>
@@ -68,12 +71,16 @@ namespace CargoSupport.Web.IIS
                                                           "http://127.0.0.1:5500");
                                   });
             });
+
             services.AddApplicationInsightsTelemetry();
+            Log.Logger.Debug($"End ConfigureServices");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
+            Log.Logger.Debug($"Start Configure");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -109,6 +116,7 @@ namespace CargoSupport.Web.IIS
             var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             VerifyRolesAndSuperUserExist(UserManager, RoleManager).Wait();
+            Log.Logger.Debug($"End Configure");
         }
 
         private async Task VerifyRolesAndSuperUserExist(UserManager<ApplicationUser> _userManager, RoleManager<MongoIdentityRole> _roleManager)
@@ -121,20 +129,24 @@ namespace CargoSupport.Web.IIS
                     await _roleManager.CreateAsync(new MongoIdentityRole { Name = role });
                 }
             }
+            const string userAndEmailForServiceAcc = "Superuser@live.se";
 
-            var user = new ApplicationUser { UserName = "Superuser@live.se", Email = "Superuser@live.se" };
+            var user = new ApplicationUser { UserName = userAndEmailForServiceAcc, Email = userAndEmailForServiceAcc, FirstName = "Servicekonto", LastName = "" };
 
-            var result = await _userManager.CreateAsync(user, "TodoPassword.123");
-            if (result.Succeeded)
+            if (_userManager.Users.Any(user => user.UserName.Equals(userAndEmailForServiceAcc, StringComparison.CurrentCultureIgnoreCase)))
             {
-                var currentUser = await _userManager.FindByNameAsync(user.UserName);
+                var result = await _userManager.CreateAsync(user, "TodoPassword.123");
+                if (result.Succeeded)
+                {
+                    var currentUser = await _userManager.FindByNameAsync(user.UserName);
 
-                await _userManager.AddToRoleAsync(currentUser, Constants.MinRoleLevel.SuperUserAndUp);
-            }
-            else
-            {
-                //TODO: Update function to reset superuser password, and better handling if user already exists in database, i.e fake error
-                //throw new Exception(result.Errors.ToString());
+                    await _userManager.AddToRoleAsync(currentUser, Constants.MinRoleLevel.SuperUserAndUp);
+                }
+                else
+                {
+                    result.Errors.ToList().ForEach(err => Log.Logger.Fatal(err.Description));
+                    Log.Logger.Fatal($"Service user is not present in database and did not get added correctly!");
+                }
             }
         }
     }

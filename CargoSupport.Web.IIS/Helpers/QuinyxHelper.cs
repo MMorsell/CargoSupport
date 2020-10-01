@@ -7,20 +7,12 @@ using CargoSupport.Enums;
 using CargoSupport.Models.DatabaseModels;
 using System.Threading.Tasks;
 using RestSharp;
-using Microsoft.Extensions.Logging;
 using CargoSupport.Interfaces;
 
 namespace CargoSupport.Helpers
 {
     public class QuinyxHelper : IQuinyxHelper
     {
-        private readonly ILogger _logger;
-
-        public QuinyxHelper(ILoggerFactory logger)
-        {
-            _logger = logger.CreateLogger("QuinyxHelper");
-        }
-
         public async Task<List<QuinyxModel>> GetAllDriversSorted(DateTime date, bool clearNames = true)
         {
             var getDriversTask = GetDrivers(date, date);

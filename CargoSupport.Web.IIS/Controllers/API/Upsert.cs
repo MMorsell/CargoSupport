@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using CargoSupport.Enums;
 using CargoSupport.Hubs;
@@ -9,12 +8,10 @@ using CargoSupport.Interfaces;
 using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.QuinyxModels;
-using CargoSupport.ViewModels;
-using CargoSupport.ViewModels.Public;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace CargoSupport.Web.IIS.Controllers.API
 {
@@ -23,16 +20,15 @@ namespace CargoSupport.Web.IIS.Controllers.API
     public class Upsert : ControllerBase
     {
         private readonly IHubContext<ChatHub> _chatHub;
-        private readonly ILogger _logger;
+
         private readonly IQuinyxHelper _quinyxHelper;
         private readonly IMongoDbService _dbService;
 
-        public Upsert(IHubContext<ChatHub> chatHub, ILoggerFactory logger, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
+        public Upsert(IHubContext<ChatHub> chatHub, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
         {
             _chatHub = chatHub;
             _quinyxHelper = quinyxHelper;
             this._dbService = dbService;
-            _logger = logger.CreateLogger("UpsertApiv1");
         }
 
         [HttpPost]
@@ -125,7 +121,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
                     break;
 
                 default:
-                    _logger.LogError($"Unable to identify update property type of '{updateKeyValuePair.Key}'");
+                    Log.Logger.Error($"Unable to identify update property type of '{updateKeyValuePair.Key}'");
                     break;
             }
 
@@ -209,7 +205,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
                     break;
 
                 default:
-                    _logger.LogError($"Unable to identify update property type of '{updateKeyValuePair.Key}'");
+                    Log.Logger.Error($"Unable to identify update property type of '{updateKeyValuePair.Key}'");
                     break;
             }
 

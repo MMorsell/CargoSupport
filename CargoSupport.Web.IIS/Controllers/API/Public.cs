@@ -7,7 +7,6 @@ using CargoSupport.ViewModels.Public;
 using System.Linq;
 using CargoSupport.Models.QuinyxModels;
 using System.Collections.Concurrent;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using CargoSupport.Interfaces;
 
@@ -17,13 +16,11 @@ namespace CargoSupport.Web.Controllers.API
     [ApiController]
     public class Public : ControllerBase
     {
-        private readonly ILogger _logger;
         private readonly IQuinyxHelper _quinyxHelper;
         private readonly IMongoDbService _dbService;
 
-        public Public(ILoggerFactory logger, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
+        public Public(IQuinyxHelper quinyxHelper, IMongoDbService dbService)
         {
-            this._logger = logger.CreateLogger("PublicApiv1");
             _quinyxHelper = quinyxHelper;
             this._dbService = dbService;
         }

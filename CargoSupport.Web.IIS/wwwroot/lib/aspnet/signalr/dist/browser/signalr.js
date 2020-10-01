@@ -1782,7 +1782,7 @@ function formatArrayBuffer(data) {
     return str.substr(0, str.length - 1);
 }
 exports.formatArrayBuffer = formatArrayBuffer;
-function sendMessage(logger, transportName, httpClient, url, accessTokenFactory, content, logMessageContent) {
+function sendMessage(  transportName, httpClient, url, accessTokenFactory, content, logMessageContent) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
         var headers, token, response, _a;
         return tslib_1.__generator(this, function (_b) {
@@ -1921,10 +1921,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var DEFAULT_TIMEOUT_IN_MS = 30 * 1000;
 /** Represents a connection to a SignalR Hub. */
 var HubConnection = /** @class */ (function () {
-    function HubConnection(connection, logger, protocol) {
+    function HubConnection(connection,   protocol) {
         var _this = this;
         Utils.Arg.isRequired(connection, "connection");
-        Utils.Arg.isRequired(logger, "logger");
+        Utils.Arg.isRequired(  "logger");
         Utils.Arg.isRequired(protocol, "protocol");
         this.serverTimeoutInMilliseconds = DEFAULT_TIMEOUT_IN_MS;
         this.logger = logger;
@@ -1943,8 +1943,8 @@ var HubConnection = /** @class */ (function () {
     // create method that can be used by HubConnectionBuilder. An "internal" constructor would just
     // be stripped away and the '.d.ts' file would have no constructor, which is interpreted as a
     // public parameter-less constructor.
-    HubConnection.create = function (connection, logger, protocol) {
-        return new HubConnection(connection, logger, protocol);
+    HubConnection.create = function (connection,   protocol) {
+        return new HubConnection(connection,   protocol);
     };
     /** Starts the connection.
      *
@@ -2382,7 +2382,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var SHUTDOWN_TIMEOUT = 5 * 1000;
 // Not exported from 'index', this type is internal.
 var LongPollingTransport = /** @class */ (function () {
-    function LongPollingTransport(httpClient, accessTokenFactory, logger, logMessageContent, shutdownTimeout) {
+    function LongPollingTransport(httpClient, accessTokenFactory,   logMessageContent, shutdownTimeout) {
         this.httpClient = httpClient;
         this.accessTokenFactory = accessTokenFactory || (function () { return null; });
         this.logger = logger;
@@ -2548,7 +2548,7 @@ var LongPollingTransport = /** @class */ (function () {
                 if (!this.running) {
                     return [2 /*return*/, Promise.reject(new Error("Cannot send until the transport is connected"))];
                 }
-                return [2 /*return*/, Utils.sendMessage(this.logger, "LongPolling", this.httpClient, this.url, this.accessTokenFactory, data, this.logMessageContent)];
+                return [2 /*return*/, Utils.sendMessage(this.  "LongPolling", this.httpClient, this.url, this.accessTokenFactory, data, this.logMessageContent)];
             });
         });
     };
@@ -2605,7 +2605,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 var ServerSentEventsTransport = /** @class */ (function () {
-    function ServerSentEventsTransport(httpClient, accessTokenFactory, logger, logMessageContent) {
+    function ServerSentEventsTransport(httpClient, accessTokenFactory,   logMessageContent) {
         this.httpClient = httpClient;
         this.accessTokenFactory = accessTokenFactory || (function () { return null; });
         this.logger = logger;
@@ -2683,7 +2683,7 @@ var ServerSentEventsTransport = /** @class */ (function () {
                 if (!this.eventSource) {
                     return [2 /*return*/, Promise.reject(new Error("Cannot send until the transport is connected"))];
                 }
-                return [2 /*return*/, Utils.sendMessage(this.logger, "SSE", this.httpClient, this.url, this.accessTokenFactory, data, this.logMessageContent)];
+                return [2 /*return*/, Utils.sendMessage(this.  "SSE", this.httpClient, this.url, this.accessTokenFactory, data, this.logMessageContent)];
             });
         });
     };
@@ -2716,7 +2716,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 var WebSocketTransport = /** @class */ (function () {
-    function WebSocketTransport(accessTokenFactory, logger, logMessageContent) {
+    function WebSocketTransport(accessTokenFactory,   logMessageContent) {
         this.logger = logger;
         this.accessTokenFactory = accessTokenFactory || (function () { return null; });
         this.logMessageContent = logMessageContent;
@@ -3062,11 +3062,11 @@ var HttpConnection = /** @class */ (function () {
     HttpConnection.prototype.constructTransport = function (transport) {
         switch (transport) {
             case ITransport.HttpTransportType.WebSockets:
-                return new WebSocketTransport_1.WebSocketTransport(this.accessTokenFactory, this.logger, this.options.logMessageContent);
+                return new WebSocketTransport_1.WebSocketTransport(this.accessTokenFactory, this.  this.options.logMessageContent);
             case ITransport.HttpTransportType.ServerSentEvents:
-                return new ServerSentEventsTransport_1.ServerSentEventsTransport(this.httpClient, this.accessTokenFactory, this.logger, this.options.logMessageContent);
+                return new ServerSentEventsTransport_1.ServerSentEventsTransport(this.httpClient, this.accessTokenFactory, this.  this.options.logMessageContent);
             case ITransport.HttpTransportType.LongPolling:
-                return new LongPollingTransport_1.LongPollingTransport(this.httpClient, this.accessTokenFactory, this.logger, this.options.logMessageContent);
+                return new LongPollingTransport_1.LongPollingTransport(this.httpClient, this.accessTokenFactory, this.  this.options.logMessageContent);
             default:
                 throw new Error("Unknown transport: " + transport + ".");
         }
@@ -3330,7 +3330,7 @@ var HubConnectionBuilder = /** @class */ (function () {
      * @returns {HubConnection} The configured {@link HubConnection}.
      */
     HubConnectionBuilder.prototype.build = function () {
-        // If httpConnectionOptions has a logger, use it. Otherwise, override it with the one
+        // If httpConnectionOptions has a   use it. Otherwise, override it with the one
         // provided to configureLogger
         var httpConnectionOptions = this.httpConnectionOptions || {};
         // If it's 'null', the user **explicitly** asked for null, don't mess with it.

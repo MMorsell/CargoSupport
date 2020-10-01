@@ -5,21 +5,18 @@ using CargoSupport.Interfaces;
 using CargoSupport.Models.DatabaseModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace CargoSupport.Web.IIS.Controllers
 {
     [Authorize(Roles = Constants.MinRoleLevel.TransportLedareAndUp)]
     public class AnalyzeController : Controller
     {
-        private readonly ILogger _logger;
         private readonly IQuinyxHelper _qh;
         private readonly IMongoDbService _dbService;
         private readonly IDataConversionHelper _dataConversionHelper;
 
-        public AnalyzeController(ILoggerFactory logger, IDataConversionHelper dataConversionHelper, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
+        public AnalyzeController(IDataConversionHelper dataConversionHelper, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
         {
-            _logger = logger.CreateLogger("AnalyzeController");
             _qh = quinyxHelper;
             _dbService = dbService;
             _dataConversionHelper = dataConversionHelper;

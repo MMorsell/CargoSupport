@@ -2,7 +2,7 @@
 using CargoSupport.Interfaces;
 using CargoSupport.Models.PinModels;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -14,11 +14,9 @@ namespace CargoSupport.Services
     {
         private readonly PinHelper _ph;
         private Timer _timer;
-        private readonly ILogger _logger;
 
-        public PinUpdateService(ILoggerFactory logger, IMongoDbService dbService)
+        public PinUpdateService(IMongoDbService dbService)
         {
-            _logger = logger.CreateLogger("PinUpdateService");
             this._ph = new PinHelper(dbService);
         }
 
@@ -47,7 +45,7 @@ namespace CargoSupport.Services
         {
             try
             {
-                _logger.LogInformation($"Start updating todays orders at {DateTime.Now.ToShortTimeString()}");
+                Log.Logger.Debug($"Start updating todays orders at {DateTime.Now.ToShortTimeString()}");
                 var existingIds = _ph.GetAllOrderIdsAsStringForThisDay(DateTime.Now).Result;
 
                 foreach (var existingId in existingIds)
@@ -60,11 +58,11 @@ namespace CargoSupport.Services
                         _ph.UpdateExistingRecordsIfThereIsOne(routes).Wait();
                     }
                 }
-                _logger.LogInformation($"Finished updating todays orders at {DateTime.Now.ToShortTimeString()}");
+                Log.Logger.Debug($"Finished updating todays orders at {DateTime.Now.ToShortTimeString()}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Exception when updating existing orders");
+                Log.Logger.Error(ex, $"Exception when updating existing orders");
             }
         }
     }

@@ -6,19 +6,17 @@ using System.Threading.Tasks;
 using CargoSupport.ViewModels.Analyze;
 using System.Collections.Concurrent;
 using CargoSupport.Models.PinModels;
-using Microsoft.Extensions.Logging;
 using CargoSupport.Interfaces;
+using Serilog;
 
 namespace CargoSupport.Helpers
 {
     public class DataConversionHelper : IDataConversionHelper
     {
-        private readonly ILogger _logger;
         private readonly IQuinyxHelper _quinyxHelper;
 
-        public DataConversionHelper(ILoggerFactory logger, IQuinyxHelper quinyxHelper)
+        public DataConversionHelper(IQuinyxHelper quinyxHelper)
         {
-            _logger = logger.CreateLogger("DataConversionHelper");
             _quinyxHelper = quinyxHelper;
         }
 
@@ -463,7 +461,7 @@ namespace CargoSupport.Helpers
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"Exception when ConvertDataModelsToSlimViewModels");
+                    Log.Logger.Error(ex, $"Exception when ConvertDataModelsToSlimViewModels");
                 }
             });
 

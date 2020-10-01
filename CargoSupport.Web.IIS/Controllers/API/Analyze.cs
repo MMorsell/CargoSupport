@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using CargoSupport.Models.DatabaseModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using CargoSupport.Models.QuinyxModels;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using CargoSupport.Interfaces;
 
@@ -16,14 +14,12 @@ namespace CargoSupport.Web.IIS.Controllers.API
     [Authorize]
     public class Analyze : Controller
     {
-        private readonly ILogger _logger;
         private readonly IQuinyxHelper _qh;
         private readonly IMongoDbService _dbService;
         private readonly IDataConversionHelper _dataConversionHelper;
 
-        public Analyze(ILoggerFactory logger, IDataConversionHelper dataConversionHelper, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
+        public Analyze(IDataConversionHelper dataConversionHelper, IQuinyxHelper quinyxHelper, IMongoDbService dbService)
         {
-            _logger = logger.CreateLogger("AnalyzeApiv1");
             _qh = quinyxHelper;
             _dbService = dbService;
             _dataConversionHelper = dataConversionHelper;

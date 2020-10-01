@@ -1,17 +1,12 @@
 ﻿using CargoSupport.Enums;
 using CargoSupport.Models;
-using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CargoSupport.ViewModels.Public
 {
     public class TransportViewModel
     {
-        //TidFrys = tidFrys.ToString(@"hh\:mm");
-
         public TransportViewModel(string _id, double kilos, string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingIsDone, string preRideAnnotation, string postRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyIntModel> numberOfColdBoxes, List<PickingVerifyBooleanModel> restPicking, List<PickingVerifyIntModel> numberOfFrozenBoxes, List<PickingVerifyIntModel> numberOfBreadBoxes, List<PickingVerifyBooleanModel> controlIsDone)
         {
             _Id = _id;
@@ -53,7 +48,7 @@ namespace CargoSupport.ViewModels.Public
         {
             if (numberOfColdBoxes.Count > 0)
             {
-                NumberOfColdBoxes = (int)numberOfColdBoxes[0].Value;
+                NumberOfColdBoxes = numberOfColdBoxes[0].Value;
             }
             else
             {
@@ -80,7 +75,7 @@ namespace CargoSupport.ViewModels.Public
 
             if (numberOfFrozenBoxes.Count > 0)
             {
-                NumberOfFrozenBoxes = (int)numberOfFrozenBoxes[0].Value;
+                NumberOfFrozenBoxes = numberOfFrozenBoxes[0].Value;
             }
             else
             {
@@ -89,7 +84,7 @@ namespace CargoSupport.ViewModels.Public
 
             if (numberOfBreadBoxes.Count > 0)
             {
-                NumberOfBreadBoxes = (int)numberOfBreadBoxes[0].Value;
+                NumberOfBreadBoxes = numberOfBreadBoxes[0].Value;
             }
             else
             {

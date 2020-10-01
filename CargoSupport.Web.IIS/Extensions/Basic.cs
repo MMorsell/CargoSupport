@@ -1,10 +1,8 @@
 ﻿using CargoSupport.Models.QuinyxModels;
-using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Principal;
-using CargoSupport.Models.Auth;
 
 namespace CargoSupport.Extensions
 {
@@ -52,11 +50,6 @@ namespace CargoSupport.Extensions
                 second ?? dateTime.Second
             );
         }
-
-        //public static string GetFreshProfilePicture(IIdentity identity, UserManager<ApplicationUser> userManager)
-        //{
-        //    return userManager.FindById(identity.GetUserId()).ProfilePicture;
-        //}
 
         public static string GetCustomPropertyFromIdentity(this IIdentity identity, string propertyName)
         {

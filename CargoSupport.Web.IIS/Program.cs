@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Serilog;
+using System;
 
 namespace CargoSupport.Web.IIS
 {
@@ -8,16 +10,29 @@ namespace CargoSupport.Web.IIS
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            //Logger init
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(config)
+                .CreateLogger();
+
+            try
+            {
+                Log.Information("app starting");
+                CreateHostBuilder(args).Build().Run();
+                Log.Information("app terminated");
+            }
+            catch (Exception e)
+            {
+                Log.Fatal("app crashed", e);
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                    .ConfigureLogging(logging =>
-                    {
-                        logging.ClearProviders();
-                        logging.AddConsole();
-                    })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

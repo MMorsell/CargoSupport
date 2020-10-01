@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNetCore.Identity.MongoDbCore.Models;
@@ -12,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace CargoSupport.Web.IIS.Controllers
 {
@@ -24,22 +22,20 @@ namespace CargoSupport.Web.IIS.Controllers
         private readonly RoleManager<MongoIdentityRole> _roleManager;
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
-        private readonly ILogger _logger;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<MongoIdentityRole> roleManager,
             IEmailSender emailSender,
-            ISmsSender smsSender,
-            ILoggerFactory loggerFactory)
+            ISmsSender smsSender
+            )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
-            _logger = loggerFactory.CreateLogger<AccountController>();
         }
 
         //
@@ -67,7 +63,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation(1, "User logged in.");
+                    Log.Logger.Information("User logged in.");
 
                     return await GetDefaultViewDependingOnRoleLevel(model.Email);
                 }
@@ -77,7 +73,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 }
                 if (result.IsLockedOut)
                 {
-                    _logger.LogWarning(2, "User account locked out.");
+                    Log.Logger.Warning("User account locked out.");
                     return View("Lockout");
                 }
                 else
@@ -95,7 +91,7 @@ namespace CargoSupport.Web.IIS.Controllers
         // GET: /Account/Register
         [HttpGet]
         [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndUp)]
-        public async Task<IActionResult> Register(string returnUrl = null)
+        public IActionResult Register(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             ViewBag.Roles = new SelectList(_roleManager.GetAllRolesToDictionary(), "Key", "Value");
@@ -134,7 +130,7 @@ namespace CargoSupport.Web.IIS.Controllers
                     //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
                     //    "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
                     //await _signInManager.SignInAsync(user, isPersistent: false);
-                    _logger.LogInformation(3, "User created a new account with password.");
+                    Log.Logger.Information("User created a new account with password.");
                     return RedirectToLocal(returnUrl);
                 }
                 AddErrors(result);
@@ -171,7 +167,7 @@ namespace CargoSupport.Web.IIS.Controllers
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
-            _logger.LogInformation(4, "User logged out.");
+            Log.Logger.Information("User logged out.");
             return RedirectToAction(nameof(AccountController.Login));
         }
 
@@ -214,7 +210,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 // Update any authentication tokens if login succeeded
                 await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
 
-                _logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
+                Log.Logger.Information("User logged in with {Name} provider.", info.LoginProvider);
                 return RedirectToLocal(returnUrl);
             }
             if (result.RequiresTwoFactor)
@@ -259,7 +255,7 @@ namespace CargoSupport.Web.IIS.Controllers
                     if (result.Succeeded)
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        _logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
+                        Log.Logger.Information("User created an account using {Name} provider.", info.LoginProvider);
 
                         // Update any authentication tokens as well
                         await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
@@ -479,7 +475,7 @@ namespace CargoSupport.Web.IIS.Controllers
             }
             if (result.IsLockedOut)
             {
-                _logger.LogWarning(7, "User account locked out.");
+                Log.Logger.Warning("User account locked out.");
                 return View("Lockout");
             }
             else
@@ -526,7 +522,7 @@ namespace CargoSupport.Web.IIS.Controllers
             }
             if (result.IsLockedOut)
             {
-                _logger.LogWarning(7, "User account locked out.");
+                Log.Logger.Warning("User account locked out.");
                 return View("Lockout");
             }
             else
