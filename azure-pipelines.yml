@@ -31,9 +31,9 @@ steps:
 - task: CopyFilesOverSSH@0
   inputs:
     sshEndpoint: 'ssh-mk1'
-    sourceFolder: '$(System.DefaultWorkingDirectory)'
+    sourceFolder: '$(System.DefaultWorkingDirectory)\CargoSupport.Web.IIS\bin\Release\netcoreapp3.1'
     contents: '**'
-    targetFolder: 'C:\Users\marmor\Desktop\drop'
+    targetFolder: 'C:\Users\marmor\Desktop\IIS'
     isWindowsOnTarget: true
     cleanTargetFolder: true
     readyTimeout: '20000'
