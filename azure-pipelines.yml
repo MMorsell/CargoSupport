@@ -28,3 +28,12 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
      
+- task: CopyFilesOverSSH@0
+  inputs:
+    sshEndpoint: 'ssh-mk1'
+    sourceFolder: '$(System.DefaultWorkingDirectory)'
+    contents: '**'
+    targetFolder: 'C:\Users\marmor\Desktop\drop'
+    isWindowsOnTarget: true
+    cleanTargetFolder: true
+    readyTimeout: '20000'
