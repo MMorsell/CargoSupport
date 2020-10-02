@@ -28,12 +28,8 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
      
-- task: CopyFilesOverSSH@0
+- task: PublishBuildArtifacts@1
   inputs:
-    sshEndpoint: 'ssh-mk1'
-    sourceFolder: '$(System.DefaultWorkingDirectory)\CargoSupport.Web.IIS\bin\Release\netcoreapp3.1'
-    contents: '**'
-    targetFolder: 'C:\Users\marmor\Desktop\IIS'
-    isWindowsOnTarget: true
-    cleanTargetFolder: true
-    readyTimeout: '20000'
+    PathtoPublish: '$(System.DefaultWorkingDirectory)\CargoSupport.Web.IIS\bin\Release\netcoreapp3.1'
+    ArtifactName: 'DeployFolder'
+    publishLocation: 'Container'
