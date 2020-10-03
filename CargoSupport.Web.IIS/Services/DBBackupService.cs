@@ -1,4 +1,5 @@
 ﻿using CargoSupport.Models.DatabaseModels;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
@@ -13,9 +14,9 @@ namespace CargoSupport.Services
 
         private Timer _timer;
 
-        public DBBackupService()
+        public DBBackupService(IConfiguration configuration)
         {
-            this._db = new MongoDbService(Constants.MongoDb.DatabaseName);
+            this._db = new MongoDbService(configuration["mongoDatabaseName"], configuration);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -60,7 +61,7 @@ namespace CargoSupport.Services
         {
             try
             {
-                _db.BackupData<DataModel>(Constants.MongoDb.OutputScreenTableName, Constants.MongoDb.BackupCollectionName).Wait();
+                _db.BackupData<DataModel>(Constants.MongoDb.OutputScreenCollectionName, Constants.MongoDb.BackupCollectionName).Wait();
             }
             catch (Exception ex)
             {

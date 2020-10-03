@@ -34,7 +34,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
                 return BadRequest(errorMessage);
             }
 
-            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
             analyzeModels = await _qh.AddNamesToData(analyzeModels);
             var res = _dataConversionHelper.ConvertDataModelsToSlimViewModels(analyzeModels);
             return Ok(res);
@@ -49,7 +49,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
                 return BadRequest(errorMessage);
             }
 
-            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
             var res = _dataConversionHelper.ConvertTodaysDataToGraphModelsAsParalell(analyzeModels, splitData);
             return Ok(res);
         }
@@ -63,7 +63,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
                 return BadRequest(errorMessage);
             }
 
-            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
 
             var res = _dataConversionHelper.ConvertDataToCarStatisticsModel(analyzeModels);
             return Ok(res);
@@ -78,7 +78,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
                 return BadRequest(errorMessage);
             }
 
-            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
             analyzeModels = analyzeModels.Where(data => data.Driver.Id == driverId).ToList();
             var res = _dataConversionHelper.ConvertDataToSimplifiedRecordsAsParalell(analyzeModels);
             return Ok(res);
@@ -93,7 +93,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
                 return BadRequest(errorMessage);
             }
 
-            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
             analyzeModels = analyzeModels.Where(data => data.Driver.Id == driverId).ToList();
             var res = _dataConversionHelper.ConvertTodaysDataToGraphModelsAsParalell(analyzeModels, true);
             return Ok(res);
@@ -110,7 +110,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
 
             if (sectionId != null)
             {
-                var matchingRecordsInDatabase = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+                var matchingRecordsInDatabase = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
                 var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
 
                 var matchingRecordsBySectionId = recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.Section == sectionId).ToList();
@@ -132,7 +132,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
             }
             else
             {
-                var matchingRecordsInDatabase = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+                var matchingRecordsInDatabase = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
                 var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
 
                 var res = _dataConversionHelper.ConvertDatRowsToBossGroup(recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null).ToList());
@@ -149,7 +149,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
                 return BadRequest(errorMessage);
             }
 
-            var matchingRecordsInDatabase = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+            var matchingRecordsInDatabase = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
             matchingRecordsInDatabase = matchingRecordsInDatabase.Where(rec => rec.Driver.Id.Equals(driverId)).ToList();
             var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
 

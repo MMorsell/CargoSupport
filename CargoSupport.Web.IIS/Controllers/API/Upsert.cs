@@ -42,7 +42,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
             //* carNumber: carNumber_selectBox
             //* loadingLevel: convert_loadingLevel_toSelectbox
 
-            var existingRecord = await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, upsertDictionary["_Id"].ToString());
+            var existingRecord = await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenCollectionName, upsertDictionary["_Id"].ToString());
 
             if (existingRecord == null)
             {
@@ -126,7 +126,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
 
             if (update)
             {
-                await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
+                await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenCollectionName, existingRecord);
                 await _chatHub.Clients.AllExcept(upsertDirectory["hubId"].ToString()).SendAsync("Upsert", upsertDirectory);
             }
         }
@@ -157,7 +157,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
             //numberOfFrozenBoxes: numberOfFrozenBoxes_input
             //numberOfBreadBoxes: numberOfBreadBoxes_input
             //controlIsDone: controlIsDone_input
-            var existingRecord = await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, upsertDictionary["_Id"].ToString());
+            var existingRecord = await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenCollectionName, upsertDictionary["_Id"].ToString());
 
             if (existingRecord == null)
             {
@@ -210,7 +210,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
 
             if (update)
             {
-                await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
+                await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenCollectionName, existingRecord);
                 await _chatHub.Clients.AllExcept(upsertDirectory["hubId"].ToString()).SendAsync("Upsert", upsertDirectory);
             }
         }

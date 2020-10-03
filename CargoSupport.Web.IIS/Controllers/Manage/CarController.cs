@@ -22,7 +22,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [Route("Car")]
         public async Task<ActionResult> Index()
         {
-            var allCars = await _dbService.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
+            var allCars = await _dbService.GetAllRecords<CarModel>(Constants.MongoDb.CarCollectionName);
             return View(new UpsertCarViewModel() { CurrentCar = new CarModel(), ExistingCars = allCars });
         }
 
@@ -55,7 +55,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         // GET: CarController/Edit/5
         public async Task<ActionResult> EditAsync(string id)
         {
-            var existingCar = await _dbService.GetRecordById<CarModel>(Constants.MongoDb.CarTableName, id);
+            var existingCar = await _dbService.GetRecordById<CarModel>(Constants.MongoDb.CarCollectionName, id);
 
             if (existingCar == null)
             {

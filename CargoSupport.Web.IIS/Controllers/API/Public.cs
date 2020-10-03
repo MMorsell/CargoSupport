@@ -36,9 +36,9 @@ namespace CargoSupport.Web.Controllers.API
                 return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
             }
 
-            var carOptionsTask = _dbService.GetAllRecords<CarModel>(Constants.MongoDb.CarTableName);
+            var carOptionsTask = _dbService.GetAllRecords<CarModel>(Constants.MongoDb.CarCollectionName);
             var driversThatWorksOnThisDateTask = _quinyxHelper.GetAllDriversSortedToArray(date, false);
-            var dataBaseResTask = ConvertToTransport(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
+            var dataBaseResTask = ConvertToTransport(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenCollectionName, date));
 
             await Task.WhenAll(carOptionsTask, driversThatWorksOnThisDateTask, dataBaseResTask);
             return Ok(new ReturnModel
@@ -54,7 +54,7 @@ namespace CargoSupport.Web.Controllers.API
         public async Task<ActionResult> GetTransportSingleRecord(string recordId)
         {
             var dataBaseResTask = await ConvertToTransport(
-                new List<DataModel> { await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, recordId) });
+                new List<DataModel> { await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenCollectionName, recordId) });
 
             return Ok(dataBaseResTask.ToArray());
         }
@@ -77,7 +77,7 @@ namespace CargoSupport.Web.Controllers.API
                 return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
             }
 
-            var res = ConvertToPublic(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
+            var res = ConvertToPublic(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenCollectionName, date));
             return Ok(res.Result.ToArray());
         }
 
@@ -85,7 +85,7 @@ namespace CargoSupport.Web.Controllers.API
         [Authorize(Roles = Constants.MinRoleLevel.MedarbetareAndUp)]
         public async Task<ActionResult> GetPublicSingleRecord(string recordId)
         {
-            var res = await ConvertToPublic(new List<DataModel> { await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, recordId) });
+            var res = await ConvertToPublic(new List<DataModel> { await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenCollectionName, recordId) });
             return Ok(res.ToArray());
         }
 
@@ -100,7 +100,7 @@ namespace CargoSupport.Web.Controllers.API
                 return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
             }
 
-            var res = ConvertToStorage(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date));
+            var res = ConvertToStorage(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenCollectionName, date));
             return Ok(res.Result.ToArray());
         }
 
@@ -108,7 +108,7 @@ namespace CargoSupport.Web.Controllers.API
         [Authorize(Roles = Constants.MinRoleLevel.PlockAndUp)]
         public async Task<ActionResult> GetStorageSingleRecord(string recordId)
         {
-            var res = await ConvertToStorage(new List<DataModel> { await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenTableName, recordId) });
+            var res = await ConvertToStorage(new List<DataModel> { await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenCollectionName, recordId) });
             return Ok(res.ToArray());
         }
 

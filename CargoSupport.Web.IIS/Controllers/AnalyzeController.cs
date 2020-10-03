@@ -37,7 +37,7 @@ namespace CargoSupport.Web.IIS.Controllers
                 return BadRequest();
             }
 
-            List<DataModel> allRoutes = await _dbService.GetAllRecordsByDriverId(Constants.MongoDb.OutputScreenTableName, id);
+            List<DataModel> allRoutes = await _dbService.GetAllRecordsByDriverId(Constants.MongoDb.OutputScreenCollectionName, id);
             var analyzeModels = await _dataConversionHelper.ConvertDataModelsToFullViewModel(allRoutes);
             ViewBag.DataTable = JsonSerializer.Serialize(analyzeModels);
             return View(allRoutes);

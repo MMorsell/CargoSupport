@@ -54,16 +54,16 @@ namespace CargoSupport.Helpers
 
         public static async Task<bool> AddOrUpdateCarModel(CarModel carModel, IMongoDbService dbService)
         {
-            var matchingRecord = await dbService.GetRecordById<CarModel>(Constants.MongoDb.CarTableName, carModel._Id);
+            var matchingRecord = await dbService.GetRecordById<CarModel>(Constants.MongoDb.CarCollectionName, carModel._Id);
 
             if (matchingRecord == null)
             {
-                await dbService.InsertRecord(Constants.MongoDb.CarTableName, carModel);
+                await dbService.InsertRecord(Constants.MongoDb.CarCollectionName, carModel);
                 return true;
             }
             else
             {
-                await dbService.UpsertCarRecordById(Constants.MongoDb.CarTableName, carModel);
+                await dbService.UpsertCarRecordById(Constants.MongoDb.CarCollectionName, carModel);
                 return true;
             }
         }

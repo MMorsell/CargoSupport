@@ -1,4 +1,5 @@
 ﻿using CargoSupport.Models.PinModels;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,11 @@ namespace CargoSupport.Helpers
     {
         private readonly HttpClient client;
 
-        public ApiRequestHelper()
+        public ApiRequestHelper(IConfiguration Configuration)
         {
             client = new HttpClient();
-            client.DefaultRequestHeaders.Add("X-PINDELIVER-API-KEY", CargoSupport.Constants.PinApi.GetApiKey(Constants.PinApi.ServerKeyFile));
-            client.DefaultRequestHeaders.Add("X-PINDELIVER-API-CLIENT-KEY", CargoSupport.Constants.PinApi.GetApiKey(Constants.PinApi.ClientKeyFile));
+            client.DefaultRequestHeaders.Add("X-PINDELIVER-API-KEY", Configuration["pinServer"]);
+            client.DefaultRequestHeaders.Add("X-PINDELIVER-API-CLIENT-KEY", Configuration["pinClient"]);
         }
 
         public async Task<T> GetSingleResult<T>(string url)

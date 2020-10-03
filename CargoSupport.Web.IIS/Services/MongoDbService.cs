@@ -2,6 +2,7 @@
 using CargoSupport.Interfaces;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -14,14 +15,14 @@ namespace CargoSupport.Services
     {
         private readonly IMongoDatabase _database;
 
-        public MongoDbService(string databaseName)
+        public MongoDbService(string databaseName, IConfiguration configuration)
         {
-            _database = new MongoClient(Constants.MongoDb.ConnectionString).GetDatabase(databaseName);
+            _database = new MongoClient(configuration["mongoConnection"]).GetDatabase(databaseName);
         }
 
-        public MongoDbService()
+        public MongoDbService(IConfiguration configuration)
         {
-            _database = new MongoClient(Constants.MongoDb.ConnectionString).GetDatabase(Constants.MongoDb.DatabaseName);
+            _database = new MongoClient(configuration["mongoConnection"]).GetDatabase(configuration["mongoDatabaseName"]);
         }
 
         public async Task InsertRecord<T>(string tableName, T record)

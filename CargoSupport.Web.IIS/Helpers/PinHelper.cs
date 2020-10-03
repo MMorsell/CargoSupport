@@ -1,13 +1,12 @@
 ﻿using CargoSupport.Extensions;
-using CargoSupport.Helpers;
 using CargoSupport.Interfaces;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
 using CargoSupport.Models.QuinyxModels;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,9 +17,9 @@ namespace CargoSupport.Helpers
         private readonly ApiRequestHelper _apiRequestHelper;
         private readonly IMongoDbService _dbService;
 
-        public PinHelper(IMongoDbService dbService)
+        public PinHelper(IMongoDbService dbService, IConfiguration configuration)
         {
-            _apiRequestHelper = new ApiRequestHelper();
+            _apiRequestHelper = new ApiRequestHelper(configuration);
             _dbService = dbService;
         }
 
@@ -68,7 +67,7 @@ namespace CargoSupport.Helpers
                         Driver = new QuinyxModel()
                     });
                 }
-                await _dbService.InsertMultipleRecords(Constants.MongoDb.OutputScreenTableName, dbModelCollection);
+                await _dbService.InsertMultipleRecords(Constants.MongoDb.OutputScreenCollectionName, dbModelCollection);
             }
             catch (Exception ex)
             {
@@ -82,12 +81,12 @@ namespace CargoSupport.Helpers
             {
                 foreach (var pinModel in pinRouteModels)
                 {
-                    var existingRecord = await _dbService.GetRecordByPinId(Constants.MongoDb.OutputScreenTableName, pinModel);
+                    var existingRecord = await _dbService.GetRecordByPinId(Constants.MongoDb.OutputScreenCollectionName, pinModel);
 
                     if (existingRecord != null)
                     {
                         existingRecord.PinRouteModel = pinModel;
-                        await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, existingRecord);
+                        await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenCollectionName, existingRecord);
                     }
                 }
             }
@@ -115,7 +114,7 @@ namespace CargoSupport.Helpers
                 newResourceRoute.PinRouteModel.ParentOrderId = parentOrderIdToBindTo;
                 newResourceRoute.PinRouteModel.ParentOrderName = parentOrderName;
 
-                await _dbService.InsertRecord(Constants.MongoDb.OutputScreenTableName, newResourceRoute);
+                await _dbService.InsertRecord(Constants.MongoDb.OutputScreenCollectionName, newResourceRoute);
             }
             catch (Exception ex)
             {
@@ -127,7 +126,7 @@ namespace CargoSupport.Helpers
         {
             try
             {
-                var allRecords = await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date);
+                var allRecords = await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenCollectionName, date);
 
                 var res = allRecords.Select(rec => rec.PinRouteModel.ParentOrderId).Distinct().ToList();
                 return res;
@@ -145,7 +144,7 @@ namespace CargoSupport.Helpers
             {
                 foreach (var pinModel in pinRouteModels)
                 {
-                    var existingRecord = await _dbService.GetRecordByPinId(Constants.MongoDb.OutputScreenTableName, pinModel);
+                    var existingRecord = await _dbService.GetRecordByPinId(Constants.MongoDb.OutputScreenCollectionName, pinModel);
 
                     if (existingRecord != null)
                     {
@@ -166,7 +165,7 @@ namespace CargoSupport.Helpers
             try
             {
                 var returnDictionary = new Dictionary<string, string>();
-                var allRecords = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, from, to);
+                var allRecords = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
 
                 var allIds = allRecords.Select(rec => rec.PinRouteModel.ParentOrderId).Where(r => r != null && r != "" && r != "0").Distinct().ToList();
                 var allNames = allRecords.Select(rec => rec.PinRouteModel.ParentOrderName).Where(r => r != null && r != "" && r != "0").Distinct().ToList();

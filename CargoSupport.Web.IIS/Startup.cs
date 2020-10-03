@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using AspNetCore.Identity.MongoDbCore.Infrastructure;
 using AspNetCore.Identity.MongoDbCore.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
@@ -33,18 +32,8 @@ namespace CargoSupport.Web.IIS
         {
             Log.Logger.Debug($"Start ConfigureServices");
             // Add db services and auth.
-            var settings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
-            services.AddSingleton(settings);
-
-            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            //        .AddCookie(options =>
-            //        {
-            //            options.LoginPath = "/Account/Login/"; // auth redirect
-            //            options.ExpireTimeSpan = new TimeSpan(0, 0, 0, 20);
-            //        });
-
             services.AddIdentity<ApplicationUser, MongoIdentityRole>()
-                    .AddMongoDbStores<ApplicationUser, MongoIdentityRole, Guid>(settings.ConnectionString, settings.DatabaseName)
+                    .AddMongoDbStores<ApplicationUser, MongoIdentityRole, Guid>(Configuration["mongoConnection"], Configuration["mongoDatabaseName"])
                     .AddSignInManager()
                     .AddRoleManager<RoleManager<MongoIdentityRole>>()
                     .AddDefaultTokenProviders();
@@ -129,11 +118,11 @@ namespace CargoSupport.Web.IIS
                     await _roleManager.CreateAsync(new MongoIdentityRole { Name = role });
                 }
             }
-            const string userAndEmailForServiceAcc = "Superuser@live.se";
+            string userAndEmailForServiceAcc = Configuration["serviceAccountLogin"];
 
             var user = new ApplicationUser { UserName = userAndEmailForServiceAcc, Email = userAndEmailForServiceAcc, FirstName = "Servicekonto", LastName = "" };
 
-            var result = await _userManager.CreateAsync(user, "TodoPassword.123");
+            var result = await _userManager.CreateAsync(user, Configuration["serviceAccountPass"]);
             if (result.Succeeded)
             {
                 var currentUser = await _userManager.FindByNameAsync(user.UserName);

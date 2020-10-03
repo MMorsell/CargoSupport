@@ -13,6 +13,7 @@ using CargoSupport.ViewModels.Manange;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
 
 namespace CargoSupport.Web.IIS.Controllers.Manage
 {
@@ -21,10 +22,15 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
     {
         private readonly IMongoDbService _dbService;
         private readonly IHubContext<ChatHub> _chatHub;
+        private readonly IConfiguration _configuration;
 
-        public ManageController(IMongoDbService dbService, IHubContext<ChatHub> chatHub)
+        public ManageController(
+            IMongoDbService dbService,
+            IHubContext<ChatHub> chatHub,
+            IConfiguration configuration)
         {
             _chatHub = chatHub;
+            this._configuration = configuration;
             this._dbService = dbService;
         }
 
@@ -37,7 +43,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> GetFromPin(PinIdModel model)
         {
-            var ph = new PinHelper(_dbService);
+            var ph = new PinHelper(_dbService, _configuration);
             List<PinRouteModel> routes = await ph.RetrieveRoutesFromActualPin(model.PinId);
 
             var anyExistingIdOfRouteInDatabase = await ph.AnyPinRouteModelExistInDatabase(routes);
@@ -67,7 +73,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 return BadRequest($"fromDate is not valid, expecting 2020-01-01, recieved: '{model.Date}'");
             }
 
-            var _ph = new PinHelper(_dbService);
+            var _ph = new PinHelper(_dbService, _configuration);
             var existingIds = await _ph.GetAllOrderIdsAsStringForThisDay(date);
 
             foreach (var existingId in existingIds)
@@ -86,7 +92,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> AddResourceRoute()
         {
-            var ph = new PinHelper(_dbService);
+            var ph = new PinHelper(_dbService, _configuration);
 
             var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now.AddDays(-1), DateTime.Now.AddDays(2));
             return View(new OrderOptionViewModel { RoutesToSelectFrom = allSelectOptions });
@@ -104,7 +110,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
             var date = DateTime.Now.SetHour(6);
 
-            var routesOfTheDay = await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenTableName, date);
+            var routesOfTheDay = await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenCollectionName, date);
 
             var numberOfResourceRoutes = routesOfTheDay.Count(route => route.IsResourceRoute &&
                 route.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
@@ -116,7 +122,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 return BadRequest($"RuttId {orderOptionViewModel.SelectedOrderId} Gick inte att koppla till någon order i databasen på datum {date}");
             }
 
-            var ph = new PinHelper(_dbService);
+            var ph = new PinHelper(_dbService, _configuration);
             await ph.InsertNewResourceRoute($"Resurs {numberOfResourceRoutes + 1}", date, orderOptionViewModel.SelectedOrderId, existingRoute.PinRouteModel.ParentOrderName);
             await _chatHub.Clients.All.SendAsync("ReloadDataTable");
             return RedirectToAction(nameof(HomeController.Transport), "Home");
@@ -124,7 +130,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> DeleteRoutesByOrderId()
         {
-            var ph = new PinHelper(_dbService);
+            var ph = new PinHelper(_dbService, _configuration);
 
             var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
             return View(new OrderOptionViewModel { RoutesToSelectFrom = allSelectOptions });
@@ -140,7 +146,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 return BadRequest("Att ta bort 'Välj' går inte");
             }
 
-            var routesOfOrder = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
+            var routesOfOrder = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
 
             var matchingRoutes = routesOfOrder.Where(
                 data => data.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
@@ -151,7 +157,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             }
             foreach (var route in matchingRoutes)
             {
-                await _dbService.DeleteRecord<DataModel>(Constants.MongoDb.OutputScreenTableName, route._Id);
+                await _dbService.DeleteRecord<DataModel>(Constants.MongoDb.OutputScreenCollectionName, route._Id);
             }
 
             await _chatHub.Clients.All.SendAsync("ReloadDataTable");
@@ -160,7 +166,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> MoveOrderDateById()
         {
-            var ph = new PinHelper(_dbService);
+            var ph = new PinHelper(_dbService, _configuration);
 
             var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
             return View(new OrderOptionViewModel { RoutesToSelectFrom = allSelectOptions });
@@ -183,7 +189,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{orderOptionViewModel.DateTimeString}'");
             }
 
-            var routesOfOrder = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenTableName, DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
+            var routesOfOrder = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
 
             var matchingRoutes = routesOfOrder.Where(
                data => data.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
@@ -195,7 +201,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             foreach (var route in matchingRoutes)
             {
                 route.DateOfRoute = date.SetHour(6);
-                await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, route);
+                await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenCollectionName, route);
             }
             await _chatHub.Clients.All.SendAsync("ReloadDataTable");
             return RedirectToAction(nameof(HomeController.Transport), "Home");
