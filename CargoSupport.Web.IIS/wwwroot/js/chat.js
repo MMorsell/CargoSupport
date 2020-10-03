@@ -13,6 +13,10 @@ connection.on("Upsert", function (upsertDirectory) {
     updateSingleRecord(upsertDirectory);
 });
 
+connection.on("ReloadDataTable", function (upsertDirectory) {
+    reloadDatatableAjax();
+});
+
 connection.start().then(function () {
     //document.getElementById("sendButton").disabled = false;
 }).catch(function (err) {

@@ -93,10 +93,10 @@
                     upsertDictionary[thisRef.id] = thisRef.checked;
                     break;
             }
-            postUpdate(JSON.stringify(upsertDictionary));
+            postUpdate(JSON.stringify(upsertDictionary), upsertDictionary);
         }
 
-        function postUpdate(jsonData) {
+        function postUpdate(jsonData, upsertDictionary) {
             var dataType = 'application/json';
             console.log('Submitting form...');
             $.ajax({
@@ -110,6 +110,7 @@
                 },
                 success: function (result) {
                     toggleConnectStatus('ok');
+                    updateSingleRecord(upsertDictionary);
                 }
             });
         }

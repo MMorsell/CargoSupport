@@ -20,7 +20,6 @@ namespace CargoSupport.Web.IIS.Controllers.API
     public class Upsert : ControllerBase
     {
         private readonly IHubContext<ChatHub> _chatHub;
-
         private readonly IQuinyxHelper _quinyxHelper;
         private readonly IMongoDbService _dbService;
 

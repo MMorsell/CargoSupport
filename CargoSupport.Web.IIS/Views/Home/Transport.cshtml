@@ -84,10 +84,10 @@
                             break;
                     }
             }
-            postUpdate(JSON.stringify(upsertDictionary));
+            postUpdate(JSON.stringify(upsertDictionary), upsertDictionary);
         }
 
-        function postUpdate(jsonData) {
+        function postUpdate(jsonData, upsertDictionary) {
             var dataType = 'application/json';
             console.log('Submitting form...');
             $.ajax({
@@ -100,6 +100,7 @@
                 },
                 success: function (result) {
                     toggleConnectStatus('ok');
+                    updateSingleRecord(upsertDictionary);
                 }
             });
         }
@@ -268,7 +269,8 @@
                     { data: 'controlIsDone', title: 'Kontroll', render: disabled_checkbox },
                 ],
                 "order": [[2, "asc"]],
-
+                "rowCallback": function (row, data, index) {
+                }
             })
 
             $('thead th').each(function () {

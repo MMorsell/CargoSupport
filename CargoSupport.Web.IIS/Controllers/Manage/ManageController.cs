@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CargoSupport.Extensions;
 using CargoSupport.Helpers;
+using CargoSupport.Hubs;
 using CargoSupport.Interfaces;
 using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
@@ -11,6 +12,7 @@ using CargoSupport.Models.PinModels;
 using CargoSupport.ViewModels.Manange;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CargoSupport.Web.IIS.Controllers.Manage
 {
@@ -18,9 +20,11 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
     public class ManageController : Controller
     {
         private readonly IMongoDbService _dbService;
+        private readonly IHubContext<ChatHub> _chatHub;
 
-        public ManageController(IMongoDbService dbService)
+        public ManageController(IMongoDbService dbService, IHubContext<ChatHub> chatHub)
         {
+            _chatHub = chatHub;
             this._dbService = dbService;
         }
 
@@ -43,7 +47,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 return BadRequest($"This order has already been downloaded from Pin");
             }
             await ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes);
-
+            await _chatHub.Clients.All.SendAsync("ReloadDataTable");
             return RedirectToAction(nameof(HomeController.Transport), "Home");
         }
 
@@ -114,6 +118,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
             var ph = new PinHelper(_dbService);
             await ph.InsertNewResourceRoute($"Resurs {numberOfResourceRoutes + 1}", date, orderOptionViewModel.SelectedOrderId, existingRoute.PinRouteModel.ParentOrderName);
+            await _chatHub.Clients.All.SendAsync("ReloadDataTable");
             return RedirectToAction(nameof(HomeController.Transport), "Home");
         }
 
@@ -149,6 +154,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 await _dbService.DeleteRecord<DataModel>(Constants.MongoDb.OutputScreenTableName, route._Id);
             }
 
+            await _chatHub.Clients.All.SendAsync("ReloadDataTable");
             return RedirectToAction(nameof(HomeController.Transport), "Home");
         }
 
@@ -191,7 +197,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 route.DateOfRoute = date.SetHour(6);
                 await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenTableName, route);
             }
-
+            await _chatHub.Clients.All.SendAsync("ReloadDataTable");
             return RedirectToAction(nameof(HomeController.Transport), "Home");
         }
     }
