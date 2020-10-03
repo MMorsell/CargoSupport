@@ -30,6 +30,6 @@ steps:
      
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)\CargoSupport.Web.IIS\bin\Release\netcoreapp3.1'
+    PathtoPublish: '$(build.artifactStagingDirectory)\WebApp.zip'
     ArtifactName: 'DeployFolder'
     publishLocation: 'Container'
