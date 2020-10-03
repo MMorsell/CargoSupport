@@ -133,16 +133,16 @@ namespace CargoSupport.Web.IIS
 
             var user = new ApplicationUser { UserName = userAndEmailForServiceAcc, Email = userAndEmailForServiceAcc, FirstName = "Servicekonto", LastName = "" };
 
-            if (_userManager.Users.Any(user => user.UserName.Equals(userAndEmailForServiceAcc, StringComparison.CurrentCultureIgnoreCase)))
+            var result = await _userManager.CreateAsync(user, "TodoPassword.123");
+            if (result.Succeeded)
             {
-                var result = await _userManager.CreateAsync(user, "TodoPassword.123");
-                if (result.Succeeded)
-                {
-                    var currentUser = await _userManager.FindByNameAsync(user.UserName);
+                var currentUser = await _userManager.FindByNameAsync(user.UserName);
 
-                    await _userManager.AddToRoleAsync(currentUser, Constants.MinRoleLevel.SuperUserAndUp);
-                }
-                else
+                await _userManager.AddToRoleAsync(currentUser, Constants.MinRoleLevel.SuperUserAndUp);
+            }
+            else
+            {
+                if (!result.Errors.ToList()[0].Code.Equals("DuplicateUserName", StringComparison.CurrentCultureIgnoreCase))
                 {
                     result.Errors.ToList().ForEach(err => Log.Logger.Fatal(err.Description));
                     Log.Logger.Fatal($"Service user is not present in database and did not get added correctly!");

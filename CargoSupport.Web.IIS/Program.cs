@@ -25,9 +25,9 @@ namespace CargoSupport.Web.IIS
                 CreateHostBuilder(args).Build().Run();
                 Log.Information("app terminated");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Fatal("app crashed", e);
+                Log.Fatal(ex, "app crashed");
             }
         }
 
