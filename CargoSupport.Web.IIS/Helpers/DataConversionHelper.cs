@@ -40,7 +40,8 @@ namespace CargoSupport.Helpers
                 foreach (var group in groupedData)
                 {
                     var listedGroup = group.ToList();
-                    if (listedGroup[0].CarModel != "Ej Satt")
+                    if (listedGroup[0].CarModel != "Ej Satt" &&
+                        listedGroup[0].CarModel != "")
                     {
                         var distanceInSwedishMeters = group.Sum(
                                 dataRow => dataRow.PinRouteModel.DistanceInMeters);

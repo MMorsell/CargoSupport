@@ -219,9 +219,9 @@
                         data: '_Id', title: 'ID', "visible": false,
                         "searchable": false
                     },
-                    { data: 'routeName', title: 'Tur', render: renderName },
+                    { data: 'routeName', title: 'Tur' },
                     { data: 'pinStartTimeString', title: 'Pintid', render: pinstart_render, "visible": false, },
-                    { data: 'carNumber', title: 'Bilnr', },
+                    { data: 'carNumber', title: 'Bilnr', render: renderEjSattIfZeroOrEmpty },
                     { data: 'portNumber', title: 'Port', },
                     { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toValue },
                     { data: 'numberOfCustomers', title: 'Kunder' },

@@ -42,7 +42,7 @@ namespace CargoSupport.Models.DatabaseModels
          * Custom
          */
         public bool IsResourceRoute { get; set; } = false;
-        public string CarModel { get; set; } = "Ej Satt";
+        public string CarModel { get; set; } = "Ej satt";
         public int PortNumber { get; set; } = 0;
         public LoadingLevel LoadingLevel { get; set; } = LoadingLevel.Ej_påbörjad;
         public DateTime DateOfRoute { get; set; }

@@ -1,5 +1,4 @@
-﻿const availableCars = ["101", "102", "103", "104", "105", "Egen", "Ej Satt"];
-const availablePorts = [24, 26, 27, 29, 31];
+﻿const availablePorts = [24, 26, 27, 29, 31];
 
 let ajaxDate = new Date();
 const timeFormat = 'YYYY-MM-DD';
@@ -149,12 +148,6 @@ const convert_loadingLevel_toValue = function (data, type, full, meta) {
     }
 }
 
-const renderName = function (data, type, full, meta) {
-    var thisRef = this;
-    //$(row).addClass('updateanimation');
-    return '<p>' + data + '</p>';
-}
-
 const pinstart_render = function (data, type, full, meta) {
     return '<p>' + data + '-' + full.pinEndTimeString + '<br>' + full.kilos + ' Kilo</p> ';
 }
@@ -178,12 +171,12 @@ const disabled_intInput = function (data, type, full, meta) {
         data + '"  />';
 }
 
-const renderEmptyIfZero = function (data, type, full, meta) {
-    if (data === 0 || data === "0") {
-        return '<p class=""> </p>'
+const renderEjSattIfZeroOrEmpty = function (data, type, full, meta) {
+    if (data === 0 || data === "0" || data === "") {
+        return '<p>Ej satt</p>'
     }
     else {
-        return '<p class="">' + data + '</p>';
+        return '<p>' + data + '</p>';
     }
 }
 
