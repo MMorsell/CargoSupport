@@ -96,7 +96,13 @@ namespace CargoSupport.Helpers
             }
         }
 
-        internal async Task InsertNewResourceRoute(string routeName, DateTime date, string parentOrderIdToBindTo, string parentOrderName)
+        internal async Task InsertNewResourceRoute(
+            string routeName,
+            DateTime date,
+            DateTime routeStart,
+            DateTime routeEnd,
+            string parentOrderIdToBindTo,
+            string parentOrderName)
         {
             try
             {
@@ -109,8 +115,8 @@ namespace CargoSupport.Helpers
                 newResourceRoute.IsResourceRoute = true;
                 newResourceRoute.DateOfRoute = date;
                 newResourceRoute.PinRouteModel.RouteName = routeName;
-                newResourceRoute.PinRouteModel.ScheduledRouteStart = DateTime.Now.SetHour(23);
-                newResourceRoute.PinRouteModel.ScheduledRouteEnd = DateTime.Now.SetHour(23).SetMinute(59);
+                newResourceRoute.PinRouteModel.ScheduledRouteStart = routeStart;
+                newResourceRoute.PinRouteModel.ScheduledRouteEnd = routeEnd;
                 newResourceRoute.PinRouteModel.ParentOrderId = parentOrderIdToBindTo;
                 newResourceRoute.PinRouteModel.ParentOrderName = parentOrderName;
 

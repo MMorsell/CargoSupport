@@ -163,7 +163,8 @@ namespace CargoSupport.Web.Controllers.API
                     route.RestPicking,
                     route.NumberOfFrozenBoxes,
                     route.NumberOfBreadBoxes,
-                    route.ControlIsDone
+                    route.ControlIsDone,
+                    route.IsResourceRoute
                     ));
             });
 

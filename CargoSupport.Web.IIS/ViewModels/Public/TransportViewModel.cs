@@ -7,7 +7,25 @@ namespace CargoSupport.ViewModels.Public
 {
     public class TransportViewModel
     {
-        public TransportViewModel(string _id, double kilos, string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingIsDone, string preRideAnnotation, string postRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyIntModel> numberOfColdBoxes, List<PickingVerifyBooleanModel> restPicking, List<PickingVerifyIntModel> numberOfFrozenBoxes, List<PickingVerifyIntModel> numberOfBreadBoxes, List<PickingVerifyBooleanModel> controlIsDone)
+        public TransportViewModel(
+            string _id,
+            double kilos,
+            string routeName,
+            DriverViewModel driverModel,
+            string carNumberString,
+            int portNumber,
+            LoadingLevel loadingIsDone,
+            string preRideAnnotation,
+            string postRideAnnotation,
+            double numberOfCustomers,
+            TimeSpan pinStartTime,
+            TimeSpan pinStopTime,
+            List<PickingVerifyIntModel> numberOfColdBoxes,
+            List<PickingVerifyBooleanModel> restPicking,
+            List<PickingVerifyIntModel> numberOfFrozenBoxes,
+            List<PickingVerifyIntModel> numberOfBreadBoxes,
+            List<PickingVerifyBooleanModel> controlIsDone,
+            bool isResourceRoute)
         {
             _Id = _id;
             Kilos = kilos;
@@ -21,6 +39,7 @@ namespace CargoSupport.ViewModels.Public
             NumberOfCustomers = numberOfCustomers;
             PinStartTimeString = pinStartTime.ToString(@"hh\:mm");
             PinEndTimeString = pinStopTime.ToString(@"hh\:mm");
+            IsResourceRoute = isResourceRoute;
             SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes, controlIsDone);
         }
 
@@ -110,5 +129,6 @@ namespace CargoSupport.ViewModels.Public
         public bool ControlIsDone { get; set; }
         public double Kilos { get; set; }
         public string HubId { get; set; }
+        public bool IsResourceRoute { get; set; }
     }
 }

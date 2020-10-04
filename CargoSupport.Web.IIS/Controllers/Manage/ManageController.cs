@@ -95,6 +95,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             var ph = new PinHelper(_dbService, _configuration);
 
             var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now.AddDays(-1), DateTime.Now.AddDays(2));
+
             return View(new OrderOptionViewModel { RoutesToSelectFrom = allSelectOptions });
         }
 
@@ -108,24 +109,56 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 return BadRequest("Att koppla resursturen till 'Välj' går inte");
             }
 
-            var date = DateTime.Now.SetHour(6);
+            //Get days of orders to select from
+            var routesOfTheDay = await _dbService.GetAllRecordsBetweenDates(
+                Constants.MongoDb.OutputScreenCollectionName,
+                DateTime.Now.AddDays(-2).SetHour(6),
+                DateTime.Now.AddDays(3).SetHour(6));
 
-            var routesOfTheDay = await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenCollectionName, date);
-
-            var numberOfResourceRoutes = routesOfTheDay.Count(route => route.IsResourceRoute &&
-                route.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
-
-            var existingRoute = routesOfTheDay.FirstOrDefault(r => r.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
-
-            if (existingRoute == null)
+            if (!routesOfTheDay
+                    .Any(route => route.PinRouteModel.ParentOrderId
+                    .Equals(orderOptionViewModel.SelectedOrderId)))
             {
-                return BadRequest($"RuttId {orderOptionViewModel.SelectedOrderId} Gick inte att koppla till någon order i databasen på datum {date}");
+                return BadRequest($"RuttId {orderOptionViewModel.SelectedOrderId} Gick inte att koppla till någon order i databasen");
             }
 
+            var existingRouteInSameOrder = routesOfTheDay
+                .FirstOrDefault(route => route.PinRouteModel.ParentOrderId
+                    .Equals(orderOptionViewModel.SelectedOrderId));
+
+            var numberOfExistingResourceRoutes = routesOfTheDay.Count(route => route.IsResourceRoute &&
+                route.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
+
+            var allRoutesInOrder = routesOfTheDay.Where(route =>
+                route.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
+
+            DateTime resourceOrderStart = GetLastOrderStart(allRoutesInOrder).Add(new TimeSpan(0, 0, 5, 0, 0));
+            DateTime resourceOrderFin = GetLastOrderFin(allRoutesInOrder).Add(new TimeSpan(0, 0, 5, 0, 0));
+
             var ph = new PinHelper(_dbService, _configuration);
-            await ph.InsertNewResourceRoute($"Resurs {numberOfResourceRoutes + 1}", date, orderOptionViewModel.SelectedOrderId, existingRoute.PinRouteModel.ParentOrderName);
+            await ph.InsertNewResourceRoute(
+                $"Resurs {existingRouteInSameOrder.PinRouteModel.ParentOrderName} " +
+                $"{numberOfExistingResourceRoutes + 1}",
+                existingRouteInSameOrder.DateOfRoute,
+                resourceOrderStart,
+                resourceOrderFin,
+                orderOptionViewModel.SelectedOrderId,
+                existingRouteInSameOrder.PinRouteModel.ParentOrderName);
+
             await _chatHub.Clients.All.SendAsync("ReloadDataTable");
             return RedirectToAction(nameof(HomeController.Transport), "Home");
+        }
+
+        private DateTime GetLastOrderFin(IEnumerable<DataModel> routesInOrderExcludingResourceRoutes)
+        {
+            return routesInOrderExcludingResourceRoutes
+                .Max(route => route.PinRouteModel.ScheduledRouteEnd);
+        }
+
+        private DateTime GetLastOrderStart(IEnumerable<DataModel> routesInOrderExcludingResourceRoutes)
+        {
+            return routesInOrderExcludingResourceRoutes
+                .Max(route => route.PinRouteModel.ScheduledRouteStart);
         }
 
         public async Task<IActionResult> DeleteRoutesByOrderId()
