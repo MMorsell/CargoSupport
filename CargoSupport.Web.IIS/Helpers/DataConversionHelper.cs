@@ -96,8 +96,10 @@ namespace CargoSupport.Helpers
                     if (allCustomerWhereDeliveryHasBeenDone.Count > 0)
                     {
                         var listOfGroup = group.ToList();
+
                         //Number of deliveries validated and done
                         todayGraphsModel.NumberOfValidDeliveries = allCustomerWhereDeliveryHasBeenDone.Count;
+
                         //Number left to be delivered
                         todayGraphsModel.NumberOfValidDeliveriesLeft = group.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
 
@@ -110,7 +112,7 @@ namespace CargoSupport.Helpers
                         //Number of customer deliveries made before time slot - 5 minutes
                         todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer));
 
-                        //Number of deliveries made before estimated time +-0 minutes
+                        //Number of deliveries made before estimated time -15 minutes
                         todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer));
 
                         var allHoursDedicatedOnRoutes = group.Sum(route => (double)route.Driver.hours);
@@ -129,10 +131,10 @@ namespace CargoSupport.Helpers
                         {
                             //Percentages deliveries withing 5 minutes of each customer time slot
                             var conversion = (todayGraphsModel.CustomersWithinTimeSlot / todayGraphsModel.NumberOfValidDeliveries);
-                            todayGraphsModel.PercentageWithing5MinOfTimeSlot = Math.Round(conversion, 4) * 100;
+                            todayGraphsModel.PercentageWithin5MinOfTimeSlot = Math.Round(conversion, 4) * 100;
                             //Percentages deliveries withing 15 minutes of each customers estimated time
                             conversion = (todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries);
-                            todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = Math.Round(conversion, 4) * 100;
+                            todayGraphsModel.PercentageWithin15MinOfCustomerEstimatedTime = Math.Round(conversion, 4) * 100;
                         }
 
                         if (splitRouteName)
@@ -143,6 +145,13 @@ namespace CargoSupport.Helpers
                         {
                             todayGraphsModel.LabelTitle = listOfGroup[0].DateOfRoute.ToString(@"yyyy-MM-dd");
                         }
+
+                        //Calculate percentages where route actual start is correct, or within 5 minutes of delay ON ROUTE LEVEL, NOT CUSTOMER LEVEL
+                        var startedRoutesRightNow = listOfGroup.Where(route => route.PinRouteModel.RouteHasStarted);
+                        double percentageOfStartedWithin5minutes = startedRoutesRightNow.Count((route => RouteHasBeenStartedBeforeOr5MinutesPlusOfEstimatedStart(route)));
+                        var percentage = (percentageOfStartedWithin5minutes / startedRoutesRightNow.Count());
+                        todayGraphsModel.PercentageWithin5MinutesOfStartTime = Math.Round(percentage, 4) * 100;
+
                         resultModels.Add(todayGraphsModel);
                     }
                 });
@@ -157,8 +166,9 @@ namespace CargoSupport.Helpers
                         CustomersWithinPrognosis = 0,
                         CustomersBeforeTimeSlot = 0,
                         CustomersBeforeEstimatedTime = 0,
-                        PercentageWithing5MinOfTimeSlot = 0,
-                        PercentageWithing15MinOfCustomerEstimatedTime = 0,
+                        PercentageWithin5MinOfTimeSlot = 0,
+                        PercentageWithin15MinOfCustomerEstimatedTime = 0,
+                        PercentageWithin5MinutesOfStartTime = 0,
                         LabelTitle = "No data on this day, or 0 deliveries has been made"
                     });
                 }
@@ -234,10 +244,10 @@ namespace CargoSupport.Helpers
                             {
                                 //Percentages deliveries withing 5 minutes of each customer time slot
                                 var conversion = (todayGraphsModel.CustomersWithinTimeSlot / todayGraphsModel.NumberOfValidDeliveries);
-                                todayGraphsModel.PercentageWithing5MinOfTimeSlot = Math.Round(conversion, 4) * 100;
+                                todayGraphsModel.percentageWithin5MinOfTimeSlot = Math.Round(conversion, 4) * 100;
                                 //Percentages deliveries withing 15 minutes of each customers estimated time
                                 conversion = (todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries);
-                                todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = Math.Round(conversion, 4) * 100;
+                                todayGraphsModel.percentageWithin15MinOfCustomerEstimatedTime = Math.Round(conversion, 4) * 100;
                             }
 
                             todayGraphsModel.LabelTitle = listOfGroup[0].Driver.ExtendedInformationModel.StaffCatName;
@@ -307,10 +317,10 @@ namespace CargoSupport.Helpers
                         {
                             //Percentages deliveries withing 5 minutes of each customer time slot
                             var conversion = (innerTodayGraphsModel.CustomersWithinTimeSlot / innerTodayGraphsModel.NumberOfValidDeliveries);
-                            innerTodayGraphsModel.PercentageWithing5MinOfTimeSlot = Math.Round(conversion, 4) * 100;
+                            innerTodayGraphsModel.percentageWithin5MinOfTimeSlot = Math.Round(conversion, 4) * 100;
                             //Percentages deliveries withing 15 minutes of each customers estimated time
                             conversion = (innerTodayGraphsModel.CustomersWithinPrognosis / innerTodayGraphsModel.NumberOfValidDeliveries);
-                            innerTodayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = Math.Round(conversion, 4) * 100;
+                            innerTodayGraphsModel.percentageWithin15MinOfCustomerEstimatedTime = Math.Round(conversion, 4) * 100;
                         }
 
                         innerTodayGraphsModel.LabelTitle = listOfGroup[0].Driver.ExtendedInformationModel.SectionName;
@@ -366,9 +376,9 @@ namespace CargoSupport.Helpers
                         if (todayGraphsModel.NumberOfValidDeliveries > 0)
                         {
                             //Percentages deliveries withing 5 minutes of each customer time slot
-                            todayGraphsModel.PercentageWithing5MinOfTimeSlot = Math.Round((todayGraphsModel.CustomersWithinTimeSlot / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
+                            todayGraphsModel.percentageWithin5MinOfTimeSlot = Math.Round((todayGraphsModel.CustomersWithinTimeSlot / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
                             //Percentages deliveries withing 15 minutes of each customers estimated time
-                            todayGraphsModel.PercentageWithing15MinOfCustomerEstimatedTime = Math.Round((todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
+                            todayGraphsModel.percentageWithin15MinOfCustomerEstimatedTime = Math.Round((todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries), 4) * 100;
                         }
 
                         todayGraphsModel.LabelTitle = groupAsList[0].Driver.GetDriverName();
@@ -389,8 +399,8 @@ namespace CargoSupport.Helpers
                         CustomersWithinPrognosis = 0,
                         CustomersBeforeTimeSlot = 0,
                         CustomersBeforeEstimatedTime = 0,
-                        PercentageWithing5MinOfTimeSlot = 0,
-                        PercentageWithing15MinOfCustomerEstimatedTime = 0,
+                        percentageWithin5MinOfTimeSlot = 0,
+                        percentageWithin15MinOfCustomerEstimatedTime = 0,
                         LabelTitle = "No data on this day"
                     });
                 }
@@ -437,6 +447,14 @@ namespace CargoSupport.Helpers
                 Log.Logger.Error(ex, "Exception in function ConvertDataToSimplifiedRecordsAsParalell");
                 return new SimplifiedRecordsViewModel[0];
             }
+        }
+
+        private bool RouteHasBeenStartedBeforeOr5MinutesPlusOfEstimatedStart(DataModel route)
+        {
+            var timeSpan_Extra5MinutesOfEstimatedRouteStart = route.PinRouteModel.ScheduledRouteStart.TimeOfDay.Add(new TimeSpan(0, 0, 5, 0, 0));
+
+            var result = (route.PinRouteModel.ActualRouteStartAsDate.TimeOfDay < timeSpan_Extra5MinutesOfEstimatedRouteStart);
+            return result;
         }
 
         private bool CustomerIsInTimeWindowPlusMinus5(PinCustomerModel customerModel)

@@ -39,8 +39,8 @@
             <canvas id="mainDataBar"></canvas>
         </div>
         <div class="col-4">
-            <canvas id="percentageWithing5MinOfTimeSlot"></canvas>
-            <canvas id="percentageWithing15MinOfCustomerEstimatedTime"></canvas>
+            <canvas id="percentageWithin5MinOfTimeSlot"></canvas>
+            <canvas id="percentageWithin15MinOfCustomerEstimatedTime"></canvas>
         </div>
     </div>
 
@@ -171,22 +171,22 @@
 
         function generateMainDatasetFromApiResponsePieGraphOne(returnData) {
 
-            deleteAllDatasetsOnChart(percentageWithing5MinOfTimeSlotRef);
+            deleteAllDatasetsOnChart(percentageWithin5MinOfTimeSlotRef);
 
             /*
              * Generates new datasets based on returned data and pushes the changes
              */
-            let percentageWithing5MinOfTimeSlot = [];
-            let percentageWithing5MinOfTimeSlotRemainder = [];
+            let percentageWithin5MinOfTimeSlot = [];
+            let percentageWithin5MinOfTimeSlotRemainder = [];
             let allLabels = [];
 
             returnData.forEach(dataRow => {
                 allLabels.push(dataRow.labelTitle);
-                percentageWithing5MinOfTimeSlot.push(dataRow.percentageWithing5MinOfTimeSlot);
-                percentageWithing5MinOfTimeSlotRemainder.push(100 - dataRow.percentageWithing5MinOfTimeSlot);
+                percentageWithin5MinOfTimeSlot.push(dataRow.percentageWithin5MinOfTimeSlot);
+                percentageWithin5MinOfTimeSlotRemainder.push(100 - dataRow.percentageWithin5MinOfTimeSlot);
             });
 
-            deleteAllDatasetsOnChart(percentageWithing5MinOfTimeSlotRef);
+            deleteAllDatasetsOnChart(percentageWithin5MinOfTimeSlotRef);
 
             /*
              * Generates new datasets based on returned data and pushes the changes
@@ -197,7 +197,7 @@
                     "rgba(75, 192, 192, 0.2)",
                 ],
                 data:
-                    percentageWithing5MinOfTimeSlot,
+                    percentageWithin5MinOfTimeSlot,
                 fill: "start",
                 borderColor: ["rgb(75, 192, 192)"],
                 borderWidth: 1,
@@ -209,36 +209,36 @@
                     "rgba(255, 99, 132, 0.2)",
                 ],
                 data:
-                    percentageWithing5MinOfTimeSlotRemainder,
+                    percentageWithin5MinOfTimeSlotRemainder,
                 fill: "start",
                 borderColor: ["rgb(255, 99, 132)"],
                 borderWidth: 1,
             }
-            percentageWithing5MinOfTimeSlotRef.data.labels = allLabels;
-            percentageWithing5MinOfTimeSlotRef.data.datasets.push(accuracyDataSet);
-            percentageWithing5MinOfTimeSlotRef.data.datasets.push(inAccuracyDataSet);
+            percentageWithin5MinOfTimeSlotRef.data.labels = allLabels;
+            percentageWithin5MinOfTimeSlotRef.data.datasets.push(accuracyDataSet);
+            percentageWithin5MinOfTimeSlotRef.data.datasets.push(inAccuracyDataSet);
 
-            updateChartReference(percentageWithing5MinOfTimeSlotRef);
+            updateChartReference(percentageWithin5MinOfTimeSlotRef);
         }
 
         function generateMainDatasetFromApiResponsePieGraphTwo(returnData) {
 
-            deleteAllDatasetsOnChart(percentageWithing15MinOfCustomerEstimatedTimeRef);
+            deleteAllDatasetsOnChart(percentageWithin15MinOfCustomerEstimatedTimeRef);
 
             /*
              * Generates new datasets based on returned data and pushes the changes
              */
-            let percentageWithing15MinOfCustomerEstimatedTime = [];
-            let percentageWithing15MinOfCustomerEstimatedTimeRemainder = [];
+            let percentageWithin15MinOfCustomerEstimatedTime = [];
+            let percentageWithin15MinOfCustomerEstimatedTimeRemainder = [];
             let allLabels = [];
 
             returnData.forEach(dataRow => {
                 allLabels.push(dataRow.labelTitle);
-                percentageWithing15MinOfCustomerEstimatedTime.push(dataRow.percentageWithing15MinOfCustomerEstimatedTime);
-                percentageWithing15MinOfCustomerEstimatedTimeRemainder.push(100 - dataRow.percentageWithing15MinOfCustomerEstimatedTime);
+                percentageWithin15MinOfCustomerEstimatedTime.push(dataRow.percentageWithin15MinOfCustomerEstimatedTime);
+                percentageWithin15MinOfCustomerEstimatedTimeRemainder.push(100 - dataRow.percentageWithin15MinOfCustomerEstimatedTime);
             });
 
-            deleteAllDatasetsOnChart(percentageWithing15MinOfCustomerEstimatedTimeRef);
+            deleteAllDatasetsOnChart(percentageWithin15MinOfCustomerEstimatedTimeRef);
 
             /*
              * Generates new datasets based on returned data and pushes the changes
@@ -249,7 +249,7 @@
                     "rgba(75, 192, 192, 0.2)",
                 ],
                 data:
-                    percentageWithing15MinOfCustomerEstimatedTime,
+                    percentageWithin15MinOfCustomerEstimatedTime,
                 fill: "start",
                 borderColor: ["rgb(75, 192, 192)"],
                 borderWidth: 1,
@@ -261,16 +261,16 @@
                     "rgba(255, 99, 132, 0.2)",
                 ],
                 data:
-                    percentageWithing15MinOfCustomerEstimatedTimeRemainder,
+                    percentageWithin15MinOfCustomerEstimatedTimeRemainder,
                 fill: "start",
                 borderColor: ["rgb(255, 99, 132)"],
                 borderWidth: 1,
             }
-            percentageWithing15MinOfCustomerEstimatedTimeRef.data.labels = allLabels;
-            percentageWithing15MinOfCustomerEstimatedTimeRef.data.datasets.push(accuracyDataSet);
-            percentageWithing15MinOfCustomerEstimatedTimeRef.data.datasets.push(inAccuracyDataSet);
+            percentageWithin15MinOfCustomerEstimatedTimeRef.data.labels = allLabels;
+            percentageWithin15MinOfCustomerEstimatedTimeRef.data.datasets.push(accuracyDataSet);
+            percentageWithin15MinOfCustomerEstimatedTimeRef.data.datasets.push(inAccuracyDataSet);
 
-            updateChartReference(percentageWithing15MinOfCustomerEstimatedTimeRef);
+            updateChartReference(percentageWithin15MinOfCustomerEstimatedTimeRef);
         }
 
         $(document).ready(function () {
@@ -303,8 +303,8 @@
                     { data: 'customersWithinPrognosis', title: 'Inom beräknad leveranstid +-15' },
                     { data: 'customersBeforeTimeSlot', title: 'Före tidsfönster -5' },
                     { data: 'customersBeforeEstimatedTime', title: 'Före beräknad tid -15' },
-                    { data: 'percentageWithing5MinOfTimeSlot', title: 'Procent tidsfönster' },
-                    { data: 'percentageWithing15MinOfCustomerEstimatedTime', title: 'Procent beräknad' },
+                    { data: 'percentageWithin5MinOfTimeSlot', title: 'Procent tidsfönster' },
+                    { data: 'percentageWithin15MinOfCustomerEstimatedTime', title: 'Procent beräknad' },
                 ],
                 "searching": false,
                 "paging": false,
@@ -387,8 +387,8 @@
                     }
                 }
             };
-            let ctx2 = document.getElementById('percentageWithing15MinOfCustomerEstimatedTime').getContext('2d');
-            percentageWithing15MinOfCustomerEstimatedTimeRef = new Chart(ctx2, configBase1);
+            let ctx2 = document.getElementById('percentageWithin15MinOfCustomerEstimatedTime').getContext('2d');
+            percentageWithin15MinOfCustomerEstimatedTimeRef = new Chart(ctx2, configBase1);
 
             let configBase2 = {
                 type: 'line',
@@ -428,8 +428,8 @@
                     }
                 }
             };
-            let ctx3 = document.getElementById('percentageWithing5MinOfTimeSlot').getContext('2d');
-            percentageWithing5MinOfTimeSlotRef = new Chart(ctx3, configBase2);
+            let ctx3 = document.getElementById('percentageWithin5MinOfTimeSlot').getContext('2d');
+            percentageWithin5MinOfTimeSlotRef = new Chart(ctx3, configBase2);
 
             getDataBetweenDates(todayGraphsForDriver);
 

@@ -23,7 +23,6 @@ namespace CargoSupport.Web.IIS
             {
                 Log.Information("app starting");
                 CreateHostBuilder(args).Build().Run();
-                Log.Information("app terminated");
             }
             catch (Exception ex)
             {

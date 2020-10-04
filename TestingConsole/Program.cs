@@ -1,9 +1,15 @@
-﻿namespace TestingConsole
+﻿using System;
+
+namespace TestingConsole
 {
     internal static class Program
     {
         private static void Main(string[] args)
         {
+            var date = "2020-08-31 10:25:59";
+
+            var dateTIme = DateTime.Parse(date);
+            Console.WriteLine();
             //var _dbHelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
 
             //DateTime.TryParse("2020-08-29", out DateTime from);

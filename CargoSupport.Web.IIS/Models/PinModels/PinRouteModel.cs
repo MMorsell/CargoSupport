@@ -8,9 +8,6 @@ namespace CargoSupport.Models.PinModels
 {
     public class PinRouteModel
     {
-        public string ParentOrderId { get; set; } = "";
-        public string ParentOrderName { get; set; }
-
         [JsonProperty("id")]
         [Required]
         public int RouteId { get; set; }
@@ -21,6 +18,9 @@ namespace CargoSupport.Models.PinModels
 
         [JsonProperty("url")]
         public string PinDirectLink { get; set; }
+
+        public string ParentOrderId { get; set; } = "";
+        public string ParentOrderName { get; set; }
 
         /*
          * Sub-objects
@@ -43,7 +43,6 @@ namespace CargoSupport.Models.PinModels
          */
 
         public double NumberOfCustomers { get; private set; } = 0;
-
         public double Weight { get; private set; } = 0;
         public double DistanceInMeters { get; private set; } = 0;
 
@@ -69,6 +68,8 @@ namespace CargoSupport.Models.PinModels
         [JsonProperty("actual_start_time")]
         public string ActualRouteStart { get; set; }
 
+        public DateTime ActualRouteStartAsDate { get; set; }
+
         public void CalculateProperties()
         {
             Weight = Customers.Sum(s => s.PinCustomerDeliveryInfo.weight);
@@ -78,11 +79,11 @@ namespace CargoSupport.Models.PinModels
             ScheduledRouteEnd = ScheduledRouteStart.AddSeconds(double.Parse(RouteInfoModel.duration)).AddHours(2);
             ScheduledRouteStart = ScheduledRouteStart.AddHours(2);
 
-            //TODO: Fix actualRouteStart and add time
-            //if (ActualRouteStart != null && ActualRouteStart is DateTime)
-            //{
-            //    ActualRouteStart = new DateTime()
-            //}
+            if (RouteHasStarted && ActualRouteStart != null)
+            {
+                DateTime.TryParse(ActualRouteStart, out DateTime parsedResult);
+                ActualRouteStartAsDate = parsedResult.AddHours(2);
+            }
         }
     }
 

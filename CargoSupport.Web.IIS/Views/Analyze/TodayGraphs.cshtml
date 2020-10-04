@@ -27,12 +27,19 @@
         </div>
     </div>
     <div class="row ">
-        <div class="col-8">
-            <canvas id="mainDataBar"></canvas>
+        <div class="col-4">
+            <canvas id="percentageWithin5MinOfTimeSlot"></canvas>
         </div>
         <div class="col-4">
-            <canvas id="percentageWithing5MinOfTimeSlot"></canvas>
-            <canvas id="percentageWithing15MinOfCustomerEstimatedTime"></canvas>
+            <canvas id="percentageWithin15MinOfCustomerEstimatedTime"></canvas>
+        </div>
+        <div class="col-4">
+            <canvas id="percentageWithin5MinutesOfStartTime"></canvas>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-12">
+            <canvas id="mainDataBar"></canvas>
         </div>
     </div>
 </div>
@@ -45,13 +52,15 @@
         const mainApiEndpoint = todayGraphs;
         fromDate = moment();
         toDate = moment();
-        let percentageWithing5MinOfTimeSlotRef;
-        let percentageWithing15MinOfCustomerEstimatedTimeRef;
+        let percentageWithin5MinOfTimeSlotRef;
+        let percentageWithin15MinOfCustomerEstimatedTimeRef;
+        let percentageWithin5MinutesOfStartTimeRef;
 
         function reloadGraphs(returnData) {
             generateMainDatasetFromApiResponse(returnData);
             generateMainDatasetFromApiResponsePieGraphOne(returnData);
             generateMainDatasetFromApiResponsePieGraphTwo(returnData);
+            generateMainDatasetFromApiResponsePieGraphThree(returnData)
         }
 
         function generateMainDatasetFromApiResponse(returnData) {
@@ -69,14 +78,6 @@
                 }
                 var newDataset = {
                     label: dataRow.labelTitle,
-                    //backgroundColor: [
-                    //    "rgba(255, 159, 64, 0.2)",
-                    //    "rgba(255, 99, 132, 0.2)",
-                    //    "rgba(54, 162, 235, 0.2)",
-                    //    "rgba(153, 102, 255, 0.2)",
-                    //    "rgba(255, 205, 86, 0.2)",
-                    //    "rgba(255, 99, 132, 0.2)",
-                    //],
                     backgroundColor: [
                         getrgbaColorWithOpacity(colorIndex, 0.2),
                         getrgbaColorWithOpacity(colorIndex, 0.2),
@@ -102,13 +103,6 @@
                         getrgbColor(colorIndex),
                         getrgbColor(colorIndex),
                         getrgbColor(colorIndex)],
-                    //borderColor: [
-                    //    "rgb(255, 159, 64)",
-                    //    "rgb(255, 99, 132)",
-                    //    "rgb(54, 162, 235)",
-                    //    "rgb(153, 102, 255)",
-                    //    "rgb(255, 205, 86)",
-                    //    "rgb(255, 99, 132)"],
                     borderWidth: 1,
                 }
 
@@ -120,22 +114,22 @@
 
         function generateMainDatasetFromApiResponsePieGraphOne(returnData) {
 
-            deleteAllDatasetsOnChart(percentageWithing5MinOfTimeSlotRef);
+            deleteAllDatasetsOnChart(percentageWithin5MinOfTimeSlotRef);
 
             /*
              * Generates new datasets based on returned data and pushes the changes
              */
-            let percentageWithing5MinOfTimeSlot = [];
-            let percentageWithing5MinOfTimeSlotRemainder = [];
+            let percentageWithin5MinOfTimeSlot = [];
+            let percentageWithin5MinOfTimeSlotRemainder = [];
             let allLabels = [];
 
             returnData.forEach(dataRow => {
                 allLabels.push(dataRow.labelTitle);
-                percentageWithing5MinOfTimeSlot.push(dataRow.percentageWithing5MinOfTimeSlot);
-                percentageWithing5MinOfTimeSlotRemainder.push(100 - dataRow.percentageWithing5MinOfTimeSlot);
+                percentageWithin5MinOfTimeSlot.push(dataRow.percentageWithin5MinOfTimeSlot);
+                percentageWithin5MinOfTimeSlotRemainder.push(100 - dataRow.percentageWithin5MinOfTimeSlot);
             });
 
-            deleteAllDatasetsOnChart(percentageWithing5MinOfTimeSlotRef);
+            deleteAllDatasetsOnChart(percentageWithin5MinOfTimeSlotRef);
 
             /*
              * Generates new datasets based on returned data and pushes the changes
@@ -146,7 +140,7 @@
                     "rgba(75, 192, 192, 0.2)",
                 ],
                 data:
-                    percentageWithing5MinOfTimeSlot,
+                    percentageWithin5MinOfTimeSlot,
                 fill: "start",
                 borderColor: ["rgb(75, 192, 192)"],
                 borderWidth: 1,
@@ -158,36 +152,36 @@
                     "rgba(255, 99, 132, 0.2)",
                 ],
                 data:
-                    percentageWithing5MinOfTimeSlotRemainder,
+                    percentageWithin5MinOfTimeSlotRemainder,
                 fill: "start",
                 borderColor: ["rgb(255, 99, 132)"],
                 borderWidth: 1,
             }
-            percentageWithing5MinOfTimeSlotRef.data.labels = allLabels;
-            percentageWithing5MinOfTimeSlotRef.data.datasets.push(accuracyDataSet);
-            percentageWithing5MinOfTimeSlotRef.data.datasets.push(inAccuracyDataSet);
+            percentageWithin5MinOfTimeSlotRef.data.labels = allLabels;
+            percentageWithin5MinOfTimeSlotRef.data.datasets.push(accuracyDataSet);
+            percentageWithin5MinOfTimeSlotRef.data.datasets.push(inAccuracyDataSet);
 
-            updateChartReference(percentageWithing5MinOfTimeSlotRef);
+            updateChartReference(percentageWithin5MinOfTimeSlotRef);
         }
 
         function generateMainDatasetFromApiResponsePieGraphTwo(returnData) {
 
-            deleteAllDatasetsOnChart(percentageWithing15MinOfCustomerEstimatedTimeRef);
+            deleteAllDatasetsOnChart(percentageWithin15MinOfCustomerEstimatedTimeRef);
 
             /*
              * Generates new datasets based on returned data and pushes the changes
              */
-            let percentageWithing15MinOfCustomerEstimatedTime = [];
-            let percentageWithing15MinOfCustomerEstimatedTimeRemainder = [];
+            let percentageWithin15MinOfCustomerEstimatedTime = [];
+            let percentageWithin15MinOfCustomerEstimatedTimeRemainder = [];
             let allLabels = [];
 
             returnData.forEach(dataRow => {
                 allLabels.push(dataRow.labelTitle);
-                percentageWithing15MinOfCustomerEstimatedTime.push(dataRow.percentageWithing15MinOfCustomerEstimatedTime);
-                percentageWithing15MinOfCustomerEstimatedTimeRemainder.push(100 - dataRow.percentageWithing15MinOfCustomerEstimatedTime);
+                percentageWithin15MinOfCustomerEstimatedTime.push(dataRow.percentageWithin15MinOfCustomerEstimatedTime);
+                percentageWithin15MinOfCustomerEstimatedTimeRemainder.push(100 - dataRow.percentageWithin15MinOfCustomerEstimatedTime);
             });
 
-            deleteAllDatasetsOnChart(percentageWithing15MinOfCustomerEstimatedTimeRef);
+            deleteAllDatasetsOnChart(percentageWithin15MinOfCustomerEstimatedTimeRef);
 
             /*
              * Generates new datasets based on returned data and pushes the changes
@@ -198,7 +192,7 @@
                     "rgba(75, 192, 192, 0.2)",
                 ],
                 data:
-                    percentageWithing15MinOfCustomerEstimatedTime,
+                    percentageWithin15MinOfCustomerEstimatedTime,
                 fill: "start",
                 borderColor: ["rgb(75, 192, 192)"],
                 borderWidth: 1,
@@ -210,16 +204,68 @@
                     "rgba(255, 99, 132, 0.2)",
                 ],
                 data:
-                    percentageWithing15MinOfCustomerEstimatedTimeRemainder,
+                    percentageWithin15MinOfCustomerEstimatedTimeRemainder,
                 fill: "start",
                 borderColor: ["rgb(255, 99, 132)"],
                 borderWidth: 1,
             }
-            percentageWithing15MinOfCustomerEstimatedTimeRef.data.labels = allLabels;
-            percentageWithing15MinOfCustomerEstimatedTimeRef.data.datasets.push(accuracyDataSet);
-            percentageWithing15MinOfCustomerEstimatedTimeRef.data.datasets.push(inAccuracyDataSet);
+            percentageWithin15MinOfCustomerEstimatedTimeRef.data.labels = allLabels;
+            percentageWithin15MinOfCustomerEstimatedTimeRef.data.datasets.push(accuracyDataSet);
+            percentageWithin15MinOfCustomerEstimatedTimeRef.data.datasets.push(inAccuracyDataSet);
 
-            updateChartReference(percentageWithing15MinOfCustomerEstimatedTimeRef);
+            updateChartReference(percentageWithin15MinOfCustomerEstimatedTimeRef);
+        }
+
+        function generateMainDatasetFromApiResponsePieGraphThree(returnData) {
+
+            deleteAllDatasetsOnChart(percentageWithin5MinutesOfStartTimeRef);
+
+            /*
+             * Generates new datasets based on returned data and pushes the changes
+             */
+            let percentageWithin5MinutesOfStartTime = [];
+            let percentageWithin5MinutesOfStartTimeRemainder = [];
+            let allLabels = [];
+
+            returnData.forEach(dataRow => {
+                allLabels.push(dataRow.labelTitle);
+                percentageWithin5MinutesOfStartTime.push(dataRow.percentageWithin5MinutesOfStartTime);
+                percentageWithin5MinutesOfStartTimeRemainder.push(100 - dataRow.percentageWithin5MinutesOfStartTime);
+            });
+
+            deleteAllDatasetsOnChart(percentageWithin5MinutesOfStartTimeRef);
+
+            /*
+             * Generates new datasets based on returned data and pushes the changes
+             */
+            const accuracyDataSet = {
+                label: "Tur startad i tid +5 minuter",
+                backgroundColor: [
+                    "rgba(75, 192, 192, 0.2)",
+                ],
+                data:
+                    percentageWithin5MinutesOfStartTime,
+                fill: "start",
+                borderColor: ["rgb(75, 192, 192)"],
+                borderWidth: 1,
+            }
+
+            const inAccuracyDataSet = {
+                label: "Ej startad i tid +5 minuter",
+                backgroundColor: [
+                    "rgba(255, 99, 132, 0.2)",
+                ],
+                data:
+                    percentageWithin5MinutesOfStartTimeRemainder,
+                fill: "start",
+                borderColor: ["rgb(255, 99, 132)"],
+                borderWidth: 1,
+            }
+            percentageWithin5MinutesOfStartTimeRef.data.labels = allLabels;
+            percentageWithin5MinutesOfStartTimeRef.data.datasets.push(accuracyDataSet);
+            percentageWithin5MinutesOfStartTimeRef.data.datasets.push(inAccuracyDataSet);
+
+            updateChartReference(percentageWithin5MinutesOfStartTimeRef);
         }
 
         window.onload = function () {
@@ -297,8 +343,8 @@
                     }
                 }
             };
-            let ctx2 = document.getElementById('percentageWithing15MinOfCustomerEstimatedTime').getContext('2d');
-            percentageWithing15MinOfCustomerEstimatedTimeRef = new Chart(ctx2, configBase1);
+            let ctx2 = document.getElementById('percentageWithin15MinOfCustomerEstimatedTime').getContext('2d');
+            percentageWithin15MinOfCustomerEstimatedTimeRef = new Chart(ctx2, configBase1);
 
             let configBase2 = {
                 type: 'line',
@@ -338,8 +384,49 @@
                     }
                 }
             };
-            let ctx3 = document.getElementById('percentageWithing5MinOfTimeSlot').getContext('2d');
-            percentageWithing5MinOfTimeSlotRef = new Chart(ctx3, configBase2);
+            let ctx3 = document.getElementById('percentageWithin5MinOfTimeSlot').getContext('2d');
+            percentageWithin5MinOfTimeSlotRef = new Chart(ctx3, configBase2);
+
+            let configBase3 = {
+                type: 'line',
+                data: {
+                    labels: ["2020-08-27"],
+                    datasets: [{
+                        label: 'Chart 1',
+                        data: [0],
+                        fill: "start",
+                        borderColor: ["rgb(75, 192, 192)"],
+                        backgroundColor: [
+                            "rgba(75, 192, 192, 0.2)",
+                        ],
+                    }, {
+                        label: 'Chart 2',
+                        data: [0],
+                        fill: "start",
+                        borderColor: ["rgb(255, 99, 132)"],
+                        backgroundColor: [
+                            "rgba(255, 99, 132, 0.2)",
+                        ],
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Tur startad i tid +5 minuter'
+                    },
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Procent'
+                            },
+                        }]
+                    }
+                }
+            };
+            let ctx4 = document.getElementById('percentageWithin5MinutesOfStartTime').getContext('2d');
+            percentageWithin5MinutesOfStartTimeRef = new Chart(ctx4, configBase3);
 
             getDataBetweenDates(todayGraphs);
         };
