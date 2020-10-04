@@ -16,8 +16,8 @@ namespace CargoSupport.Helpers
         public ApiRequestHelper(IConfiguration Configuration)
         {
             client = new HttpClient();
-            client.DefaultRequestHeaders.Add("X-PINDELIVER-API-KEY", Configuration["pinServer"]);
-            client.DefaultRequestHeaders.Add("X-PINDELIVER-API-CLIENT-KEY", Configuration["pinClient"]);
+            client.DefaultRequestHeaders.Add("X-PINDELIVER-API-KEY", Configuration.GetValue<string>("pinServer"));
+            client.DefaultRequestHeaders.Add("X-PINDELIVER-API-CLIENT-KEY", Configuration.GetValue<string>("pinClient"));
         }
 
         public async Task<T> GetSingleResult<T>(string url)

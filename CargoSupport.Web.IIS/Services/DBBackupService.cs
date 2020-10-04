@@ -16,7 +16,7 @@ namespace CargoSupport.Services
 
         public DBBackupService(IConfiguration configuration)
         {
-            this._db = new MongoDbService(configuration["mongoDatabaseName"], configuration);
+            this._db = new MongoDbService(configuration.GetValue<string>("mongoDatabaseName"), configuration);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

@@ -17,12 +17,12 @@ namespace CargoSupport.Services
 
         public MongoDbService(string databaseName, IConfiguration configuration)
         {
-            _database = new MongoClient(configuration["mongoConnection"]).GetDatabase(databaseName);
+            _database = new MongoClient(configuration.GetValue<string>("mongoConnection")).GetDatabase(databaseName);
         }
 
         public MongoDbService(IConfiguration configuration)
         {
-            _database = new MongoClient(configuration["mongoConnection"]).GetDatabase(configuration["mongoDatabaseName"]);
+            _database = new MongoClient(configuration.GetValue<string>("mongoConnection")).GetDatabase(configuration.GetValue<string>("mongoDatabaseName"));
         }
 
         public async Task InsertRecord<T>(string tableName, T record)

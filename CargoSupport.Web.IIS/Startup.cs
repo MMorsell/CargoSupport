@@ -33,7 +33,7 @@ namespace CargoSupport.Web.IIS
             Log.Logger.Debug($"Start ConfigureServices");
             // Add db services and auth.
             services.AddIdentity<ApplicationUser, MongoIdentityRole>()
-                    .AddMongoDbStores<ApplicationUser, MongoIdentityRole, Guid>(Configuration["mongoConnection"], Configuration["mongoDatabaseName"])
+                    .AddMongoDbStores<ApplicationUser, MongoIdentityRole, Guid>(Configuration.GetValue<string>("mongoConnection"), Configuration["mongoDatabaseName"])
                     .AddSignInManager()
                     .AddRoleManager<RoleManager<MongoIdentityRole>>()
                     .AddDefaultTokenProviders();
@@ -118,11 +118,11 @@ namespace CargoSupport.Web.IIS
                     await _roleManager.CreateAsync(new MongoIdentityRole { Name = role });
                 }
             }
-            string userAndEmailForServiceAcc = Configuration["serviceAccountLogin"];
+            string userAndEmailForServiceAcc = Configuration.GetValue<string>("serviceAccountLogin");
 
             var user = new ApplicationUser { UserName = userAndEmailForServiceAcc, Email = userAndEmailForServiceAcc, FirstName = "Servicekonto", LastName = "" };
 
-            var result = await _userManager.CreateAsync(user, Configuration["serviceAccountPass"]);
+            var result = await _userManager.CreateAsync(user, Configuration.GetValue<string>("serviceAccountPass"));
             if (result.Succeeded)
             {
                 var currentUser = await _userManager.FindByNameAsync(user.UserName);

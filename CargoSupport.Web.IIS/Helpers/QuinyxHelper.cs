@@ -68,7 +68,7 @@ namespace CargoSupport.Helpers
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Content-Type", "text/xml");
                 request.AddHeader("Cookie", "QWFMSESSION=B3sAtHUIsYKEGfzcSW98Lsbqu4jAxdfy");
-                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"><soapenv:Header/><soapenv:Body><uri:wsdlGetSchedulesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><apiKey>{_configuration["soapKey"]}</apiKey><getSchedulesV2Request xsi:type=\"flex:getSchedulesV2Request\" xmlns:flex=\"http://qwfm/soap/FlexForce\"><fromDate xsi:type=\"xsd:string\">{fromDate}</fromDate><fromTime xsi:type=\"xsd:string\">00:00:00</fromTime><toDate xsi:type=\"xsd:string\">{toDate}</toDate><toTime xsi:type=\"xsd:string\">23:59:59</toTime><scheduledShifts xsi:type=\"xsd:boolean\">true</scheduledShifts><absenceShifts xsi:type=\"xsd:boolean\">false</absenceShifts><allUnits xsi:type=\"xsd:boolean\">false</allUnits><includeCosts xsi:type=\"xsd:boolean\">false</includeCosts></getSchedulesV2Request></uri:wsdlGetSchedulesV2></soapenv:Body></soapenv:Envelope>", ParameterType.RequestBody);
+                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"><soapenv:Header/><soapenv:Body><uri:wsdlGetSchedulesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey><getSchedulesV2Request xsi:type=\"flex:getSchedulesV2Request\" xmlns:flex=\"http://qwfm/soap/FlexForce\"><fromDate xsi:type=\"xsd:string\">{fromDate}</fromDate><fromTime xsi:type=\"xsd:string\">00:00:00</fromTime><toDate xsi:type=\"xsd:string\">{toDate}</toDate><toTime xsi:type=\"xsd:string\">23:59:59</toTime><scheduledShifts xsi:type=\"xsd:boolean\">true</scheduledShifts><absenceShifts xsi:type=\"xsd:boolean\">false</absenceShifts><allUnits xsi:type=\"xsd:boolean\">false</allUnits><includeCosts xsi:type=\"xsd:boolean\">false</includeCosts></getSchedulesV2Request></uri:wsdlGetSchedulesV2></soapenv:Body></soapenv:Envelope>", ParameterType.RequestBody);
                 IRestResponse response = await client.ExecuteAsync(request);
 
                 var result = new List<QuinyxModel>();
@@ -186,7 +186,7 @@ namespace CargoSupport.Helpers
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Content-Type", "text/xml");
                 request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
-                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration["soapKey"]}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
+                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
                 IRestResponse response = await client.ExecuteAsync(request);
 
                 XDocument doc = XDocument.Parse(response.Content);
@@ -224,7 +224,7 @@ namespace CargoSupport.Helpers
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Content-Type", "text/xml");
                 request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
-                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration["soapKey"]}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
+                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
                 IRestResponse response = await client.ExecuteAsync(request);
 
                 XDocument doc = XDocument.Parse(response.Content);
@@ -272,7 +272,7 @@ namespace CargoSupport.Helpers
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Content-Type", "text/xml");
                 request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
-                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration["soapKey"]}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
+                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
                 IRestResponse response = await client.ExecuteAsync(request);
 
                 XDocument doc = XDocument.Parse(response.Content);
