@@ -1,9 +1,5 @@
 ﻿using CargoSupport.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace CargoSupport.Models.QuinyxModels
 {
@@ -66,5 +62,6 @@ namespace CargoSupport.Models.QuinyxModels
         public string CategoryName { get; internal set; }
 
         public string FullNameWithTime => $"{ExtendedInformationModel.GivenName} {ExtendedInformationModel.FamilyName} {begTime.ToString(@"hh\:mm")}-{endTime.ToString(@"hh\:mm")}";
+        public string FullName => GetDriverName();
     }
 }

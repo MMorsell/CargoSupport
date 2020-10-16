@@ -228,8 +228,8 @@ function updateSingleRecord(newObject) {
             table.row(index).invalidate();
             var row = table.row(index).node();
             $(row).removeClass('updateanimation');
+            $(row).find('.selectpicker').selectpicker();
             setTimeout(function () { $(row).addClass('updateanimation'); }, 50);
-            console.log('updated single record')
         }
     }
 }
