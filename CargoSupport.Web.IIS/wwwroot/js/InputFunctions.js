@@ -65,22 +65,22 @@ const convert_loadingLevel_toSelectbox = function (data, type, full, meta) {
     switch (data) {
         case 0:
             selectBox.push(
-                '<div><select style="background-color: red;" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">'
+                `<div><select ${bootstrapSelectDropdownStyle} data-style="btn-danger" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
             );
             break;
         case 1:
             selectBox.push(
-                '<div><select style="background-color: orange;" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">'
+                `<div><select ${bootstrapSelectDropdownStyle} data-style="btn-warning" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
             );
             break;
         case 2:
             selectBox.push(
-                '<div><select style="background-color: yellow;" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">'
+                `<div><select ${bootstrapSelectDropdownStyle} data-style="btn-warning" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
             );
             break;
         case 3:
             selectBox.push(
-                '<div><select style="background-color: lightgreen;" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">'
+                `<div><select ${bootstrapSelectDropdownStyle} data-style="btn-success" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
             );
             break;
     }
@@ -154,8 +154,10 @@ const pinstart_render = function (data, type, full, meta) {
 
 const disabled_checkbox = function (data, type, full, meta) {
     var is_checked = data == true ? "checked" : "";
-    return '<input type="checkbox" onclick="return false" class=" checkbox" ' +
-        is_checked + ' />';
+    return `<label class="checkbox-label">
+                                <input type="checkbox" onclick="return false" ${is_checked}>
+                                <span class="checkbox-custom rectangular"></span>
+                            </label>`;
 }
 
 const disabled_textInput = function (data, type, full, meta) {

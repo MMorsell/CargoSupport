@@ -24,15 +24,14 @@
 
 @section Scripts
 {
-    <script src="~/lib/aspnet/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/chat.js"></script>
+    <script src="~/js/UpsertFunctions.js" asp-append-version="true"></script>
+    <script src="~/lib/aspnet/signalr/dist/browser/signalr.js" asp-append-version="true"></script>
+    <script src="~/js/chat.js" asp-append-version="true"></script>
     <script>
         let table;
         const mainApiEndpoint = '/api/v1/public/GetStorage';
-        let prevValues = [];
 
         function proptForSignatureInt(thisReference) {
-            var dataRef = table.row($(thisReference).parents('tr')).data();
             var personSignature = prompt("Signatur krävs, om du väljer 'Cancel' återställs värdet utan förändring", "");
 
             if (personSignature == null) {
@@ -117,21 +116,25 @@
 
         const restPicking_input = function (data, type, full, meta) {
             var is_checked = data == true ? "checked" : "";
-            return '<input id="restPicking_input" type="checkbox" onChange=proptForSignatureBool(this) class=" checkbox" ' +
-                is_checked + ' />';
+            return `<label class="checkbox-label">
+                                <input type="checkbox" id="restPicking_input" onChange=proptForSignatureBool(this) ${is_checked}>
+                                <span class="checkbox-custom rectangular"></span>
+                            </label>`;
         }
 
         const controlIsDone_input = function (data, type, full, meta) {
             var is_checked = data == true ? "checked" : "";
-            return '<input id="controlIsDone_input" type="checkbox" onChange=proptForSignatureBool(this) class=" checkbox" ' +
-                is_checked + ' />';
+            return `<label class="checkbox-label">
+                                <input type="checkbox" id="controlIsDone_input" onChange=proptForSignatureBool(this) ${is_checked}>
+                                <span class="checkbox-custom rectangular"></span>
+                            </label>`;
         }
 
         const numberOfBreadBoxes_input = function (data, type, full, meta) {
 
             var selectBox = [];
             selectBox.push(
-                '<div><select class=" form-control" id="numberOfBreadBoxes_input" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
+                `<div><select data-style="btn-primary" ${bootstrapSelectDropdownStyle} id="numberOfBreadBoxes_input" onChange=proptForSignatureInt(this)>`
             );
 
             for (i = 0; i < 100; i++) {
@@ -151,7 +154,7 @@
 
             var selectBox = [];
             selectBox.push(
-                '<div><select class=" form-control" id="numberOfFrozenBoxes_input" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
+                `<div><select data-style="btn-primary" ${bootstrapSelectDropdownStyle} id="numberOfFrozenBoxes_input" onChange=proptForSignatureInt(this)>`
             );
 
             for (i = 0; i < 100; i++) {
@@ -171,7 +174,7 @@
 
             var selectBox = [];
             selectBox.push(
-                '<div><select class=" form-control" id="numberOfColdBoxes_input" onChange=proptForSignatureInt(this) class="dropdown bootstrap-select">'
+                `<div><select data-style="btn-primary" ${bootstrapSelectDropdownStyle} id="numberOfColdBoxes_input" onChange=proptForSignatureInt(this)>`
             );
 
             for (i = 0; i < 100; i++) {
@@ -201,17 +204,12 @@
                             toggleConnectStatus('error');
                         }
                         else {
+                            $('.selectpicker').selectpicker();
                             toggleConnectStatus('ok');
                         }
                     },
                     "error": function (responseReference, responseText) {
-                        if (responseText === "error") {
-                            toggleConnectStatus('error');
-                        }
-                        else {
-                            toggleConnectStatus('ok');
-                        }
-
+                        toggleConnectStatus('error');
                     },
                 },
                 columns: [
