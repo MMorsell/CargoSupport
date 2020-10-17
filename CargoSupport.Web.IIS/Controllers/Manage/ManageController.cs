@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using CargoSupport.Extensions;
 using CargoSupport.Helpers;
@@ -11,6 +13,7 @@ using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
 using CargoSupport.ViewModels.Manange;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +40,51 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         public IActionResult GetFromPin()
         {
             return View();
+        }
+
+        // GET: ManageController/Register
+        public ActionResult RegisterCustomerReports(object file)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadCustomerReport(IFormFile file)
+        {
+            //var uploads = Path.Combine(_environment.WebRootPath, "uploads");
+            //if (file.Length > 0)
+            //{
+            //    using (var fileStream = new FileStream(Path.Combine(uploads, file.FileName), FileMode.Create))
+            //    {
+            //        await file.CopyToAsync(fileStream);
+            //    }
+            //}
+            return Ok();
+        }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> UploadCustomerReport(object files)
+        //{
+        //    //foreach (IFormFile source in files)
+        //    //{
+        //    //    string filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
+
+        //    //    filename = this.EnsureCorrectFilename(filename);
+
+        //    //    //using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename)))
+        //    //    //    await source.CopyToAsync(output);
+        //    //}
+
+        //    return this.View();
+        //}
+
+        private string EnsureCorrectFilename(string filename)
+        {
+            if (filename.Contains("\\"))
+                filename = filename.Substring(filename.LastIndexOf("\\") + 1);
+
+            return filename;
         }
 
         [HttpPost]

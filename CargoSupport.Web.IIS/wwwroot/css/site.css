@@ -264,3 +264,19 @@ body {
         -ms-transition: all 0.3s ease-out;
         -o-transition: all 0.3s ease-out;
     }
+
+/* Upload boxes */
+.box__dragndrop,
+.box__uploading,
+.box__success,
+.box__error {
+    display: none;
+}
+
+.box.is-uploading .box__input {
+    visibility: none;
+}
+
+.box.is-uploading .box__uploading {
+    display: block;
+}

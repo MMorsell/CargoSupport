@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Ladda upp kundenkät";
+}
+<link rel="stylesheet" href="~/lib/Dropzone/dropzone.min.css" asp-append-version="true" />
+
+<form action="/Manage/UploadCustomerReport" class="dropzone">
+    <div class="fallback">
+        <input name="file" type="file" multiple />
+    </div>
+</form>
+@section Scripts
+{
+    <script src="~/lib/Dropzone/dropzone.min.js" asp-append-version="true"></script>
+}
