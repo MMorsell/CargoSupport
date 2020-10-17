@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
+using OfficeOpenXml;
+using Serilog;
 
 namespace CargoSupport.Web.IIS.Controllers.Manage
 {
@@ -51,40 +53,103 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [HttpPost]
         public async Task<IActionResult> UploadCustomerReport(IFormFile file)
         {
-            //var uploads = Path.Combine(_environment.WebRootPath, "uploads");
-            //if (file.Length > 0)
-            //{
-            //    using (var fileStream = new FileStream(Path.Combine(uploads, file.FileName), FileMode.Create))
-            //    {
-            //        await file.CopyToAsync(fileStream);
-            //    }
-            //}
+            var actualType = FileExtensionHelper.GetContentType(file.FileName);
+            if (!actualType.EndsWith("excel"))
+            {
+                return BadRequest($"File is not valid excel file, detected filetype: '{actualType}'");
+            }
+            var customerList = new List<CustomerReportModel>();
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var fileStream = file.OpenReadStream())
+            {
+                using (var package = new ExcelPackage(fileStream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    int colCount = worksheet.Dimension.End.Column;  //get Column Count
+                    int rowCount = worksheet.Dimension.End.Row;     //get row count
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        try
+                        {
+                            var customerModel = new CustomerReportModel();
+                            for (int col = 1; col <= colCount; col++)
+                            {
+                                switch (col)
+                                {
+                                    case 1: customerModel.SetDateOfRoute(worksheet.Cells[row, col].Value?.ToString().Trim()); break;
+                                    case 2: customerModel.POnumber = worksheet.Cells[row, col].Value?.ToString().Trim(); break;
+                                    case 8: customerModel.SetSatisfactionNumber(worksheet.Cells[row, col].Value?.ToString().Trim()); break;
+                                    case 9: customerModel.SetTimingNumber(worksheet.Cells[row, col].Value?.ToString().Trim()); break;
+                                    case 10: customerModel.SetDriverNumber(worksheet.Cells[row, col].Value?.ToString().Trim()); break;
+                                    case 11: customerModel.SetProduceNumber(worksheet.Cells[row, col].Value?.ToString().Trim()); break;
+                                    case 12: customerModel.SetComment(worksheet.Cells[row, col].Value?.ToString().Trim()); break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            customerList.Add(customerModel);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Logger.Error(ex, "Exception in function UploadCustomerReport when parsing an uploaded excel row");
+                        }
+                    }
+                }
+            }
+
+            await UpdateRecordsWithCustomerReports(customerList);
+
             return Ok();
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> UploadCustomerReport(object files)
-        //{
-        //    //foreach (IFormFile source in files)
-        //    //{
-        //    //    string filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
-
-        //    //    filename = this.EnsureCorrectFilename(filename);
-
-        //    //    //using (FileStream output = System.IO.File.Create(this.GetPathAndFilename(filename)))
-        //    //    //    await source.CopyToAsync(output);
-        //    //}
-
-        //    return this.View();
-        //}
-
-        private string EnsureCorrectFilename(string filename)
+        private async Task UpdateRecordsWithCustomerReports(List<CustomerReportModel> customerList)
         {
-            if (filename.Contains("\\"))
-                filename = filename.Substring(filename.LastIndexOf("\\") + 1);
+            var customerListGroupedByDate = customerList
+                .GroupBy(model => model.DateOfRoute.Date);
 
-            return filename;
+            var allDbGetTasks = new List<Task<List<DataModel>>>();
+
+            foreach (var day in customerListGroupedByDate)
+            {
+                allDbGetTasks.Add(_dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenCollectionName, day.Key));
+            }
+
+            await Task.WhenAll(allDbGetTasks);
+
+            foreach (var groupOfCustomers in customerListGroupedByDate)
+            {
+                var matchingDbTask = allDbGetTasks
+                    .FirstOrDefault(task => task.Result[0].DateOfRoute.Date
+                    .Equals(groupOfCustomers.Key.Date));
+
+                await MatchCustomerWithData(groupOfCustomers.ToList(), matchingDbTask.Result);
+            }
+        }
+
+        private async Task MatchCustomerWithData(List<CustomerReportModel> customerRecordUpserts, List<DataModel> existingRecordsInDb)
+        {
+            foreach (var record in existingRecordsInDb)
+            {
+                foreach (var customer in record.PinRouteModel.Customers)
+                {
+                    var matchingCustomerRecord = customerRecordUpserts
+                        .FirstOrDefault(upsertCustomer => upsertCustomer.POnumber
+                        .Equals(customer.tracking_number));
+                    if (matchingCustomerRecord != null)
+                    {
+                        customer.CustomerReportModel = matchingCustomerRecord;
+                        await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenCollectionName, record);
+                        customerRecordUpserts.Remove(matchingCustomerRecord);
+                    }
+                }
+            }
+
+            foreach (var notMatchedCustomerRecordUpserts in customerRecordUpserts)
+            {
+                Log.Logger.Error($"No match on PO '{notMatchedCustomerRecordUpserts.POnumber}' " +
+                    $"with comment '{notMatchedCustomerRecordUpserts.Comment}'. " +
+                    $"Has every order on day '{notMatchedCustomerRecordUpserts.DateOfRoute.ToLongDateString()}' been retrieved?");
+            }
         }
 
         [HttpPost]

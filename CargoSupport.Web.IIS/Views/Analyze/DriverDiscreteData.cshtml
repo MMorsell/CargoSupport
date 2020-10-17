@@ -101,6 +101,21 @@
             return Math.min.apply(null, this);
         };
 
+        const customerComments_render = function (data, type, full, meta) {
+            let validObjects = [];
+
+            for (i = 0; i < data.length; i++) {
+                if (data[i].comment !== "Tomt") {
+                    validObjects.push(`<p>${data[i].comment}</p>`);
+                }
+            }
+            if (validObjects.length === 0) {
+                return '<p>Tomt</p>'
+            }
+
+            return validObjects.join("");
+        }
+
         function reloadGraphs(returnData) {
             generateMainDatasetFromApiResponse(returnData);
             generateMainDatasetFromApiResponsePieGraphOne(returnData);
@@ -461,7 +476,7 @@
                     { data: 'weight', title: 'Vikt' },
                     { data: 'distansInSwedishMiles', title: 'Mil' },
                     { data: 'commentFromTransport', title: 'Kommentar transport' },
-                    { data: 'customerComments', title: 'Kundkommentarer' },
+                    { data: 'customerComments', title: 'Kundkommentarer', render: customerComments_render },
                     { data: 'resourceRoute', title: 'Resurstur' },
                 ],
                 "order": [[1, "desc"]],

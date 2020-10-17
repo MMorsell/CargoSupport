@@ -117,6 +117,7 @@ namespace CargoSupport.Models.PinModels
         public string vehicle_tags { get; set; } = "";
         public string position_lng { get; set; } = "NOT_SET";
         public string position_lat { get; set; } = "NOT_SET";
+        public CustomerReportModel CustomerReportModel { get; set; } = new CustomerReportModel();
 
         [JsonProperty("delivery_info")]
         public PinCustomerDeliveryInfo PinCustomerDeliveryInfo { get; set; }

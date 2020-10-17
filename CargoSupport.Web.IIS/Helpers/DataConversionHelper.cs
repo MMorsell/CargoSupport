@@ -419,9 +419,9 @@ namespace CargoSupport.Helpers
             try
             {
                 var resultModels = new ConcurrentBag<SimplifiedRecordsViewModel>();
-
                 Parallel.ForEach(routes, route =>
                 {
+                    var allCommentsAsList = route.PinRouteModel.Customers.Select(customer => customer.CustomerReportModel);
                     resultModels.Add(new SimplifiedRecordsViewModel()
                     {
                         RouteName = route.PinRouteModel.RouteName,
@@ -430,8 +430,8 @@ namespace CargoSupport.Helpers
                         DistansInSwedishMiles = Math.Round((route.PinRouteModel.DistanceInMeters / 10000), 2),
                         CommentFromTransport = route.PostRideAnnotation,
                         ResourceRoute = route.IsResourceRoute,
-                        DateOfRoute = route.DateOfRoute.ToString(@"yyyy-MM-dd")
-                        //TODO: Add for customer comments
+                        DateOfRoute = route.DateOfRoute.ToString(@"yyyy-MM-dd"),
+                        CustomerComments = allCommentsAsList.ToArray()
                     });
                 });
 
