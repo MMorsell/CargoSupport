@@ -64,34 +64,42 @@
         }
 
         function colorcolumns() {
-            //colorColumnDependingOnValue(1);
-            //colorColumnDependingOnValue(2);
-            //colorColumnDependingOnValue(3, true);
             colorColumnDependingOnValue(4, true);
-            colorColumnDependingOnValue(5, true);
+            colorColumnDependingOnValue(5, false);
             colorColumnDependingOnValue(6, false);
-            colorColumnDependingOnValue(7, false);
+            colorColumnDependingOnValue(7, true);
             colorColumnDependingOnValue(8, true);
         }
 
-        function colorColumnDependingOnValue(columnIndex, highIsGood) {
-            const allValues = table.columns(columnIndex + 2).data()[0];
-            const maxVal = allValues.max();
+        function getMaxValue(columnIndex) {
+            let maxValue = -1;
+            $('#dataTable tr').not(':first').each(function () {
+                const currentCellValue = parseInt(this.cells[columnIndex].innerHTML);
 
-            for (i = 0; i < allValues.length; i++) {
-                const percentageVal = percentage(allValues[i], maxVal);
-                let colorToSet
+                if (currentCellValue > maxValue) {
+                    maxValue = currentCellValue;
+                }
+            });
+
+            return maxValue;
+        }
+
+        function colorColumnDependingOnValue(columnIndex, highIsGood) {
+            const maxValue = getMaxValue(columnIndex);
+
+            $('#dataTable tr').not(':first').each(function () {
+                const percentageVal = percentage(parseInt(this.cells[columnIndex].innerHTML), maxValue);
+
+                let colorToSet;
                 if (highIsGood) {
                     colorToSet = percentageToColorHighIsGood(percentageVal);
                 }
                 else {
                     colorToSet = percentageToColorHighIsBad(percentageVal);
                 }
-                const tableRef = document.getElementById("dataTable");
-                const row = tableRef.rows[i + 1];
-                const cell = row.cells[columnIndex];
-                cell.style.backgroundColor = colorToSet;
-            }
+
+                this.cells[columnIndex].style.backgroundColor = colorToSet;
+            })
         }
 
         const boss_extendedInfo = function (data, type, full, meta) {

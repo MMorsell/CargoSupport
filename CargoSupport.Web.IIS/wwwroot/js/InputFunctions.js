@@ -333,7 +333,7 @@ $('#downloadPdf').click(function (event) {
     });
 
     // Save the PDF
-    doc.save('sample-document.pdf');
+    doc.save(`${fileName}.pdf`);
 
     document.getElementById('mainName').innerText = oldValue;
 });

@@ -62,6 +62,7 @@
         let section = null;
         let staffCat = null;
         let secondTable;
+        let fileName = "sample";
 
         function resetTable() {
             staffCat = null;
@@ -84,6 +85,7 @@
 
         const set_Mainname = function (data, type, full, meta) {
             document.getElementById('mainName').innerText = 'Rapport för ' + full.labelTitle;
+            fileName = full.labelTitle;
             return data;
         }
 
