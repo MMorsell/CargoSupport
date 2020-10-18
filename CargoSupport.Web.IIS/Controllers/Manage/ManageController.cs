@@ -118,11 +118,19 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
             foreach (var groupOfCustomers in customerListGroupedByDate)
             {
-                var matchingDbTask = allDbGetTasks
-                    .FirstOrDefault(task => task.Result[0].DateOfRoute.Date
-                    .Equals(groupOfCustomers.Key.Date));
 
-                await MatchCustomerWithData(groupOfCustomers.ToList(), matchingDbTask.Result);
+                try
+                {
+                    var matchingDbTask = allDbGetTasks
+                                .FirstOrDefault(task => task.Result[0].DateOfRoute.Date
+                                .Equals(groupOfCustomers.Key.Date));
+
+                    await MatchCustomerWithData(groupOfCustomers.ToList(), matchingDbTask.Result);
+                }
+                catch (Exception ex)
+                {
+                    Log.Logger.Error(ex, "Exception in function UpdateRecordsWithCustomerReports, problem when connection matching task with customerreportmodel and upserting");
+                }
             }
         }
 
@@ -137,9 +145,17 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                         .Equals(customer.tracking_number));
                     if (matchingCustomerRecord != null)
                     {
-                        customer.CustomerReportModel = matchingCustomerRecord;
-                        await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenCollectionName, record);
-                        customerRecordUpserts.Remove(matchingCustomerRecord);
+
+                        try
+                        {
+                            customer.CustomerReportModel = matchingCustomerRecord;
+                            await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenCollectionName, record);
+                            customerRecordUpserts.Remove(matchingCustomerRecord);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Logger.Error(ex, "Exception in function MatchCustomerWithData");
+                        }
                     }
                 }
             }
