@@ -1,4 +1,5 @@
-﻿function deleteAllDatasetsOnChart(chartReference) {
+﻿let tabs = [];
+function deleteAllDatasetsOnChart(chartReference) {
     /*
      * Removes all old datasets
      */
@@ -85,4 +86,80 @@ function colorBasedOnLoadingValue(thisRef) {
     }
 
     updateRow(thisRef)
+}
+
+function hideEverythingButThisClass(className) {
+    $(`#dataTable tr`).hide();
+    $(`#dataTable tr.${className}`).show();
+    $(`#dataTable thead tr`).show();
+}
+
+function generateTabs() {
+    let firstTabHasBeenSelected = false;
+    var tabDomRef = document.getElementById('dataTableTabs');
+    $(tabDomRef).empty();
+    if (tabs.includes("Morgon")) {
+        let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('Morgon')">Morgon</button>`);
+        $(tabDomRef).append(t);
+    }
+
+    if (tabs.includes("Kväll")) {
+        let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('Kväll')">Kväll</button>`);
+        $(tabDomRef).append(t);
+    }
+
+    if (tabs.includes("Hämtas")) {
+        let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('Hämtas')">Hämtas</button>`);
+        $(tabDomRef).append(t);
+    }
+
+    if (tabs.includes("Returer")) {
+        let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('Returer')">Returer</button>`);
+        $(tabDomRef).append(t);
+    }
+
+    for (var i = 0; i < tabs.length; i++) {
+        if (tabs[i] !== "Morgon" &&
+            tabs[i] !== "Kväll" &&
+            tabs[i] !== "Hämtas" &&
+            tabs[i] !== "Returer") {
+
+            let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('${tabs[i]}')">${tabs[i]}</button>`);
+            $(tabDomRef).append(t);
+        }
+    }
+    let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('Alla')">Alla</button>`);
+    $(tabDomRef).append(t);
+    $(`#dataTableTabs button`).first().click()
+}
+
+function getGroupFromFirstColumn(thisRef) {
+    if (thisRef.cells[0].innerText.match(afternoonRegex)) {
+        if (!tabs.includes("Kväll")) {
+            tabs.push("Kväll");
+        }
+        $(thisRef).addClass('Kväll');
+    } else if (thisRef.cells[0].innerText.match(morningRegex)) {
+        if (!tabs.includes("Morgon")) {
+            tabs.push("Morgon");
+        }
+        $(thisRef).addClass('Morgon');
+    } else if (thisRef.cells[0].innerText.match(hamtasRegex)) {
+        if (!tabs.includes("Hämtas")) {
+            tabs.push("Hämtas");
+        }
+        $(thisRef).addClass('Hämtas');
+    } else if (thisRef.cells[0].innerText.match(returRegex)) {
+        if (!tabs.includes("Returer")) {
+            tabs.push("Returer");
+        }
+        $(thisRef).addClass('Returer');
+    } else {
+        if (!tabs.includes(thisRef.cells[0].innerText)) {
+            tabs.push(thisRef.cells[0].innerText);
+        }
+        $(thisRef).addClass(thisRef.cells[0].innerText);
+    }
+    $(thisRef).addClass('Alla');
+    $(thisRef).hide();
 }
