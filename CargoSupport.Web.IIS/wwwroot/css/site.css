@@ -141,16 +141,6 @@ body {
     animation-iteration-count: 2;
 }
 
-/*Styling for table headers*/
-.tableHeader {
-    font-family: Montserrat-Medium;
-    font-size: 14px;
-    color: #fff;
-    line-height: 1.4;
-    text-transform: uppercase;
-    background-color: #fa4251;
-}
-
 /* Styling for Checkboxes */
 .checkbox-label {
     display: block;
