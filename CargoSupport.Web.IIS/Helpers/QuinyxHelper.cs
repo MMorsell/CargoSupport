@@ -10,6 +10,7 @@ using RestSharp;
 using CargoSupport.Interfaces;
 using Serilog;
 using Microsoft.Extensions.Configuration;
+using System.Net;
 
 namespace CargoSupport.Helpers
 {
@@ -63,7 +64,11 @@ namespace CargoSupport.Helpers
                 var toDate = to.ToString(@"yyyy-MM-dd");
                 var client = new RestClient(Constants.SoapApi.Connection)
                 {
-                    Timeout = -1
+                    Timeout = -1,
+                    Proxy = new WebProxy($"http://proxy02.ica.se:8080")
+                    {
+                        Credentials = System.Net.CredentialCache.DefaultCredentials
+                    }
                 };
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Content-Type", "text/xml");
@@ -180,7 +185,11 @@ namespace CargoSupport.Helpers
             {
                 var client = new RestClient(Constants.SoapApi.Connection)
                 {
-                    Timeout = -1
+                    Timeout = -1,
+                    Proxy = new WebProxy($"http://proxy02.ica.se:8080")
+                    {
+                        Credentials = System.Net.CredentialCache.DefaultCredentials
+                    }
                 };
 
                 var request = new RestRequest(Method.POST);
@@ -218,7 +227,11 @@ namespace CargoSupport.Helpers
             {
                 var client = new RestClient(Constants.SoapApi.Connection)
                 {
-                    Timeout = -1
+                    Timeout = -1,
+                    Proxy = new WebProxy($"http://proxy02.ica.se:8080")
+                    {
+                        Credentials = System.Net.CredentialCache.DefaultCredentials
+                    }
                 };
 
                 var request = new RestRequest(Method.POST);
@@ -266,7 +279,11 @@ namespace CargoSupport.Helpers
             {
                 var client = new RestClient(Constants.SoapApi.Connection)
                 {
-                    Timeout = -1
+                    Timeout = -1,
+                    Proxy = new WebProxy($"http://proxy02.ica.se:8080")
+                    {
+                        Credentials = System.Net.CredentialCache.DefaultCredentials
+                    }
                 };
 
                 var request = new RestRequest(Method.POST);

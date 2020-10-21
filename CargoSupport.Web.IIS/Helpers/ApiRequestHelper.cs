@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -15,7 +16,21 @@ namespace CargoSupport.Helpers
 
         public ApiRequestHelper(IConfiguration Configuration)
         {
-            client = new HttpClient();
+            var proxy = new WebProxy
+            {
+                Address = new Uri($"http://proxy02.ica.se:8080"),
+                BypassProxyOnLocal = false,
+                UseDefaultCredentials = false,
+
+                Credentials = System.Net.CredentialCache.DefaultCredentials
+        };
+
+            var httpClientHandler = new HttpClientHandler
+            {
+                Proxy = proxy,
+            };
+
+            client = new HttpClient(handler: httpClientHandler);
             client.DefaultRequestHeaders.Add("X-PINDELIVER-API-KEY", Configuration.GetValue<string>("pinServer"));
             client.DefaultRequestHeaders.Add("X-PINDELIVER-API-CLIENT-KEY", Configuration.GetValue<string>("pinClient"));
         }
