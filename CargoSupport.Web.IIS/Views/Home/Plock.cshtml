@@ -17,242 +17,250 @@
                 <span class="bar"></span>
             </div>
         </div>
-        </div>
-        <div class="row">
-            <div id="dataTableTabs" class="tab">
-            </div>
-        </div>
-        <table id="dataTable" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
-            <thead>
-            </thead>
-        </table>
     </div>
+    <div class="row">
+        <div id="dataTableTabs" class="tab">
+        </div>
+    </div>
+    <table id="dataTable" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
+        <thead>
+        </thead>
+    </table>
+</div>
 
-    @section Scripts
+@section Scripts
 {
-        <script src="~/js/UpsertFunctions.js" asp-append-version="true"></script>
-        <script src="~/lib/aspnet/signalr/dist/browser/signalr.js" asp-append-version="true"></script>
-        <script src="~/js/chat.js" asp-append-version="true"></script>
-        <script>
-            let table;
-            const mainApiEndpoint = '/api/v1/public/GetStorage';
+    <script src="~/js/UpsertFunctions.js" asp-append-version="true"></script>
+    <script src="~/lib/aspnet/signalr/dist/browser/signalr.js" asp-append-version="true"></script>
+    <script src="~/js/chat.js" asp-append-version="true"></script>
+    <script>
+        let table;
+        const mainApiEndpoint = '/api/v1/public/GetStorage';
 
-            function proptForSignatureInt(thisReference) {
-                var personSignature = prompt("Signatur krävs, om du väljer 'Cancel' återställs värdet utan förändring", "");
+        function proptForSignatureInt(thisReference) {
+            var personSignature = prompt("Signatur krävs, om du väljer 'Cancel' återställs värdet utan förändring", "");
 
-                if (personSignature == null) {
-                    reloadAjax();
+            if (personSignature == null) {
+                reloadAjax();
+            }
+            else if (personSignature.trim() === "") {
+                alert("Tom signatur godkänns ej")
+                reloadAjax();
+            }
+            else {
+                updateRow(thisReference, personSignature);
+            }
+        }
+
+        function proptForSignatureBool(thisReference) {
+            var personSignature = prompt("Signatur krävs, om du väljer 'Cancel' återställs värdet utan förändring", "");
+
+            if (personSignature == null) {
+                reloadAjax();
+            } else if (personSignature.trim() === "") {
+                alert("Tom signatur godkänns ej")
+                reloadAjax();
+            }
+            else {
+                updateRow(thisReference, personSignature);
+            }
+        }
+
+        async function updateRow(thisRef, signature) {
+            var dataRef = table.row($(thisRef).parents('tr')).data();
+            /*
+              numberOfColdBoxes: numberOfColdBoxes_input
+              restPicking: restPicking_input
+              numberOfFrozenBoxes: numberOfFrozenBoxes_input
+              numberOfBreadBoxes: numberOfBreadBoxes_input
+              controlIsDone: controlIsDone_input
+             */
+
+            let upsertDictionary = {};
+            upsertDictionary["hubId"] = await connection.invoke('GetConnectionId');
+            upsertDictionary["_Id"] = dataRef._Id;
+            upsertDictionary['signature'] = signature;
+
+            switch (thisRef.id) {
+                case 'numberOfColdBoxes_input':
+                    upsertDictionary[thisRef.id] = parseInt(thisRef.value);
+                    break;
+                case 'restPicking_input':
+                    upsertDictionary[thisRef.id] = thisRef.checked;
+                    break;
+                case 'numberOfFrozenBoxes_input':
+                    upsertDictionary[thisRef.id] = parseInt(thisRef.value);
+                    break;
+                case 'numberOfBreadBoxes_input':
+                    upsertDictionary[thisRef.id] = parseInt(thisRef.value);
+                    break;
+                case 'controlIsDone_input':
+                    upsertDictionary[thisRef.id] = thisRef.checked;
+                    break;
+            }
+            postUpdate(JSON.stringify(upsertDictionary), upsertDictionary);
+        }
+
+        function postUpdate(jsonData, upsertDictionary) {
+            var dataType = 'application/json';
+            console.log('Submitting form...');
+            $.ajax({
+                type: 'POST',
+                url: '/api/v1/Upsert/UpsertStorage',
+                //dataType: 'json',
+                contentType: dataType,
+                data: jsonData,
+                error: function (jqXHR, exception) {
+                    toggleConnectStatus('error');
+                },
+                success: function (result) {
+                    toggleConnectStatus('ok');
+                    updateSingleRecord(upsertDictionary);
                 }
-                else if (personSignature.trim() === "") {
-                    alert("Tom signatur godkänns ej")
-                    reloadAjax();
-                }
-                else {
-                    updateRow(thisReference, personSignature);
+            });
+        }
+
+        const restPicking_input = function (data, type, full, meta) {
+            var is_checked = data == true ? "checked" : "";
+
+            return `<div class="pretty p-icon p-round p-pulse p-jelly p-bigger">
+                    <input type="checkbox" id="restPicking_input" onChange=proptForSignatureBool(this) ${is_checked} />
+                    <div class="state p-success">
+                        <i class="icon mdi mdi-check"></i>
+                        <label></label>
+                    </div>
+                </div>`;
+        }
+
+        const controlIsDone_input = function (data, type, full, meta) {
+            var is_checked = data == true ? "checked" : "";
+
+            return `<div class="pretty p-icon p-round p-pulse p-jelly p-bigger">
+                    <input type="checkbox" id="controlIsDone_input" onChange=proptForSignatureBool(this) ${is_checked} />
+                    <div class="state p-success">
+                        <i class="icon mdi mdi-check"></i>
+                        <label></label>
+                    </div>
+                </div>`;
+        }
+
+        const numberOfBreadBoxes_input = function (data, type, full, meta) {
+
+            var selectBox = [];
+            selectBox.push(
+                `<div><select data-style="btn-primary" ${bootstrapSelectDropdownStyle} id="numberOfBreadBoxes_input" onChange=proptForSignatureInt(this)>`
+            );
+
+            for (i = 0; i < 100; i++) {
+                if (i === data) {
+                    selectBox.push('<option selected>' + i + '</option>')
+                } else {
+                    selectBox.push('<option>' + i + '</option>')
                 }
             }
+            selectBox.push(
+                '</select>'
+            );
+            return selectBox.join("");
+        }
 
-            function proptForSignatureBool(thisReference) {
-                var personSignature = prompt("Signatur krävs, om du väljer 'Cancel' återställs värdet utan förändring", "");
+        const numberOfFrozenBoxes_input = function (data, type, full, meta) {
 
-                if (personSignature == null) {
-                    reloadAjax();
-                } else if (personSignature.trim() === "") {
-                    alert("Tom signatur godkänns ej")
-                    reloadAjax();
-                }
-                else {
-                    updateRow(thisReference, personSignature);
+            var selectBox = [];
+            selectBox.push(
+                `<div><select data-style="btn-primary" ${bootstrapSelectDropdownStyle} id="numberOfFrozenBoxes_input" onChange=proptForSignatureInt(this)>`
+            );
+
+            for (i = 0; i < 100; i++) {
+                if (i === data) {
+                    selectBox.push('<option selected>' + i + '</option>')
+                } else {
+                    selectBox.push('<option>' + i + '</option>')
                 }
             }
+            selectBox.push(
+                '</select>'
+            );
+            return selectBox.join("");
+        }
 
-            async function updateRow(thisRef, signature) {
-                var dataRef = table.row($(thisRef).parents('tr')).data();
-                /*
-                  numberOfColdBoxes: numberOfColdBoxes_input
-                  restPicking: restPicking_input
-                  numberOfFrozenBoxes: numberOfFrozenBoxes_input
-                  numberOfBreadBoxes: numberOfBreadBoxes_input
-                  controlIsDone: controlIsDone_input
-                 */
+        const numberOfColdBoxes_input = function (data, type, full, meta) {
 
-                let upsertDictionary = {};
-                upsertDictionary["hubId"] = await connection.invoke('GetConnectionId');
-                upsertDictionary["_Id"] = dataRef._Id;
-                upsertDictionary['signature'] = signature;
+            var selectBox = [];
+            selectBox.push(
+                `<div><select data-style="btn-primary" ${bootstrapSelectDropdownStyle} id="numberOfColdBoxes_input" onChange=proptForSignatureInt(this)>`
+            );
 
-                switch (thisRef.id) {
-                    case 'numberOfColdBoxes_input':
-                        upsertDictionary[thisRef.id] = parseInt(thisRef.value);
-                        break;
-                    case 'restPicking_input':
-                        upsertDictionary[thisRef.id] = thisRef.checked;
-                        break;
-                    case 'numberOfFrozenBoxes_input':
-                        upsertDictionary[thisRef.id] = parseInt(thisRef.value);
-                        break;
-                    case 'numberOfBreadBoxes_input':
-                        upsertDictionary[thisRef.id] = parseInt(thisRef.value);
-                        break;
-                    case 'controlIsDone_input':
-                        upsertDictionary[thisRef.id] = thisRef.checked;
-                        break;
+            for (i = 0; i < 100; i++) {
+                if (i === data) {
+                    selectBox.push('<option selected>' + i + '</option>')
+                } else {
+                    selectBox.push('<option>' + i + '</option>')
                 }
-                postUpdate(JSON.stringify(upsertDictionary), upsertDictionary);
             }
+            selectBox.push(
+                '</select>'
+            );
+            return selectBox.join("");
+        }
 
-            function postUpdate(jsonData, upsertDictionary) {
-                var dataType = 'application/json';
-                console.log('Submitting form...');
-                $.ajax({
-                    type: 'POST',
-                    url: '/api/v1/Upsert/UpsertStorage',
-                    //dataType: 'json',
-                    contentType: dataType,
-                    data: jsonData,
-                    error: function (jqXHR, exception) {
+        $(document).ready(function () {
+            table = $('#dataTable').DataTable({
+                pageLength: 250,
+                "ajax": {
+                    "url": mainApiEndpoint,
+                    "data": {
+                        "dateString": function () { return formatDate(ajaxDate) }
+                    },
+                    "dataSrc": "",
+                    "complete": function (responseReference, responseText) {
+                        if (responseText === "error") {
+                            toggleConnectStatus('error');
+                        }
+                        else {
+                            tabs = [];
+                            $('#dataTable tr').not(':first').each(function () {
+                                getGroupFromFirstColumn(this);
+                            });
+                            generateTabs();
+                            $('.selectpicker').selectpicker();
+                            toggleConnectStatus('ok');
+                        }
+                    },
+                    "error": function (responseReference, responseText) {
                         toggleConnectStatus('error');
                     },
-                    success: function (result) {
-                        toggleConnectStatus('ok');
-                        updateSingleRecord(upsertDictionary);
-                    }
-                });
-            }
-
-            const restPicking_input = function (data, type, full, meta) {
-                var is_checked = data == true ? "checked" : "";
-                return `<label class="checkbox-label">
-                                        <input type="checkbox" id="restPicking_input" onChange=proptForSignatureBool(this) ${is_checked}>
-                                        <span class="checkbox-custom rectangular"></span>
-                                    </label>`;
-            }
-
-            const controlIsDone_input = function (data, type, full, meta) {
-                var is_checked = data == true ? "checked" : "";
-                return `<label class="checkbox-label">
-                                        <input type="checkbox" id="controlIsDone_input" onChange=proptForSignatureBool(this) ${is_checked}>
-                                        <span class="checkbox-custom rectangular"></span>
-                                    </label>`;
-            }
-
-            const numberOfBreadBoxes_input = function (data, type, full, meta) {
-
-                var selectBox = [];
-                selectBox.push(
-                    `<div><select data-style="btn-primary" ${bootstrapSelectDropdownStyle} id="numberOfBreadBoxes_input" onChange=proptForSignatureInt(this)>`
-                );
-
-                for (i = 0; i < 100; i++) {
-                    if (i === data) {
-                        selectBox.push('<option selected>' + i + '</option>')
-                    } else {
-                        selectBox.push('<option>' + i + '</option>')
-                    }
-                }
-                selectBox.push(
-                    '</select>'
-                );
-                return selectBox.join("");
-            }
-
-            const numberOfFrozenBoxes_input = function (data, type, full, meta) {
-
-                var selectBox = [];
-                selectBox.push(
-                    `<div><select data-style="btn-primary" ${bootstrapSelectDropdownStyle} id="numberOfFrozenBoxes_input" onChange=proptForSignatureInt(this)>`
-                );
-
-                for (i = 0; i < 100; i++) {
-                    if (i === data) {
-                        selectBox.push('<option selected>' + i + '</option>')
-                    } else {
-                        selectBox.push('<option>' + i + '</option>')
-                    }
-                }
-                selectBox.push(
-                    '</select>'
-                );
-                return selectBox.join("");
-            }
-
-            const numberOfColdBoxes_input = function (data, type, full, meta) {
-
-                var selectBox = [];
-                selectBox.push(
-                    `<div><select data-style="btn-primary" ${bootstrapSelectDropdownStyle} id="numberOfColdBoxes_input" onChange=proptForSignatureInt(this)>`
-                );
-
-                for (i = 0; i < 100; i++) {
-                    if (i === data) {
-                        selectBox.push('<option selected>' + i + '</option>')
-                    } else {
-                        selectBox.push('<option>' + i + '</option>')
-                    }
-                }
-                selectBox.push(
-                    '</select>'
-                );
-                return selectBox.join("");
-            }
-
-            $(document).ready(function () {
-                table = $('#dataTable').DataTable({
-                    pageLength: 250,
-                    "ajax": {
-                        "url": mainApiEndpoint,
-                        "data": {
-                            "dateString": function () { return formatDate(ajaxDate) }
-                        },
-                        "dataSrc": "",
-                        "complete": function (responseReference, responseText) {
-                            if (responseText === "error") {
-                                toggleConnectStatus('error');
-                            }
-                            else {
-                                tabs = [];
-                                $('#dataTable tr').not(':first').each(function () {
-                                    getGroupFromFirstColumn(this);
-                                });
-                                generateTabs();
-                                $('.selectpicker').selectpicker();
-                                toggleConnectStatus('ok');
-                            }
-                        },
-                        "error": function (responseReference, responseText) {
-                            toggleConnectStatus('error');
-                        },
+                },
+                columns: [
+                    {
+                        data: '_Id', title: 'ID', "visible": false,
+                        "searchable": false
                     },
-                    columns: [
-                        {
-                            data: '_Id', title: 'ID', "visible": false,
-                            "searchable": false
-                        },
-                        { data: 'routeName', title: 'Tur' },
-                        { data: 'pinStartTimeString', title: 'Pintid', render: pinstart_render, "visible": false, },
-                        { data: 'carNumber', title: 'Bilnr', render: renderEjSattIfZeroOrEmpty },
-                        { data: 'portNumber', title: 'Port', },
-                        { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toValue },
-                        { data: 'numberOfCustomers', title: 'Kunder' },
-                        { data: 'numberOfColdBoxes.value', title: 'Lådor', render: numberOfColdBoxes_input },
-                        { data: 'restPicking.value', title: 'Restplock', render: restPicking_input },
-                        { data: 'numberOfFrozenBoxes.value', title: 'Frys', render: numberOfFrozenBoxes_input },
-                        { data: 'numberOfBreadBoxes.value', title: 'Bröd', render: numberOfBreadBoxes_input },
-                        { data: 'controlIsDone.value', title: 'Kontroll', render: controlIsDone_input },
-                    ],
-                    "order": [[2, "asc"]],
+                    { data: 'routeName', title: 'Tur' },
+                    { data: 'pinStartTimeString', title: 'Pintid', render: pinstart_render, "visible": false, },
+                    { data: 'carNumber', title: 'Bilnr', render: renderEjSattIfZeroOrEmpty },
+                    { data: 'portNumber', title: 'Port', },
+                    { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toValue },
+                    { data: 'numberOfCustomers', title: 'Kunder' },
+                    { data: 'numberOfColdBoxes.value', title: 'Lådor', render: numberOfColdBoxes_input },
+                    { data: 'restPicking.value', title: 'Restplock', render: restPicking_input },
+                    { data: 'numberOfFrozenBoxes.value', title: 'Frys', render: numberOfFrozenBoxes_input },
+                    { data: 'numberOfBreadBoxes.value', title: 'Bröd', render: numberOfBreadBoxes_input },
+                    { data: 'controlIsDone.value', title: 'Kontroll', render: controlIsDone_input },
+                ],
+                "order": [[2, "asc"]],
 
-                });
-                $('thead th').each(function () {
-                    $(this).addClass("stickyHeader");
-                })
             });
-            function reloadAjax() {
-                table.ajax.reload(null, false);
-            }
-            setInterval(function () {
-                console.log('auto-reloading')
-                table.ajax.reload(null, false);
-            }, 300000);
-        </script>
-    }
+            $('thead th').each(function () {
+                $(this).addClass("stickyHeader");
+            })
+        });
+        function reloadAjax() {
+            table.ajax.reload(null, false);
+        }
+        setInterval(function () {
+            console.log('auto-reloading')
+            table.ajax.reload(null, false);
+        }, 300000);
+    </script>
+}

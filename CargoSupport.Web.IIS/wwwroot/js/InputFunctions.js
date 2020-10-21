@@ -154,10 +154,14 @@ const pinstart_render = function (data, type, full, meta) {
 
 const disabled_checkbox = function (data, type, full, meta) {
     var is_checked = data == true ? "checked" : "";
-    return `<label class="checkbox-label">
-                                <input type="checkbox" onclick="return false" ${is_checked}>
-                                <span class="checkbox-custom rectangular"></span>
-                            </label>`;
+
+    return `<div class="pretty p-icon p-round p-pulse p-jelly p-bigger p-locked">
+                    <input type="checkbox" ${is_checked} />
+                    <div class="state p-success">
+                        <i class="icon mdi mdi-check"></i>
+                        <label></label>
+                    </div>
+                </div>`;
 }
 
 const disabled_textInput = function (data, type, full, meta) {
@@ -272,8 +276,8 @@ function fnExcelReport(tableId) {
 
 $('#downloadPdf').click(function (event) {
     // get size of report page
-    var reportPageHeight = $('#reportPage').innerHeight();
-    var reportPageWidth = $('#reportPage').innerWidth();
+    var reportPageHeight = $('#reportPage').innerHeight() + 500;
+    var reportPageWidth = $('#reportPage').innerWidth() + 500;
 
     // create a new canvas object that we will populate with all other canvas objects
     var pdfCanvas = $('<canvas />').attr({
@@ -289,6 +293,7 @@ $('#downloadPdf').click(function (event) {
     var buffer = 100;
 
     // for each chart.js chart
+    debugger;
     $("canvas").each(function (index) {
         // get the chart height/width
         var canvasHeight = $(this).innerHeight();
@@ -301,13 +306,16 @@ $('#downloadPdf').click(function (event) {
         //}
         //else {
         pdfctx.drawImage($(this)[0], pdfctxX, pdfctxY, canvasWidth, canvasHeight);
-        pdfctxX += canvasWidth + buffer;
+
         //}
 
         // our report page is in a grid pattern so replicate that in the new canvas
         if (index % 2 === 1) {
-            pdfctxX = 0;
+            //pdfctxX = 0;
             pdfctxY += canvasHeight + buffer;
+        }
+        else {
+            pdfctxX += canvasWidth + buffer;
         }
     });
     let from = document.getElementById('calendar-from-graphs-discrete').value;
@@ -325,13 +333,12 @@ $('#downloadPdf').click(function (event) {
             return true;
         }
     };
-    doc.addImage($(pdfCanvas)[0], 'PNG', 0, reportPageHeight - pdfctxX);
-
     doc.fromHTML(elementHTML, 15, 15, {
         'width': 1000,
         'elementHandlers': specialElementHandlers
     });
 
+    doc.addImage($(pdfCanvas)[0], 'PNG', 0, 600);
     // Save the PDF
     doc.save(`${fileName}.pdf`);
 
