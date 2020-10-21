@@ -1,6 +1,7 @@
 ﻿using CargoSupport.Helpers;
 using CargoSupport.Interfaces;
 using CargoSupport.Models.PinModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -16,9 +17,9 @@ namespace CargoSupport.Services
         private readonly PinHelper _ph;
         private Timer _timer;
 
-        public PinUpdateService(IMongoDbService dbService, IConfiguration configuration)
+        public PinUpdateService(IMongoDbService dbService, IConfiguration configuration, IWebHostEnvironment env)
         {
-            this._ph = new PinHelper(dbService, configuration);
+            this._ph = new PinHelper(dbService, configuration, env);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

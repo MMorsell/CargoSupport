@@ -3,6 +3,7 @@ using CargoSupport.Interfaces;
 using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
 using CargoSupport.Models.QuinyxModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
@@ -17,9 +18,9 @@ namespace CargoSupport.Helpers
         private readonly ApiRequestHelper _apiRequestHelper;
         private readonly IMongoDbService _dbService;
 
-        public PinHelper(IMongoDbService dbService, IConfiguration configuration)
+        public PinHelper(IMongoDbService dbService, IConfiguration configuration, IWebHostEnvironment env)
         {
-            _apiRequestHelper = new ApiRequestHelper(configuration);
+            _apiRequestHelper = new ApiRequestHelper(configuration, env);
             _dbService = dbService;
         }
 

@@ -13,6 +13,7 @@ using CargoSupport.Models.DatabaseModels;
 using CargoSupport.Models.PinModels;
 using CargoSupport.ViewModels.Manange;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -28,14 +29,17 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         private readonly IMongoDbService _dbService;
         private readonly IHubContext<ChatHub> _chatHub;
         private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _env;
 
         public ManageController(
             IMongoDbService dbService,
             IHubContext<ChatHub> chatHub,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IWebHostEnvironment env)
         {
             _chatHub = chatHub;
             this._configuration = configuration;
+            this._env = env;
             this._dbService = dbService;
         }
 
@@ -118,7 +122,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
             foreach (var groupOfCustomers in customerListGroupedByDate)
             {
-
                 try
                 {
                     var matchingDbTask = allDbGetTasks
@@ -145,7 +148,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                         .Equals(customer.tracking_number));
                     if (matchingCustomerRecord != null)
                     {
-
                         try
                         {
                             customer.CustomerReportModel = matchingCustomerRecord;
@@ -172,7 +174,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> GetFromPin(PinIdModel model)
         {
-            var ph = new PinHelper(_dbService, _configuration);
+            var ph = new PinHelper(_dbService, _configuration, _env);
             List<PinRouteModel> routes = await ph.RetrieveRoutesFromActualPin(model.PinId);
 
             var anyExistingIdOfRouteInDatabase = await ph.AnyPinRouteModelExistInDatabase(routes);
@@ -202,7 +204,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 return BadRequest($"fromDate is not valid, expecting 2020-01-01, recieved: '{model.Date}'");
             }
 
-            var _ph = new PinHelper(_dbService, _configuration);
+            var _ph = new PinHelper(_dbService, _configuration, _env);
             var existingIds = await _ph.GetAllOrderIdsAsStringForThisDay(date);
 
             foreach (var existingId in existingIds)
@@ -221,7 +223,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> AddResourceRoute()
         {
-            var ph = new PinHelper(_dbService, _configuration);
+            var ph = new PinHelper(_dbService, _configuration, _env);
 
             var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now.AddDays(-1), DateTime.Now.AddDays(2));
 
@@ -264,7 +266,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             DateTime resourceOrderStart = GetLastOrderStart(allRoutesInOrder).Add(new TimeSpan(0, 0, 5, 0, 0));
             DateTime resourceOrderFin = GetLastOrderFin(allRoutesInOrder).Add(new TimeSpan(0, 0, 5, 0, 0));
 
-            var ph = new PinHelper(_dbService, _configuration);
+            var ph = new PinHelper(_dbService, _configuration, _env);
             await ph.InsertNewResourceRoute(
                 $"Resurs {existingRouteInSameOrder.PinRouteModel.ParentOrderName} " +
                 $"{numberOfExistingResourceRoutes + 1}",
@@ -292,7 +294,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> DeleteRoutesByOrderId()
         {
-            var ph = new PinHelper(_dbService, _configuration);
+            var ph = new PinHelper(_dbService, _configuration, _env);
 
             var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
             return View(new OrderOptionViewModel { RoutesToSelectFrom = allSelectOptions });
@@ -328,7 +330,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
 
         public async Task<IActionResult> MoveOrderDateById()
         {
-            var ph = new PinHelper(_dbService, _configuration);
+            var ph = new PinHelper(_dbService, _configuration, _env);
 
             var allSelectOptions = await ph.GetAllUniqueRoutesBetweenDatesWithNames(DateTime.Now.AddDays(-8).SetHour(6), DateTime.Now.AddDays(8).SetHour(6));
             return View(new OrderOptionViewModel { RoutesToSelectFrom = allSelectOptions });

@@ -1,5 +1,7 @@
 ﻿using CargoSupport.Models.PinModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,9 +14,9 @@ namespace CargoSupport.Helpers
 {
     public class ApiRequestHelper
     {
-        private readonly HttpClient client;
+        private readonly HttpClient _client;
 
-        public ApiRequestHelper(IConfiguration Configuration)
+        public ApiRequestHelper(IConfiguration Configuration, IWebHostEnvironment env)
         {
             var proxy = new WebProxy
             {
@@ -23,21 +25,27 @@ namespace CargoSupport.Helpers
                 UseDefaultCredentials = false,
 
                 Credentials = System.Net.CredentialCache.DefaultCredentials
-        };
+            };
 
             var httpClientHandler = new HttpClientHandler
             {
                 Proxy = proxy,
             };
-
-            client = new HttpClient(handler: httpClientHandler);
-            client.DefaultRequestHeaders.Add("X-PINDELIVER-API-KEY", Configuration.GetValue<string>("pinServer"));
-            client.DefaultRequestHeaders.Add("X-PINDELIVER-API-CLIENT-KEY", Configuration.GetValue<string>("pinClient"));
+            if (env.IsDevelopment())
+            {
+                _client = new HttpClient();
+            }
+            else
+            {
+                _client = new HttpClient(handler: httpClientHandler);
+            }
+            _client.DefaultRequestHeaders.Add("X-PINDELIVER-API-KEY", Configuration.GetValue<string>("pinServer"));
+            _client.DefaultRequestHeaders.Add("X-PINDELIVER-API-CLIENT-KEY", Configuration.GetValue<string>("pinClient"));
         }
 
         public async Task<T> GetSingleResult<T>(string url)
         {
-            var response = await client.GetAsync(
+            var response = await _client.GetAsync(
                 url)
                 .ConfigureAwait(false);
             var result = JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
@@ -47,7 +55,7 @@ namespace CargoSupport.Helpers
 
         public async Task<List<T>> GetMultipleResult<T>(string url)
         {
-            var response = await client.GetAsync(
+            var response = await _client.GetAsync(
                 url)
                 .ConfigureAwait(false);
             var results = JsonConvert.DeserializeObject<List<T>>(await response.Content.ReadAsStringAsync());
