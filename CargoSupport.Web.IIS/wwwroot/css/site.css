@@ -301,3 +301,7 @@ body {
         .tab button.active {
             background-color: #ccc;
         }
+
+.nowrap {
+    white-space: nowrap;
+}

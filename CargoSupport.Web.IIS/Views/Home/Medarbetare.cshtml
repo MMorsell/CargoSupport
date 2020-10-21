@@ -17,72 +17,77 @@
                 <span class="bar"></span>
             </div>
         </div>
+    </div>
+    <div class="row">
+        <div id="dataTableTabs" class="tab">
         </div>
-        <div class="row">
-            <div id="dataTableTabs" class="tab">
-            </div>
-        </div>
-        <table id="dataTable" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
+    </div>
+    <div style="width: 100%;">
+        <table id="dataTable" class="table table-striped table-bordered">
             <thead>
             </thead>
         </table>
     </div>
-    @section Scripts
+</div>
+@section Scripts
 {
-        <script src="~/js/UpsertFunctions.js" asp-append-version="true"></script>
-        <script src="~/lib/aspnet/signalr/dist/browser/signalr.js" asp-append-version="true"></script>
-        <script src="~/js/chat.js" asp-append-version="true"></script>
-        <script>
-            $(document).ready(function () {
-                table = $('#dataTable').DataTable({
-                    pageLength: 250,
-                    "ajax": {
-                        "url": '/api/v1/public/GetPublic',
-                        "data": {
-                            "dateString": function () { return formatDate(ajaxDate) }
-                        },
-                        "dataSrc": "",
-                        "complete": function (responseReference, responseText) {
-                            if (responseText === "error") {
-                                toggleConnectStatus('error');
-                            }
-                            else {
-                                tabs = [];
-                                $('#dataTable tr').not(':first').each(function () {
-                                    getGroupFromFirstColumn(this);
-                                });
-                                generateTabs();
-                                toggleConnectStatus('ok');
-                            }
-                        },
-                        "error": function (responseReference, responseText) {
-                            toggleConnectStatus('error');
-                        },
+    <script src="~/js/UpsertFunctions.js" asp-append-version="true"></script>
+    <script src="~/lib/aspnet/signalr/dist/browser/signalr.js" asp-append-version="true"></script>
+    <script src="~/js/chat.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            table = $('#dataTable').DataTable({
+                "aoColumnDefs": [
+                    { "sClass": "nowrap", "aTargets": [1] }
+                ],
+                pageLength: 250,
+                "ajax": {
+                    "url": '/api/v1/public/GetPublic',
+                    "data": {
+                        "dateString": function () { return formatDate(ajaxDate) }
                     },
-                    columns: [
-                        { data: 'routeName', title: 'Turnamn' },
-                        { data: 'driver.fullName', title: 'Lev. Ansvarig' },
-                        { data: 'pinStartTimeString', title: 'Pintid', render: pinstart_render, "visible": false, },
-                        { data: 'carNumber', title: 'Bilnr', render: renderEjSattIfZeroOrEmpty },
-                        { data: 'portNumber', title: 'Port', render: renderEjSattIfZeroOrEmpty },
-                        { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toValue },
-                        { data: 'preRideAnnotation', title: 'Kommentar', render: disabled_fat_textInput },
-                        { data: 'numberOfCustomers', title: 'Kunder' },
-                        { data: 'numberOfColdBoxes', title: 'Lådor', render: hidden_IntIfNull },
-                        { data: 'restPlock', title: 'Restplock', render: disabled_checkbox },
-                        { data: 'numberOfFrozenBoxes', title: 'Frys', render: hidden_IntIfNull },
-                        { data: 'numberOfBreadBoxes', title: 'Bröd', render: hidden_IntIfNull },
-                        { data: 'controlIsDone', title: 'Kontroll', render: disabled_checkbox },
-                    ],
-                    "order": [[2, "asc"]],
-                });
-                $('thead th').each(function () {
-                    $(this).addClass("stickyHeader");
-                })
+                    "dataSrc": "",
+                    "complete": function (responseReference, responseText) {
+                        if (responseText === "error") {
+                            toggleConnectStatus('error');
+                        }
+                        else {
+                            tabs = [];
+                            $('#dataTable tr').not(':first').each(function () {
+                                getGroupFromFirstColumn(this);
+                            });
+                            generateTabs();
+                            toggleConnectStatus('ok');
+                        }
+                    },
+                    "error": function (responseReference, responseText) {
+                        toggleConnectStatus('error');
+                    },
+                },
+                columns: [
+                    { data: 'routeName', title: 'Turnamn' },
+                    { data: 'driver.fullName', title: 'Lev. Ansvarig' },
+                    { data: 'pinStartTimeString', title: 'Pintid', render: pinstart_render, "visible": false, },
+                    { data: 'carNumber', title: 'Bilnr', render: renderEjSattIfZeroOrEmpty },
+                    { data: 'portNumber', title: 'Port', render: renderEjSattIfZeroOrEmpty },
+                    { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toValue },
+                    { data: 'preRideAnnotation', title: 'Kommentar' },
+                    { data: 'numberOfCustomers', title: 'Kunder' },
+                    { data: 'numberOfColdBoxes', title: 'Lådor', render: hidden_IntIfNull },
+                    { data: 'restPlock', title: 'Restplock', render: disabled_checkbox },
+                    { data: 'numberOfFrozenBoxes', title: 'Frys', render: hidden_IntIfNull },
+                    { data: 'numberOfBreadBoxes', title: 'Bröd', render: hidden_IntIfNull },
+                    { data: 'controlIsDone', title: 'Kontroll', render: disabled_checkbox },
+                ],
+                "order": [[2, "asc"]],
             });
-            setInterval(function () {
-                console.log('auto-reloading')
-                table.ajax.reload(null, false);
-            }, 300000);
-        </script>
-    }
+            $('thead th').each(function () {
+                $(this).addClass("stickyHeader");
+            })
+        });
+        setInterval(function () {
+            console.log('auto-reloading')
+            table.ajax.reload(null, false);
+        }, 300000);
+    </script>
+}
