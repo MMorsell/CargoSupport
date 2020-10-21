@@ -112,8 +112,67 @@
             if (validObjects.length === 0) {
                 return '<p>Tomt</p>'
             }
-
             return validObjects.join("");
+        }
+
+        const customerSatisfaction_render = function (data, type, full, meta) {
+            let validObjects = [];
+
+            for (i = 0; i < data.length; i++) {
+                if (data[i].satisfactionNumber !== -1) {
+                    validObjects.push(data[i].satisfactionNumber);
+                }
+            }
+            if (validObjects.length === 0) {
+                return '<p>Tomt</p>'
+            }
+            const totalValue = validObjects.reduce((a, b) => a + b, 0);
+            return `<p>${(totalValue / validObjects.length).toFixed(2)}</p>`;
+        }
+
+        const customerTiming_render = function (data, type, full, meta) {
+            let validObjects = [];
+
+            for (i = 0; i < data.length; i++) {
+                if (data[i].timingNumber !== -1) {
+                    validObjects.push(data[i].timingNumber);
+                }
+            }
+            if (validObjects.length === 0) {
+                return '<p>Tomt</p>'
+            }
+            const totalValue = validObjects.reduce((a, b) => a + b, 0);
+            return `<p>${(totalValue / validObjects.length).toFixed(2)}</p>`;
+        }
+
+        const customerDriver_render = function (data, type, full, meta) {
+            let validObjects = [];
+
+            for (i = 0; i < data.length; i++) {
+                if (data[i].driverNumber !== -1) {
+                    validObjects.push(data[i].driverNumber);
+                }
+            }
+            if (validObjects.length === 0) {
+                return '<p>Tomt</p>'
+            }
+            const totalValue = validObjects.reduce((a, b) => a + b, 0);
+            return `<p>${(totalValue / validObjects.length).toFixed(2)}</p>`;
+        }
+
+        const customerProduce_render = function (data, type, full, meta) {
+            let validObjects = [];
+
+            for (i = 0; i < data.length; i++) {
+                if (data[i].produceNumber !== -1) {
+                    validObjects.push(data[i].produceNumber);
+                }
+            }
+            if (validObjects.length === 0) {
+                return '<p>Tomt</p>'
+            }
+            const totalValue = validObjects.reduce((a, b) => a + b, 0);
+            return `<p>${(totalValue / validObjects.length).toFixed(2)}</p>`;
         }
 
         function reloadGraphs(returnData) {
@@ -476,6 +535,10 @@
                     { data: 'weight', title: 'Vikt' },
                     { data: 'distansInSwedishMiles', title: 'Mil' },
                     { data: 'commentFromTransport', title: 'Kommentar transport' },
+                    { data: 'customerComments', title: 'Snitt nöjdskala', render: customerSatisfaction_render },
+                    { data: 'customerComments', title: 'Snitt leveransen kom i tid', render: customerTiming_render },
+                    { data: 'customerComments', title: 'Snitt bemötande', render: customerDriver_render },
+                    { data: 'customerComments', title: 'Snitt varor', render: customerProduce_render },
                     { data: 'customerComments', title: 'Kundkommentarer', render: customerComments_render },
                     { data: 'resourceRoute', title: 'Resurstur' },
                 ],
