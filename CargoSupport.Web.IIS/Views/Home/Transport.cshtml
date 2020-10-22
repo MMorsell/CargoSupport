@@ -18,10 +18,10 @@
                 <span class="bar"></span>
             </div>
         </div>
-    <button class="btn btn-outline-success" style="margin-left: 20px; margin-top: -3px;" id="btnExport" onclick="fnExcelReport('dataTable');"> Exportera som excel</button>
+        <button class="btn btn-outline-success" style="margin-left: 20px; margin-top: -3px;" id="btnExport" onclick="fnExcelReport('dataTable');"> Exportera som excel</button>
     </div>
-        <div class="row">
-            <div id="dataTableTabs" class="tab">
+    <div class="row">
+        <div id="dataTableTabs" class="tab">
         </div>
     </div>
     <table id="dataTable" class="table table-striped table-bordered" style="width:100%; white-space: nowrap;">
@@ -41,6 +41,7 @@
     <script src="~/js/chat.js" asp-append-version="true"></script>
     <script>
         let table;
+        let currentTab;
         const mainApiEndpoint = '/api/v1/public/GetTransport';
         async function updateRow(thisRef) {
             var dataRef = table.row($(thisRef).parents('tr')).data();

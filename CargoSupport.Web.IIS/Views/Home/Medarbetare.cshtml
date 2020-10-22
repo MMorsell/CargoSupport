@@ -35,6 +35,7 @@
     <script src="~/lib/aspnet/signalr/dist/browser/signalr.js" asp-append-version="true"></script>
     <script src="~/js/chat.js" asp-append-version="true"></script>
     <script>
+        let currentTab;
         $(document).ready(function () {
             table = $('#dataTable').DataTable({
                 "aoColumnDefs": [

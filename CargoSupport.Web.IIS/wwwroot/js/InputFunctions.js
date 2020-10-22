@@ -178,8 +178,8 @@ const disabled_intInput = function (data, type, full, meta) {
 }
 
 const renderEjSattIfZeroOrEmpty = function (data, type, full, meta) {
-    if (data === 0 || data === "0" || data === "") {
-        return '<p>Ej satt</p>'
+    if (data === 0 || data === "0" || data === "" || data === "Ej satt") {
+        return '<p></p>'
     }
     else {
         return '<p>' + data + '</p>';
@@ -188,7 +188,7 @@ const renderEjSattIfZeroOrEmpty = function (data, type, full, meta) {
 
 const hidden_IntIfNull = function (data, type, full, meta) {
     if (data === 0) {
-        return '<p class="" >Ej ifyllt</p>';
+        return '<p class="" ></p>';
     }
     else {
         return '<p class="">' + data + '</p>';
