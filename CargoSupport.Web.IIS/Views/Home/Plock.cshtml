@@ -125,24 +125,24 @@
             var is_checked = data == true ? "checked" : "";
 
             return `<div class="pretty p-icon p-round p-pulse p-jelly p-bigger">
-                            <input type="checkbox" id="restPicking_input" onChange=proptForSignatureBool(this) ${is_checked} />
-                            <div class="state p-success">
-                                <i class="icon mdi mdi-check"></i>
-                                <label></label>
-                            </div>
-                        </div>`;
+                                            <input type="checkbox" id="restPicking_input" onChange=proptForSignatureBool(this) ${is_checked} />
+                                            <div class="state p-success">
+                                                <i class="icon mdi mdi-check"></i>
+                                                <label></label>
+                                            </div>
+                                        </div>`;
         }
 
         const controlIsDone_input = function (data, type, full, meta) {
             var is_checked = data == true ? "checked" : "";
 
             return `<div class="pretty p-icon p-round p-pulse p-jelly p-bigger">
-                            <input type="checkbox" id="controlIsDone_input" onChange=proptForSignatureBool(this) ${is_checked} />
-                            <div class="state p-success">
-                                <i class="icon mdi mdi-check"></i>
-                                <label></label>
-                            </div>
-                        </div>`;
+                                            <input type="checkbox" id="controlIsDone_input" onChange=proptForSignatureBool(this) ${is_checked} />
+                                            <div class="state p-success">
+                                                <i class="icon mdi mdi-check"></i>
+                                                <label></label>
+                                            </div>
+                                        </div>`;
         }
 
         const numberOfBreadBoxes_input = function (data, type, full, meta) {
@@ -260,6 +260,7 @@
             table.ajax.reload(null, false);
         }
         setInterval(function () {
+            toggleConnectStatus('loading');
             console.log('auto-reloading')
             table.ajax.reload(null, false);
         }, 300000);

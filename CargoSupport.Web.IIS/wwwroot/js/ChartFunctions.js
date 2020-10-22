@@ -92,29 +92,29 @@ function hideEverythingButThisClass(className) {
     $(`#dataTable tr`).hide();
     $(`#dataTable tr.${className}`).show();
     $(`#dataTable thead tr`).show();
+    currentTab = `tab-${className}`;
 }
 
 function generateTabs() {
-    let firstTabHasBeenSelected = false;
     var tabDomRef = document.getElementById('dataTableTabs');
     $(tabDomRef).empty();
     if (tabs.includes("Morgon")) {
-        let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('Morgon')">Morgon</button>`);
+        let t = $(`<button class="tablinks" id="tab-Morgon" onclick="hideEverythingButThisClass('Morgon')">Morgon</button>`);
         $(tabDomRef).append(t);
     }
 
     if (tabs.includes("Kväll")) {
-        let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('Kväll')">Kväll</button>`);
+        let t = $(`<button class="tablinks" id="tab-Kväll" onclick="hideEverythingButThisClass('Kväll')">Kväll</button>`);
         $(tabDomRef).append(t);
     }
 
     if (tabs.includes("Hämtas")) {
-        let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('Hämtas')">Hämtas</button>`);
+        let t = $(`<button class="tablinks" id="tab-Hämtas" onclick="hideEverythingButThisClass('Hämtas')">Hämtas</button>`);
         $(tabDomRef).append(t);
     }
 
     if (tabs.includes("Returer")) {
-        let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('Returer')">Returer</button>`);
+        let t = $(`<button class="tablinks" id="tab-Returer" onclick="hideEverythingButThisClass('Returer')">Returer</button>`);
         $(tabDomRef).append(t);
     }
 
@@ -123,14 +123,22 @@ function generateTabs() {
             tabs[i] !== "Kväll" &&
             tabs[i] !== "Hämtas" &&
             tabs[i] !== "Returer") {
-
-            let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('${tabs[i]}')">${tabs[i]}</button>`);
+            let t = $(`<button class="tablinks" id="tab-${tabs[i]}" onclick="hideEverythingButThisClass('${tabs[i]}')">${tabs[i]}</button>`);
             $(tabDomRef).append(t);
         }
     }
     let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('Alla')">Alla</button>`);
     $(tabDomRef).append(t);
-    $(`#dataTableTabs button`).first().click()
+
+    if (currentTab === undefined) {
+        $(`#dataTableTabs button`).first().click()
+
+        currentTab = $(`#dataTableTabs button`).first().attr('id')
+    }
+    else {
+        debugger;
+        $(`#${currentTab}`).click()
+    }
 }
 
 function getGroupFromFirstColumn(thisRef) {

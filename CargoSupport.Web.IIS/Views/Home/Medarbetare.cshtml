@@ -87,6 +87,7 @@
             })
         });
         setInterval(function () {
+            toggleConnectStatus('loading');
             console.log('auto-reloading')
             table.ajax.reload(null, false);
         }, 300000);
