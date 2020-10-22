@@ -257,7 +257,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                 .FirstOrDefault(route => route.PinRouteModel.ParentOrderId
                     .Equals(orderOptionViewModel.SelectedOrderId));
 
-            var numberOfExistingResourceRoutes = routesOfTheDay.Count(route => route.IsResourceRoute &&
+            var numberOfRoutes = routesOfTheDay.Count(route =>
                 route.PinRouteModel.ParentOrderId == orderOptionViewModel.SelectedOrderId);
 
             var allRoutesInOrder = routesOfTheDay.Where(route =>
@@ -266,10 +266,15 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             DateTime resourceOrderStart = GetLastOrderStart(allRoutesInOrder).Add(new TimeSpan(0, 0, 5, 0, 0));
             DateTime resourceOrderFin = GetLastOrderFin(allRoutesInOrder).Add(new TimeSpan(0, 0, 5, 0, 0));
 
+            var routeName = CargoSupport.Helpers.RegexHelper.GetPrefixOfRoute(existingRouteInSameOrder.PinRouteModel.RouteName, numberOfRoutes + 1);
+            if (routeName == null)
+            {
+                routeName = existingRouteInSameOrder.PinRouteModel.ParentOrderName;
+            }
+
             var ph = new PinHelper(_dbService, _configuration, _env);
             await ph.InsertNewResourceRoute(
-                $"Resurs {existingRouteInSameOrder.PinRouteModel.ParentOrderName} " +
-                $"{numberOfExistingResourceRoutes + 1}",
+                $"{routeName} Resurs",
                 existingRouteInSameOrder.DateOfRoute,
                 resourceOrderStart,
                 resourceOrderFin,
