@@ -7,117 +7,120 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-<div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-    <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">
-        <button type="submit" class="btn btn-light" asp-controller="Account" asp-action="LogOff" title="Manage">Logga ut</button>
-    </form>
-    <p class="nav navbar-text navbar-right">Välkommen, @UserManager.FindByIdAsync(User.Identity.GetUserId()).Result.FullName </p>
-    <ul class="navbar-nav flex-grow-1">
-        @if (User.IsInRole(CargoSupport.Constants.MinRoleLevel.Plock))
+    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+        <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">
+            <button type="submit" class="btn btn-light" asp-controller="Account" asp-action="LogOff" title="Manage">Logga ut</button>
+        </form>
+        <p class="nav navbar-text navbar-right">Välkommen, @UserManager.FindByIdAsync(User.Identity.GetUserId()).Result.FullName </p>
+        <ul class="navbar-nav flex-grow-1">
+            @if (User.IsInRole(CargoSupport.Constants.MinRoleLevel.Plock))
             {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Plock">Plock</a>
-        </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Plock">Plock</a>
+                </li>
             }
-        @if (User.IsInRole(CargoSupport.Constants.MinRoleLevel.Medarbetare))
+            @if (User.IsInRole(CargoSupport.Constants.MinRoleLevel.Medarbetare))
             {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Medarbetare">Medarbetare</a>
-        </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Medarbetare">Medarbetare</a>
+                </li>
             }
-        @if (User.IsInRole(CargoSupport.Constants.MinRoleLevel.TransportLedare))
+            @if (User.IsInRole(CargoSupport.Constants.MinRoleLevel.TransportLedare))
             {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Transport">Transportledare</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Medarbetare">Medarbetare</a>
-        </li>
-        <li class="nav-item">
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Admin
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" asp-area="" asp-controller="Car" asp-action="Index">Bilar</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="GetFromPin">Hämta från pin</a>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="UpdatePinDataByOrder">Uppdatera pin-statistik</a>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="DeleteRoutesByOrderId">Radera order</a>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="MoveOrderDateById">Byt dag på order</a>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="RegisterCustomerReports">Ladda upp kundenkät</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="Index">Analysera</a>
-                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="TodayGraphs">Statistik för dagen</a>
-                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="CarStats">Körstatistik bilar</a>
-            </div>
-        </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Transport">Transportledare</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Medarbetare">Medarbetare</a>
+                </li>
+                <li class="nav-item">
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Admin
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" asp-area="" asp-controller="Car" asp-action="Index">Bilar</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="GetFromPin">Hämta från pin</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="UpdatePinDataByOrder">Uppdatera pin-statistik</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="DeleteRoutesByOrderId">Radera order</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="MoveOrderDateById">Byt dag på order</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="RegisterCustomerReports">Ladda upp kundenkät</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="RegisterCustomerServiceReports">Ladda upp kundservice</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="Index">Analysera</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="TodayGraphs">Statistik för dagen</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="CarStats">Körstatistik bilar</a>
+                    </div>
+                </li>
             }
-        @if (User.IsInRole(CargoSupport.Constants.MinRoleLevel.Gruppchef))
+            @if (User.IsInRole(CargoSupport.Constants.MinRoleLevel.Gruppchef))
             {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Transport">Transportledare</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Medarbetare">Medarbetare</a>
-        </li>
-        <li class="nav-item">
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Admin
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" asp-area="" asp-controller="Car" asp-action="Index">Bilar</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="GetFromPin">Hämta från pin</a>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="UpdatePinDataByOrder">Uppdatera pin-statistik</a>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="DeleteRoutesByOrderId">Radera order</a>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="MoveOrderDateById">Byt dag på order</a>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="RegisterCustomerReports">Ladda upp kundenkät</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="Index">Analysera</a>
-                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="DataByGroup">Analysera på anställningsnivå</a>
-                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="TodayGraphs">Statistik för dagen</a>
-                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="CarStats">Körstatistik bilar</a>
-            </div>
-        </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Transport">Transportledare</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Medarbetare">Medarbetare</a>
+                </li>
+                <li class="nav-item">
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Admin
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" asp-area="" asp-controller="Car" asp-action="Index">Bilar</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="GetFromPin">Hämta från pin</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="UpdatePinDataByOrder">Uppdatera pin-statistik</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="DeleteRoutesByOrderId">Radera order</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="MoveOrderDateById">Byt dag på order</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="RegisterCustomerReports">Ladda upp kundenkät</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="RegisterCustomerServiceReports">Ladda upp kundservice</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="Index">Analysera</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="DataByGroup">Analysera på anställningsnivå</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="TodayGraphs">Statistik för dagen</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="CarStats">Körstatistik bilar</a>
+                    </div>
+                </li>
             }
-        @if (User.IsInRole(CargoSupport.Constants.MinRoleLevel.SuperUser))
+            @if (User.IsInRole(CargoSupport.Constants.MinRoleLevel.SuperUser))
             {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Transport">Transportledare</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Plock">Plock</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Medarbetare">Medarbetare</a>
-        </li>
-        <li class="nav-item">
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Admin
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" asp-area="" asp-controller="User" asp-action="Users">Användare</a>
-                <a class="dropdown-item" asp-area="" asp-controller="Car" asp-action="Index">Bilar</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="GetFromPin">Hämta från pin</a>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="UpdatePinDataByOrder">Uppdatera pin-statistik</a>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="DeleteRoutesByOrderId">Radera order</a>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="MoveOrderDateById">Byt dag på order</a>
-                <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="RegisterCustomerReports">Ladda upp kundenkät</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="Index">Analysera</a>
-                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="DataByGroup">Analysera på anställningsnivå</a>
-                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="TodayGraphs">Statistik för dagen</a>
-                <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="CarStats">Körstatistik bilar</a>
-            </div>
-        </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Transport">Transportledare</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Plock">Plock</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Medarbetare">Medarbetare</a>
+                </li>
+                <li class="nav-item">
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Admin
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" asp-area="" asp-controller="User" asp-action="Users">Användare</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="Car" asp-action="Index">Bilar</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="GetFromPin">Hämta från pin</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="UpdatePinDataByOrder">Uppdatera pin-statistik</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="DeleteRoutesByOrderId">Radera order</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="MoveOrderDateById">Byt dag på order</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="RegisterCustomerReports">Ladda upp kundenkät</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="manage" asp-action="RegisterCustomerServiceReports">Ladda upp kundservice</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="Index">Analysera</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="DataByGroup">Analysera på anställningsnivå</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="TodayGraphs">Statistik för dagen</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="Analyze" asp-action="CarStats">Körstatistik bilar</a>
+                    </div>
+                </li>
             }
-    </ul>
-</div>
+        </ul>
+    </div>
 }

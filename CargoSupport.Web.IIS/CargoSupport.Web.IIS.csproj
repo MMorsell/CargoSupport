@@ -25,4 +25,10 @@
     <Folder Include="Models\Auth\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="BackupDatabase.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

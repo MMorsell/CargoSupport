@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Ladda upp kundservice";
+}
+<link rel="stylesheet" href="~/lib/Dropzone/dropzone.min.css" asp-append-version="true" />
+
+<form action="/Manage/UploadCustomerServiceReport" class="dropzone">
+    <div class="dz-message" data-dz-message><span>Dra eller klicka för att ladda upp kundservice online ehl (Excel)</span></div>
+    <div class="fallback">
+        <input name="file" type="file" multiple />
+    </div>
+</form>
+@section Scripts
+{
+    <script src="~/lib/Dropzone/dropzone.min.js" asp-append-version="true"></script>
+}

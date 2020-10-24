@@ -15,6 +15,11 @@ namespace CargoSupport.Services
     {
         private readonly IMongoDatabase _database;
 
+        public MongoDbService(string connectionString, string databaseName)
+        {
+            _database = new MongoClient(connectionString).GetDatabase(databaseName);
+        }
+
         public MongoDbService(string databaseName, IConfiguration configuration)
         {
             _database = new MongoClient(configuration.GetValue<string>("mongoConnection")).GetDatabase(databaseName);
@@ -127,6 +132,17 @@ namespace CargoSupport.Services
         {
             var collection = _database.GetCollection<DataModel>(tableName);
             var result = await collection.Find(_ => _.PinRouteModel.RouteId == pinModel.RouteId).FirstOrDefaultAsync();
+
+            return result;
+        }
+
+        public async Task<DataModel> GetRecordByCustomerId(string tableName, string customerId)
+        {
+            var collection = _database.GetCollection<DataModel>(tableName);
+            var filter = Builders<DataModel>.Filter.ElemMatch(_ => _.PinRouteModel.Customers,
+                customer => customer.tracking_number_splitted == customerId);
+
+            var result = await collection.Find(filter).FirstOrDefaultAsync();
 
             return result;
         }

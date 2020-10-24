@@ -37,5 +37,7 @@ namespace CargoSupport.Interfaces
         Task UpsertDataRecord(string tableName, DataModel record);
 
         Task UpsertMultiplePinRouteModelRecords(string tableName, List<DataModel> pinRouteModels);
+
+        Task<DataModel> GetRecordByCustomerId(string tableName, string customerId);
     }
 }

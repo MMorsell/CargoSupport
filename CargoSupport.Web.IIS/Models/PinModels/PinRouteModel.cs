@@ -84,6 +84,15 @@ namespace CargoSupport.Models.PinModels
                 DateTime.TryParse(ActualRouteStart, out DateTime parsedResult);
                 ActualRouteStartAsDate = parsedResult.AddHours(2);
             }
+
+            foreach (var customer in Customers)
+            {
+                var resArr = customer.tracking_number.Split('-');
+                if (resArr.Length > 1)
+                {
+                    customer.tracking_number_splitted = resArr[1];
+                }
+            }
         }
     }
 
@@ -114,10 +123,12 @@ namespace CargoSupport.Models.PinModels
         public int PositionInRoute { get; set; } = 0;
 
         public string tracking_number { get; set; } = "NO_TRACKINGNUMBER_SET";
+        public string tracking_number_splitted { get; set; } = "NO_tracking_number_splitted";
         public string vehicle_tags { get; set; } = "";
         public string position_lng { get; set; } = "NOT_SET";
         public string position_lat { get; set; } = "NOT_SET";
         public CustomerReportModel CustomerReportModel { get; set; } = new CustomerReportModel();
+        public CustomerServiceModel CustomerServiceModel { get; set; } = new CustomerServiceModel();
 
         [JsonProperty("delivery_info")]
         public PinCustomerDeliveryInfo PinCustomerDeliveryInfo { get; set; }
