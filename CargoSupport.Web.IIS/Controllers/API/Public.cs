@@ -45,7 +45,7 @@ namespace CargoSupport.Web.Controllers.API
             {
                 data = dataBaseResTask.Result,
                 selectValues = driversThatWorksOnThisDateTask.Result,
-                carOptions = carOptionsTask.Result.Where(car => car.CanBeSelected).ToArray()
+                carOptions = carOptionsTask.Result.Where(car => car.CanBeSelected && !car.IsRetired).ToArray()
             });
         }
 

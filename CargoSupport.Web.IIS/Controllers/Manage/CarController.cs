@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using CargoSupport.Interfaces;
 using CargoSupport.Models;
 using CargoSupport.Models.DatabaseModels;
@@ -23,7 +24,7 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
         public async Task<ActionResult> Index()
         {
             var allCars = await _dbService.GetAllRecords<CarModel>(Constants.MongoDb.CarCollectionName);
-            return View(new UpsertCarViewModel() { CurrentCar = new CarModel(), ExistingCars = allCars });
+            return View(new UpsertCarViewModel() { CurrentCar = new CarModel(), ExistingCars = allCars.Where(car => !car.IsRetired).ToList() });
         }
 
         public ActionResult Create()
@@ -87,28 +88,40 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             }
         }
 
-        /*
-         * Will not allow deletions by users for now, saving this if it changes in the future
-         */
-        //// GET: CarController/Delete/5
-        //public ActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
+        // GET: CarController/Delete/5
+        public async Task<ActionResult> DeleteAsync(string id)
+        {
+            var existingCar = await _dbService.GetRecordById<CarModel>(Constants.MongoDb.CarCollectionName, id);
 
-        //// POST: CarController/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Delete(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+            if (existingCar == null)
+            {
+                return NotFound();
+            }
+
+            return View(existingCar);
+        }
+
+        // POST: CarController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteAsync(CarModel newCarModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var existingCar = await _dbService.GetRecordById<CarModel>(Constants.MongoDb.CarCollectionName, newCarModel._Id);
+
+                if (existingCar == null)
+                {
+                    return NotFound();
+                }
+                existingCar.IsRetired = true;
+                await _dbService.UpsertCarRecordById(Constants.MongoDb.CarCollectionName, existingCar);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View("Error", new ErrorViewModel { Message = "Åtgärden misslyckades" });
+            }
+        }
     }
 }

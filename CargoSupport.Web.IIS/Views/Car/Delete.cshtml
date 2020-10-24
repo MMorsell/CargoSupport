@@ -1,0 +1,33 @@
+﻿@model CargoSupport.Models.DatabaseModels.CarModel;
+@{
+    ViewData["Title"] = "Radera bil";
+}
+
+<h4>Är du säker att du vill radera bilen? Detta kan endast återställas av en tekniker</h4>
+<form method="post" enctype="multipart/form-data" asp-action="Delete">
+    <table>
+        <tr>
+            <td><input hidden asp-for="@Model._Id" type="text" /></td>
+        </tr>
+        <tr>
+            <td>Bilens namn eller nummer</td>
+            <td><input readonly asp-for="@Model.Name" type="text" /></td>
+        </tr>
+        <tr>
+            <td>Bilens registeringsnummer</td>
+            <td><input readonly asp-for="@Model.RegistrationNumber" type="text" /></td>
+        </tr>
+        <tr>
+            <td>Maxvikt för bilen</td>
+            <td><input readonly asp-for="@Model.MaxWeight" type="number" /></td>
+        </tr>
+        <tr>
+            <td>Påställd/Kan användas</td>
+            <td><input readonly asp-for="@Model.CanBeSelected" /></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input class="btn btn-outline-danger" type="submit" value="Radera" /></td>
+        </tr>
+    </table>
+</form>

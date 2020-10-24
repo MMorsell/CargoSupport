@@ -20,5 +20,7 @@ namespace CargoSupport.Models.DatabaseModels
 
         [Required]
         public bool CanBeSelected { get; set; }
+
+        public bool IsRetired { get; set; } = false;
     }
 }
