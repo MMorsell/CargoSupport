@@ -422,6 +422,7 @@ namespace CargoSupport.Helpers
                 Parallel.ForEach(routes, route =>
                 {
                     var allCommentsAsList = route.PinRouteModel.Customers.Select(customer => customer.CustomerReportModel);
+                    var allServicesCommentsAsList = route.PinRouteModel.Customers.Select(customer => customer.CustomerServiceModel);
                     resultModels.Add(new SimplifiedRecordsViewModel()
                     {
                         RouteName = route.PinRouteModel.RouteName,
@@ -431,7 +432,8 @@ namespace CargoSupport.Helpers
                         CommentFromTransport = route.PostRideAnnotation,
                         ResourceRoute = route.IsResourceRoute,
                         DateOfRoute = route.DateOfRoute.ToString(@"yyyy-MM-dd"),
-                        CustomerComments = allCommentsAsList.ToArray()
+                        CustomerComments = allCommentsAsList.ToArray(),
+                        ServiceComments = allServicesCommentsAsList.ToArray()
                     });
                 });
 

@@ -101,6 +101,20 @@
             return Math.min.apply(null, this);
         };
 
+        const serviceComments_render = function (data, type, full, meta) {
+            let validObjects = [];
+
+            for (i = 0; i < data.length; i++) {
+                if (data[i].categoryLevelComment !== "Tomt" && data[i].categoryLevelComment !== "") {
+                    validObjects.push(`<p>${data[i].categoryLevelComment}</p>`);
+                }
+            }
+            if (validObjects.length === 0) {
+                return '<p>Tomt</p>'
+            }
+            return validObjects.join("");
+        }
+
         const customerComments_render = function (data, type, full, meta) {
             let validObjects = [];
 
@@ -540,6 +554,7 @@
                     { data: 'customerComments', title: 'Snitt bemötande', render: customerDriver_render },
                     { data: 'customerComments', title: 'Snitt varor', render: customerProduce_render },
                     { data: 'customerComments', title: 'Kundkommentarer', render: customerComments_render },
+                    { data: 'serviceComments', title: 'Servicekommentarer', render: serviceComments_render },
                     { data: 'resourceRoute', title: 'Resurstur' },
                 ],
                 "order": [[1, "desc"]],
