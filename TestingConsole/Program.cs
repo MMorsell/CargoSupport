@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CargoSupport.Models.DatabaseModels;
+using CargoSupport.Services;
+using System;
 
 namespace TestingConsole
 {
@@ -6,10 +8,49 @@ namespace TestingConsole
     {
         private static void Main(string[] args)
         {
-            var date = "2020-08-31 10:25:59";
+            Console.WriteLine("Update started");
+            var dbservice = new MongoDbService("mongodb://localhost:27017", "ICDB");
+            Console.WriteLine("Loading allrecords");
+            var allRecords = dbservice.GetAllRecords<DataModel>(CargoSupport.Constants.MongoDb.OutputScreenCollectionName).Result;
+            Console.WriteLine($"All records loaded, {allRecords.Count}");
+            foreach (var record in allRecords)
+            {
+                foreach (var customer in record.PinRouteModel.Customers)
+                {
+                    var resArr = customer.tracking_number.Split('-');
+                    if (resArr.Length > 1)
+                    {
+                        customer.tracking_number_splitted = resArr[1];
+                    }
+                    else
+                    {
+                        customer.tracking_number_splitted = "NO_tracking_number_splitted";
+                    }
+                }
+            }
+            Console.WriteLine($"Updated all records in memory, starting update");
+            int numberOfErrors = 0;
+            foreach (var record in allRecords)
+            {
+                try
+                {
+                    dbservice.UpsertDataRecord(CargoSupport.Constants.MongoDb.OutputScreenCollectionName, record).Wait();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("ERROR");
+                    numberOfErrors++;
+                }
+            }
+            Console.WriteLine($"Done with update, {numberOfErrors} errors");
+            Console.Read();
+            Console.Read();
+            Console.Read();
+            Console.Read();
+            Console.Read();
+            Console.Read();
 
-            var dateTIme = DateTime.Parse(date);
-            Console.WriteLine();
             //var _dbHelper = new MongoDbHelper(CargoSupport.Constants.MongoDb.DatabaseName);
 
             //DateTime.TryParse("2020-08-29", out DateTime from);
