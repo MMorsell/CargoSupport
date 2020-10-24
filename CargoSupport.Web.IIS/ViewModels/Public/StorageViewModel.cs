@@ -20,7 +20,8 @@ namespace CargoSupport.ViewModels.Public
             List<PickingVerifyIntModel> numberOfColdBoxes,
             List<PickingVerifyBooleanModel> restPicking,
             List<PickingVerifyIntModel> numberOfFrozenBoxes,
-            List<PickingVerifyIntModel> numberOfBreadBoxes)
+            List<PickingVerifyIntModel> numberOfBreadBoxes,
+            bool isExteded)
         {
             _Id = _id;
             PinStartTimeString = pinStartTime.ToString(@"hh\:mm");
@@ -31,7 +32,18 @@ namespace CargoSupport.ViewModels.Public
             LoadingLevel = loadingLevel;
             NumberOfCustomers = numberOfCustomers;
 
-            SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes, controlIsDone);
+            if (isExteded)
+            {
+                ListNumberOfColdBoxes = numberOfColdBoxes;
+                ListRestPicking = restPicking;
+                ListNumberOfFrozenBoxes = numberOfFrozenBoxes;
+                ListNumberOfBreadBoxes = numberOfBreadBoxes;
+                ListControlIsDone = controlIsDone;
+            }
+            else
+            {
+                SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes, controlIsDone);
+            }
         }
 
         [Obsolete("Used only for api")]
@@ -100,6 +112,11 @@ namespace CargoSupport.ViewModels.Public
         public PickingVerifyIntModel NumberOfFrozenBoxes { get; set; }
         public PickingVerifyIntModel NumberOfBreadBoxes { get; set; }
         public PickingVerifyBooleanModel ControlIsDone { get; set; }
+        public List<PickingVerifyIntModel> ListNumberOfColdBoxes { get; set; }
+        public List<PickingVerifyBooleanModel> ListRestPicking { get; set; }
+        public List<PickingVerifyIntModel> ListNumberOfFrozenBoxes { get; set; }
+        public List<PickingVerifyIntModel> ListNumberOfBreadBoxes { get; set; }
+        public List<PickingVerifyBooleanModel> ListControlIsDone { get; set; }
         public string HubId { get; set; }
     }
 }

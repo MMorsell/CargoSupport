@@ -52,7 +52,7 @@
                 object.controlIsDone = newObject["controlIsDone_input"];
                 update = true;
             }
-        } else if (window.location.href.includes('Plock')) {
+        } else if (window.location.href.includes('Plock') && !window.location.href.includes('Plockanalys')) {
             //Plock view only cares about updates with these properties
             if (newObject["numberOfColdBoxes_input"] !== undefined) {
                 object.numberOfColdBoxes.value = newObject["numberOfColdBoxes_input"];
@@ -86,6 +86,9 @@
                 object.loadingLevel = newObject["convert_loadingLevel_toSelectbox"];
                 update = true;
             }
+        } else if (window.location.href.includes('Plockanalys')) {
+            toggleConnectStatus('loading');
+            table.ajax.reload(null, false);
         }
         else {
             //Medarbetare view only cares about updates with these properties

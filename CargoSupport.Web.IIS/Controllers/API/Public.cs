@@ -100,7 +100,22 @@ namespace CargoSupport.Web.Controllers.API
                 return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
             }
 
-            var res = ConvertToStorage(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenCollectionName, date));
+            var res = ConvertToStorage(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenCollectionName, date), false);
+            return Ok(res.Result.ToArray());
+        }
+
+        [HttpGet]
+        [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndUp)]
+        public async Task<ActionResult> GetStorageExtended(string dateString)
+        {
+            DateTime.TryParse(dateString, out DateTime date);
+
+            if (date.ToString(@"yyyy-MM-dd") != dateString)
+            {
+                return BadRequest($"dateString is not valid, expecting 2020-01-01, recieved: '{dateString}'");
+            }
+
+            var res = ConvertToStorage(await _dbService.GetAllRecordsByDate(Constants.MongoDb.OutputScreenCollectionName, date), true);
             return Ok(res.Result.ToArray());
         }
 
@@ -108,12 +123,12 @@ namespace CargoSupport.Web.Controllers.API
         [Authorize(Roles = Constants.MinRoleLevel.PlockAndUp)]
         public async Task<ActionResult> GetStorageSingleRecord(string recordId)
         {
-            var res = await ConvertToStorage(new List<DataModel> { await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenCollectionName, recordId) });
+            var res = await ConvertToStorage(new List<DataModel> { await _dbService.GetRecordById<DataModel>(Constants.MongoDb.OutputScreenCollectionName, recordId) }, false);
             return Ok(res.ToArray());
         }
 
         [Authorize(Roles = Constants.MinRoleLevel.PlockAndUp)]
-        private async Task<List<StorageViewModel>> ConvertToStorage(List<DataModel> allRoutes)
+        private async Task<List<StorageViewModel>> ConvertToStorage(List<DataModel> allRoutes, bool isExtended)
         {
             allRoutes = allRoutes.Where(route => !route.IsResourceRoute).ToList();
             allRoutes = await _quinyxHelper.AddNamesToData(allRoutes);
@@ -133,9 +148,11 @@ namespace CargoSupport.Web.Controllers.API
                     allRoutes[i].NumberOfColdBoxes,
                     allRoutes[i].RestPicking,
                     allRoutes[i].NumberOfFrozenBoxes,
-                    allRoutes[i].NumberOfBreadBoxes
+                    allRoutes[i].NumberOfBreadBoxes,
+                    isExtended
                     ));
             }
+
             return returnModels;
         }
 

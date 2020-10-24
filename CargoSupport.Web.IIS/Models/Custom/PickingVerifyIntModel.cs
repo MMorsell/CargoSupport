@@ -22,7 +22,7 @@ namespace CargoSupport.Models
             _timestamp = DateTime.Now;
         }
 
-        public DateTime _timestamp;
+        public DateTime _timestamp { get; set; }
         public int Value { get; set; } = 0;
         public string Signature { get; set; }
     }
