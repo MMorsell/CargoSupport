@@ -20,6 +20,7 @@ flatpickr('#calendar-from-table-tr', {
     "maxDate": new Date().fp_incr(3),
     defaultDate: new Date(),
     onChange: function (selectedDates, dateStr, instance) {
+        currentTab = undefined;
         ajaxDate = new Date(dateStr);
         reloadDatatableAjax();
     }
@@ -32,6 +33,7 @@ flatpickr('#calendar-from-vanilla', {
     "locale": "sv",
     defaultDate: new Date().fp_incr(-7),
     onChange: function (selectedDates, dateStr, instance) {
+        currentTab = undefined;
         fromDate = moment(dateStr);
         reloadDatatableAjax();
     }
