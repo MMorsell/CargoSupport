@@ -74,7 +74,7 @@
                     { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toValue },
                     { data: 'preRideAnnotation', title: 'Kommentar' },
                     { data: 'numberOfCustomers', title: 'Kunder' },
-                    { data: 'numberOfColdBoxes', title: 'Lådor', render: hidden_IntIfNull },
+                    { data: 'numberOfColdBoxes', title: 'Lådor', render: ok_IfNotNull },
                     { data: 'restPlock', title: 'Restplock', render: disabled_checkbox },
                     { data: 'numberOfFrozenBoxes', title: 'Frys', render: hidden_IntIfNull },
                     { data: 'numberOfBreadBoxes', title: 'Bröd', render: hidden_IntIfNull },

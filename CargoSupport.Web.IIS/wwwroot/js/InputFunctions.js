@@ -195,6 +195,15 @@ const hidden_IntIfNull = function (data, type, full, meta) {
     }
 }
 
+const ok_IfNotNull = function (data, type, full, meta) {
+    if (data === 0) {
+        return '<p class="" ></p>';
+    }
+    else {
+        return '<p>Klart</p>';
+    }
+}
+
 function reloadDatatableAjax() {
     toggleConnectStatus('loading');
     console.log("reloading ajax...");
