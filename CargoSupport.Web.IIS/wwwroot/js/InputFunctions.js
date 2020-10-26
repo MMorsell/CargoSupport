@@ -47,7 +47,7 @@ const preRideInput = function (data, type, full, meta) {
 }
 
 const preRideInput_fat = function (data, type, full, meta) {
-    return '<textarea id="preRideInput" onfocusout=updateRow(this) style="background: white;" class=" form-control" rows="5" cols="50">' + data + '</textarea >';
+    return '<textarea id="preRideInput" onfocusout=updateRow(this) style="background: white;" class=" form-control" rows="2" cols="50">' + data + '</textarea >';
 }
 
 const postRideInput = function (data, type, full, meta) {
@@ -56,7 +56,7 @@ const postRideInput = function (data, type, full, meta) {
 }
 
 const postRideInput_fat = function (data, type, full, meta) {
-    return '<textarea id="postRideInput" onfocusout=updateRow(this) style="background: white;" class=" form-control" rows="5" cols="50">' + data + '</textarea >';
+    return '<textarea id="postRideInput" onfocusout=updateRow(this) style="background: white;" class=" form-control" rows="2" cols="50">' + data + '</textarea >';
 }
 
 const convert_loadingLevel_toSelectbox = function (data, type, full, meta) {

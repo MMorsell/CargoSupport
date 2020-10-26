@@ -184,16 +184,19 @@
             }
 
             var selectBox = [];
-            selectBox.push(
-                `<select data-show-subtext="true" data-width="auto" ${bootstrapSelectDropdownStyleWithLiveSearch} id="driver_select" onChange=updateRow(this)>`
-            );
 
             if (driverObject.id === -1) {
+                selectBox.push(
+                    `<select data-show-subtext="true" data-style="btn-danger" data-width="auto" title="Inget valt" class="selectpicker show-tick" data-live-search="true" id="driver_select" onChange=updateRow(this)>`
+                );
                 selectBox.push(
                     '<option value="-1" selected></option>'
                 );
             }
             else {
+                selectBox.push(
+                    `<select data-show-subtext="true" data-width="auto" ${bootstrapSelectDropdownStyleWithLiveSearch} id="driver_select" onChange=updateRow(this)>`
+                );
                 selectBox.push(
                     '<option value="-1"></option>'
                 );
