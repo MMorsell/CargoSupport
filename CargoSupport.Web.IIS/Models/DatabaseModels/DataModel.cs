@@ -59,7 +59,6 @@ namespace CargoSupport.Models.DatabaseModels
             DateOfRoute = DateOfRoute.ToUniversalTime();
             PinRouteModel.ScheduledRouteStart = PinRouteModel.ScheduledRouteStart.ToUniversalTime();
             PinRouteModel.ScheduledRouteEnd = PinRouteModel.ScheduledRouteEnd.ToUniversalTime();
-            PinRouteModel.ScheduledRouteEnd = PinRouteModel.ScheduledRouteEnd.ToUniversalTime();
 
             if (PinRouteModel.RouteHasStarted && PinRouteModel.ActualRouteStart != null)
             {

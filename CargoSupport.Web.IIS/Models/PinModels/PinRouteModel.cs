@@ -76,12 +76,12 @@ namespace CargoSupport.Models.PinModels
             NumberOfCustomers = Customers.Count;
             int.TryParse(RouteInfoModel.DistanceInMeters, out int result);
             DistanceInMeters = result;
-            ScheduledRouteEnd = ScheduledRouteStart.AddSeconds(double.Parse(RouteInfoModel.duration));
+            ScheduledRouteEnd = ScheduledRouteStart.AddSeconds(double.Parse(RouteInfoModel.duration)).ToUniversalTime();
 
             if (RouteHasStarted && ActualRouteStart != null)
             {
                 DateTime.TryParse(ActualRouteStart, out DateTime parsedResult);
-                ActualRouteStartAsDate = parsedResult;
+                ActualRouteStartAsDate = parsedResult.ToUniversalTime();
             }
 
             foreach (var customer in Customers)
@@ -92,6 +92,8 @@ namespace CargoSupport.Models.PinModels
                     customer.tracking_number_splitted = resArr[1];
                 }
             }
+
+            ScheduledRouteStart = ScheduledRouteStart.ToUniversalTime();
         }
     }
 
