@@ -18,8 +18,8 @@ namespace CargoSupport.ViewModels.Public
             string preRideAnnotation,
             string postRideAnnotation,
             double numberOfCustomers,
-            TimeSpan pinStartTime,
-            TimeSpan pinStopTime,
+            DateTime pinStartTime,
+            DateTime pinStopTime,
             List<PickingVerifyIntModel> numberOfColdBoxes,
             List<PickingVerifyBooleanModel> restPicking,
             List<PickingVerifyIntModel> numberOfFrozenBoxes,
@@ -37,13 +37,28 @@ namespace CargoSupport.ViewModels.Public
             PreRideAnnotation = preRideAnnotation;
             PostRideAnnotation = postRideAnnotation;
             NumberOfCustomers = numberOfCustomers;
-            PinStartTimeString = pinStartTime.ToString(@"hh\:mm");
-            PinEndTimeString = pinStopTime.ToString(@"hh\:mm");
+            PinStartTime = pinStartTime;
+            PinEndTime = pinStopTime;
             IsResourceRoute = isResourceRoute;
             SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes, controlIsDone);
         }
 
-        public TransportViewModel(string _id, string routeName, DriverViewModel driverModel, string carNumberString, int portNumber, LoadingLevel loadingLevel, string preRideAnnotation, double numberOfCustomers, TimeSpan pinStartTime, TimeSpan pinStopTime, List<PickingVerifyIntModel> numberOfColdBoxes, List<PickingVerifyBooleanModel> restPicking, List<PickingVerifyIntModel> numberOfFrozenBoxes, List<PickingVerifyIntModel> numberOfBreadBoxes, List<PickingVerifyBooleanModel> controlIsDone)
+        public TransportViewModel(
+            string _id,
+            string routeName,
+            DriverViewModel driverModel,
+            string carNumberString,
+            int portNumber,
+            LoadingLevel loadingLevel,
+            string preRideAnnotation,
+            double numberOfCustomers,
+            DateTime pinStartTime,
+            DateTime pinStopTime,
+            List<PickingVerifyIntModel> numberOfColdBoxes,
+            List<PickingVerifyBooleanModel> restPicking,
+            List<PickingVerifyIntModel> numberOfFrozenBoxes,
+            List<PickingVerifyIntModel> numberOfBreadBoxes,
+            List<PickingVerifyBooleanModel> controlIsDone)
         {
             _Id = _id;
             RouteName = routeName;
@@ -53,8 +68,8 @@ namespace CargoSupport.ViewModels.Public
             LoadingLevel = loadingLevel;
             PreRideAnnotation = preRideAnnotation;
             NumberOfCustomers = numberOfCustomers;
-            PinStartTimeString = pinStartTime.ToString(@"hh\:mm");
-            PinEndTimeString = pinStopTime.ToString(@"hh\:mm");
+            PinStartTime = pinStartTime;
+            PinEndTime = pinStopTime;
             SetPickingValues(numberOfColdBoxes, restPicking, numberOfFrozenBoxes, numberOfBreadBoxes, controlIsDone);
         }
 
@@ -119,8 +134,8 @@ namespace CargoSupport.ViewModels.Public
         public LoadingLevel LoadingLevel { get; set; }
         public string PreRideAnnotation { get; set; } = "";
         public string PostRideAnnotation { get; set; } = "";
-        public string PinStartTimeString { get; set; }
-        public string PinEndTimeString { get; set; }
+        public DateTime PinStartTime { get; set; }
+        public DateTime PinEndTime { get; set; }
         public double NumberOfCustomers { get; set; }
         public int NumberOfColdBoxes { get; set; }
         public bool RestPlock { get; set; }

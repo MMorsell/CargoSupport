@@ -76,13 +76,12 @@ namespace CargoSupport.Models.PinModels
             NumberOfCustomers = Customers.Count;
             int.TryParse(RouteInfoModel.DistanceInMeters, out int result);
             DistanceInMeters = result;
-            ScheduledRouteEnd = ScheduledRouteStart.AddSeconds(double.Parse(RouteInfoModel.duration)).AddHours(2);
-            ScheduledRouteStart = ScheduledRouteStart.AddHours(2);
+            ScheduledRouteEnd = ScheduledRouteStart.AddSeconds(double.Parse(RouteInfoModel.duration));
 
             if (RouteHasStarted && ActualRouteStart != null)
             {
                 DateTime.TryParse(ActualRouteStart, out DateTime parsedResult);
-                ActualRouteStartAsDate = parsedResult.AddHours(2);
+                ActualRouteStartAsDate = parsedResult;
             }
 
             foreach (var customer in Customers)

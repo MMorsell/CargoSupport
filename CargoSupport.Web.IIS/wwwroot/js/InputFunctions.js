@@ -149,7 +149,9 @@ const convert_loadingLevel_toValue = function (data, type, full, meta) {
 }
 
 const pinstart_render = function (data, type, full, meta) {
-    return '<p>' + data + '-' + full.pinEndTimeString + '<br>' + full.kilos + ' Kilo</p> ';
+    const pinStartTime = new Date(full.pinStartTime);
+    const pinEndTime = new Date(full.pinEndTime);
+    return `<p>${pinStartTime.toLocaleTimeString("sv-SE", { hour: '2-digit', minute: '2-digit' })}-${pinEndTime.toLocaleTimeString("sv-SE", { hour: '2-digit', minute: '2-digit' })}<br>${full.kilos} Kilo</p>`;
 }
 
 const disabled_checkbox = function (data, type, full, meta) {

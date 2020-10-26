@@ -53,5 +53,18 @@ namespace CargoSupport.Models.DatabaseModels
         public List<PickingVerifyIntModel> NumberOfBreadBoxes { get; set; }
         public string PreRideAnnotation { get; set; } = "";
         public string PostRideAnnotation { get; set; } = "";
+
+        public void ConvertAllDatesToUniversalTime()
+        {
+            DateOfRoute = DateOfRoute.ToUniversalTime();
+            PinRouteModel.ScheduledRouteStart = PinRouteModel.ScheduledRouteStart.ToUniversalTime();
+            PinRouteModel.ScheduledRouteEnd = PinRouteModel.ScheduledRouteEnd.ToUniversalTime();
+            PinRouteModel.ScheduledRouteEnd = PinRouteModel.ScheduledRouteEnd.ToUniversalTime();
+
+            if (PinRouteModel.RouteHasStarted && PinRouteModel.ActualRouteStart != null)
+            {
+                PinRouteModel.ActualRouteStartAsDate = PinRouteModel.ActualRouteStartAsDate.ToUniversalTime();
+            }
+        }
     }
 }

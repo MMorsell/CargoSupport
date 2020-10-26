@@ -68,6 +68,12 @@ namespace CargoSupport.Helpers
                         Driver = new QuinyxModel()
                     });
                 }
+
+                foreach (var dataModel in dbModelCollection)
+                {
+                    dataModel.ConvertAllDatesToUniversalTime();
+                }
+
                 await _dbService.InsertMultipleRecords(Constants.MongoDb.OutputScreenCollectionName, dbModelCollection);
             }
             catch (Exception ex)
@@ -87,6 +93,7 @@ namespace CargoSupport.Helpers
                     if (existingRecord != null)
                     {
                         existingRecord.PinRouteModel = pinModel;
+                        existingRecord.ConvertAllDatesToUniversalTime();
                         await _dbService.UpsertDataRecord(Constants.MongoDb.OutputScreenCollectionName, existingRecord);
                     }
                 }

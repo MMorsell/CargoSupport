@@ -9,8 +9,8 @@ namespace CargoSupport.ViewModels.Public
     {
         public StorageViewModel(
             string _id,
-            TimeSpan pinStartTime,
-            TimeSpan pinStopTime,
+            DateTime pinStartTime,
+            DateTime pinStopTime,
             string routeName,
             string carNumberString,
             int portNumber,
@@ -24,8 +24,8 @@ namespace CargoSupport.ViewModels.Public
             bool isExteded)
         {
             _Id = _id;
-            PinStartTimeString = pinStartTime.ToString(@"hh\:mm");
-            PinEndTimeString = pinStopTime.ToString(@"hh\:mm");
+            PinStartTime = pinStartTime;
+            PinEndTime = pinStopTime;
             RouteName = routeName;
             CarNumber = carNumberString;
             PortNumber = portNumber;
@@ -100,8 +100,8 @@ namespace CargoSupport.ViewModels.Public
         }
 
         public string _Id { get; set; }
-        public string PinStartTimeString { get; set; }
-        public string PinEndTimeString { get; set; }
+        public DateTime PinStartTime { get; set; }
+        public DateTime PinEndTime { get; set; }
         public string RouteName { get; set; }
         public string CarNumber { get; set; }
         public int PortNumber { get; set; }
