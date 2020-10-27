@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-<div class="container-fluid">
+<div id="main-containter" class="container-fluid">
     <div style="float: right;">
         <h3 style="display: inline-block;">Status</h3>
         <img id="errorSymbol" style="display:none" src="~/img/svg/errorSymbol.svg" />
@@ -125,24 +125,24 @@
             var is_checked = data == true ? "checked" : "";
 
             return `<div class="pretty p-icon p-round p-pulse p-jelly p-bigger">
-                                            <input type="checkbox" id="restPicking_input" onChange=proptForSignatureBool(this) ${is_checked} />
-                                            <div class="state p-success">
-                                                <i class="icon mdi mdi-check"></i>
-                                                <label></label>
-                                            </div>
-                                        </div>`;
+                                                <input type="checkbox" id="restPicking_input" onChange=proptForSignatureBool(this) ${is_checked} />
+                                                <div class="state p-success">
+                                                    <i class="icon mdi mdi-check"></i>
+                                                    <label></label>
+                                                </div>
+                                            </div>`;
         }
 
         const controlIsDone_input = function (data, type, full, meta) {
             var is_checked = data == true ? "checked" : "";
 
             return `<div class="pretty p-icon p-round p-pulse p-jelly p-bigger">
-                                            <input type="checkbox" id="controlIsDone_input" onChange=proptForSignatureBool(this) ${is_checked} />
-                                            <div class="state p-success">
-                                                <i class="icon mdi mdi-check"></i>
-                                                <label></label>
-                                            </div>
-                                        </div>`;
+                                                <input type="checkbox" id="controlIsDone_input" onChange=proptForSignatureBool(this) ${is_checked} />
+                                                <div class="state p-success">
+                                                    <i class="icon mdi mdi-check"></i>
+                                                    <label></label>
+                                                </div>
+                                            </div>`;
         }
 
         const numberOfBreadBoxes_input = function (data, type, full, meta) {
@@ -226,6 +226,8 @@
                             generateTabs();
                             $('.selectpicker').selectpicker();
                             toggleConnectStatus('ok');
+                            $('#main-containter').css("height", `${$('#main-containter').height()}px`)
+
                         }
                     },
                     "error": function (responseReference, responseText) {

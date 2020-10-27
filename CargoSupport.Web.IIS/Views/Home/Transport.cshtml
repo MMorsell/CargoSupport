@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-<div class="container-fluid">
+<div id="main-containter" class="container-fluid">
     <iframe id="txtArea1" style="display:none"></iframe>
     <div style="float: right;">
         <h3 style="display: inline-block;">Status</h3>
@@ -239,6 +239,8 @@
                             generateTabs();
                             $('.selectpicker').selectpicker();
                             toggleConnectStatus('ok');
+
+                            $('#main-containter').css("height", `${$('#main-containter').height()}px`)
                         }
                     },
                     "error": function (responseReference, responseText) {

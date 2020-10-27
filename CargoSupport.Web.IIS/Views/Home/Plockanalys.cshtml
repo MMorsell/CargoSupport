@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Plockanalys";
 }
-<div class="container-fluid">
+<div id="main-containter" class="container-fluid">
     <div style="float: right;">
         <h3 style="display: inline-block;">Status</h3>
         <img id="errorSymbol" style="display:none" src="~/img/svg/errorSymbol.svg" />
@@ -75,6 +75,8 @@
                             generateTabs();
                             $('.selectpicker').selectpicker();
                             toggleConnectStatus('ok');
+                            $('#main-containter').css("height", `${$('#main-containter').height()}px`)
+
                         }
                     },
                     "error": function (responseReference, responseText) {
