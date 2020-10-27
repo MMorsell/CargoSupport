@@ -127,7 +127,7 @@ function generateTabs() {
             $(tabDomRef).append(t);
         }
     }
-    let t = $(`<button class="tablinks" onclick="hideEverythingButThisClass('Alla')">Alla</button>`);
+    let t = $(`<button class="tablinks" id="tab-Alla" onclick="hideEverythingButThisClass('Alla')">Alla</button>`);
     $(tabDomRef).append(t);
 
     if (currentTab === undefined) {
