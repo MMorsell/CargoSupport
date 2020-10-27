@@ -259,9 +259,41 @@ function fnExcelReport(tableId) {
     tab = document.getElementById(tableId); // id of table
 
     for (j = 0; j < tab.rows.length; j++) {
-        tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
-        //tab_text=tab_text+"</tr>";
+        if ($(tab.rows[j]).is(":visible")) {
+            tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+        }
     }
+
+    var $dataWrapper = $("<div>");
+    $dataWrapper.html(tab_text);
+
+    //Replace select with value of select
+    $dataWrapper.find('select').each(function () {
+        var innerValue = $('this option:selected').text();
+        var convertedHtml = "<p>" + innerValue + "</p>";
+        $(this).after(convertedHtml);
+        $(this).detach();
+    });
+
+    //Replace textarea with value
+    $dataWrapper.find('textarea').each(function () {
+        var innerValue = $(this).text();
+        var convertedHtml = "<p>" + innerValue + "</p>";
+        $(this).after(convertedHtml);
+        $(this).detach();
+    });
+
+    //Replace boolean with ja or empty
+    $dataWrapper.find(':checkbox').each(function () {
+        if ($(this).is(":checked")) {
+            var innerValue = "Ja";
+            var convertedHtml = "<p>" + innerValue + "</p>";
+            $(this).after(convertedHtml);
+        }
+        $(this).detach();
+    });
+
+    tab_text = $dataWrapper[0].innerHTML;
 
     tab_text = tab_text + "</table>";
     tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
