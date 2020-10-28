@@ -269,6 +269,11 @@ function fnExcelReport(tableId) {
     var $dataWrapper = $("<div>");
     $dataWrapper.html(tab_text);
 
+    //Remove all line break
+    $dataWrapper.find('br').each(function () {
+        $(this).detach();
+    });
+
     //Replace select with value of select
     $dataWrapper.find('select').each(function () {
         var innerValue = $('this option:selected').text();
