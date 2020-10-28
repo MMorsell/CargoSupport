@@ -199,7 +199,7 @@ const hidden_IntIfNull = function (data, type, full, meta) {
 
 const ok_IfNotNull = function (data, type, full, meta) {
     if (data === 0) {
-        return '<p class="" ></p>';
+        return '<p></p>';
     }
     else {
         return '<p>Klart</p>';
