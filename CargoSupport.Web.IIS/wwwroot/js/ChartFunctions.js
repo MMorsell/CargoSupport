@@ -93,6 +93,7 @@ function hideEverythingButThisClass(className) {
     $(`#dataTable tr.${className}`).show();
     $(`#dataTable thead tr`).show();
     currentTab = `tab-${className}`;
+    $('#main-containter').css("height", `${$('#dataTable').height() + 250}px`)
 }
 
 function generateTabs() {
