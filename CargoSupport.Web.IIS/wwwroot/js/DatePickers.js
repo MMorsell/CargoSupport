@@ -118,7 +118,6 @@ flatpickr('#calendar-from-graphs-discrete', {
  */
 flatpickr('#calendar-to-graphs-discrete', {
     "locale": "sv",
-    "maxDate": new Date(),
     defaultDate: new Date(),
     onChange: function (selectedDates, dateStr, instance) {
         toDate = moment(dateStr, timeFormat);

@@ -6,6 +6,7 @@ namespace CargoSupport.ViewModels.Analyze
     {
         public string RouteName { get; set; }
         public string DateOfRoute { get; set; }
+        public string StartTimeDiff { get; set; }
         public double NumberOfCustomers { get; set; } = 0;
         public double Weight { get; set; } = 0;
         public double DistansInSwedishMiles { get; set; } = 0;

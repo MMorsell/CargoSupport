@@ -426,6 +426,7 @@ namespace CargoSupport.Helpers
                     resultModels.Add(new SimplifiedRecordsViewModel()
                     {
                         RouteName = route.PinRouteModel.RouteName,
+                        StartTimeDiff = (route.PinRouteModel.ScheduledRouteStart - route.PinRouteModel.ActualRouteStartAsDate).ToString(),
                         NumberOfCustomers = route.PinRouteModel.NumberOfCustomers,
                         Weight = route.PinRouteModel.Weight,
                         DistansInSwedishMiles = Math.Round((route.PinRouteModel.DistanceInMeters / 10000), 2),
