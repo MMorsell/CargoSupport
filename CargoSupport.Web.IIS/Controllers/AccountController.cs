@@ -616,6 +616,11 @@ namespace CargoSupport.Web.IIS.Controllers
                 return RedirectToAction(nameof(HomeController.Plock), "Home");
             }
 
+            if (await _userManager.IsInRoleAsync(currentUser, Constants.MinRoleLevel.PlockAnalys))
+            {
+                return RedirectToAction(nameof(HomeController.Plockanalys), "Home");
+            }
+
             if (await _userManager.IsInRoleAsync(currentUser, Constants.MinRoleLevel.Medarbetare))
             {
                 return RedirectToAction(nameof(HomeController.Medarbetare), "Home");

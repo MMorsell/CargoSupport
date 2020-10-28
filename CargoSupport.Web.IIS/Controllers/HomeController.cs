@@ -20,7 +20,7 @@ namespace CargoSupport.Web.IIS.Controllers
             return View();
         }
 
-        [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndUp)]
+        [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndPlockAnalys)]
         public IActionResult Plockanalys()
         {
             return View();

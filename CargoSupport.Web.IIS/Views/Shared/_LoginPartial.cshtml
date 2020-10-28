@@ -13,6 +13,12 @@
         </form>
         <p class="nav navbar-text navbar-right">Välkommen, @UserManager.FindByIdAsync(User.Identity.GetUserId()).Result.FullName </p>
         <ul class="navbar-nav flex-grow-1">
+            @if (User.IsInRole(CargoSupport.Constants.MinRoleLevel.PlockAnalys))
+            {
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Plockanalys">Plockanalys</a>
+                </li>
+            }
             @if (User.IsInRole(CargoSupport.Constants.MinRoleLevel.Plock))
             {
                 <li class="nav-item">

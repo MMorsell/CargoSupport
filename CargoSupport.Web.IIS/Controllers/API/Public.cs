@@ -105,7 +105,7 @@ namespace CargoSupport.Web.Controllers.API
         }
 
         [HttpGet]
-        [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndUp)]
+        [Authorize(Roles = Constants.MinRoleLevel.SuperUserAndPlockAnalys)]
         public async Task<ActionResult> GetStorageExtended(string dateString)
         {
             DateTime.TryParse(dateString, out DateTime date);
