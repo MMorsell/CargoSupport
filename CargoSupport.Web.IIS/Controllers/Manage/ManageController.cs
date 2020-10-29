@@ -47,6 +47,24 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> GetFromPin(PinIdModel model)
+        {
+            var ph = new PinHelper(_dbService, _configuration, _env);
+            List<PinRouteModel> routes = await ph.RetrieveRoutesFromActualPin(model.PinId);
+
+            var anyExistingIdOfRouteInDatabase = await ph.AnyPinRouteModelExistInDatabase(routes);
+
+            if (anyExistingIdOfRouteInDatabase != 0)
+            {
+                return BadRequest($"This order has already been downloaded from Pin");
+            }
+            await ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes);
+            await _chatHub.Clients.All.SendAsync("ReloadDataTable");
+            return RedirectToAction(nameof(HomeController.Transport), "Home");
+        }
+
         public ActionResult RegisterCustomerReports(object file)
         {
             return View();
@@ -254,24 +272,6 @@ namespace CargoSupport.Web.IIS.Controllers.Manage
                     $"with comment '{notMatchedCustomerRecordUpserts.Comment}'. " +
                     $"Has every order on day '{notMatchedCustomerRecordUpserts.DateOfRoute.ToLongDateString()}' been retrieved?");
             }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> GetFromPin(PinIdModel model)
-        {
-            var ph = new PinHelper(_dbService, _configuration, _env);
-            List<PinRouteModel> routes = await ph.RetrieveRoutesFromActualPin(model.PinId);
-
-            var anyExistingIdOfRouteInDatabase = await ph.AnyPinRouteModelExistInDatabase(routes);
-
-            if (anyExistingIdOfRouteInDatabase != 0)
-            {
-                return BadRequest($"This order has already been downloaded from Pin");
-            }
-            await ph.PopulateRoutesWithDriversAndSaveResultToDatabase(routes);
-            await _chatHub.Clients.All.SendAsync("ReloadDataTable");
-            return RedirectToAction(nameof(HomeController.Transport), "Home");
         }
 
         public IActionResult UpdatePinDataByOrder()
