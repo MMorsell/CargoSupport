@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using CargoSupport.Interfaces;
+using CargoSupport.Helpers;
 
 namespace CargoSupport.Web.IIS.Controllers.API
 {
@@ -65,7 +66,12 @@ namespace CargoSupport.Web.IIS.Controllers.API
             List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
 
             var res = _dataConversionHelper.ConvertDataToCarStatisticsModel(analyzeModels);
-            return Ok(res);
+            return Ok(new ReturnModel { data = res });
+        }
+
+        public class ReturnModel
+        {
+            public DataConversionHelper.CarStatisticsModel[] data { get; set; }
         }
 
         [HttpGet]
