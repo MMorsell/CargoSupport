@@ -223,6 +223,50 @@ namespace CargoSupport.Helpers
             }
         }
 
+        public async Task<List<DataModel>> AddNamesToData(Task<List<DataModel>> dataRetrievalTask)
+        {
+            try
+            {
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("Content-Type", "text/xml");
+                request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
+                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
+                IRestResponse response = await _client.ExecuteAsync(request);
+
+                XDocument doc = XDocument.Parse(response.Content);
+
+                var extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
+                {
+                    Id = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "id"),
+                    GivenName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "givenName"),
+                    FamilyName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "familyName"),
+                    StaffCat = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "staffCat"),
+                    StaffCatName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "staffCatName"),
+                    Section = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "section"),
+                    SectionName = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "sectionName"),
+                    ReportingTo = (string)y.Elements().FirstOrDefault(z => z.Name.LocalName == "reportingTo"),
+                    Active = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "active"),
+                }).ToList();
+
+                var dataRes = await dataRetrievalTask;
+                foreach (var dataModel in dataRes)
+                {
+                    var extendedInfo = extendedInformation.FirstOrDefault(info => info.Id.Equals(dataModel.Driver.Id));
+
+                    if (extendedInfo != null)
+                    {
+                        dataModel.Driver.ExtendedInformationModel = extendedInfo;
+                    }
+                }
+                return dataRes;
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "Exception in function AddNamesToData");
+                return new List<DataModel>();
+            }
+        }
+
         public async Task<List<DataModel>> AddNamesToData(List<DataModel> Data)
         {
             try

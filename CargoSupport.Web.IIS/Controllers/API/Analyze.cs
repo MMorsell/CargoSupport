@@ -34,8 +34,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
                 return BadRequest(errorMessage);
             }
 
-            List<DataModel> analyzeModels = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
-            analyzeModels = await _qh.AddNamesToData(analyzeModels);
+            var analyzeModels = await _qh.AddNamesToData(_dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to));
             var res = _dataConversionHelper.ConvertDataModelsToSlimViewModels(analyzeModels);
             return Ok(res);
         }
@@ -110,13 +109,13 @@ namespace CargoSupport.Web.IIS.Controllers.API
 
             if (sectionId != null)
             {
-                var matchingRecordsInDatabase = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
-                var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
+                var recordsWithDriverNames = await _qh.AddNamesToData(_dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to));
 
                 var matchingRecordsBySectionId = recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.Section == sectionId).ToList();
 
                 if (staffCatId == 28899)
                 {
+                    //user has selected an Internal group
                     var res = _dataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId);
                     return Ok(res);
                 }
@@ -132,8 +131,8 @@ namespace CargoSupport.Web.IIS.Controllers.API
             }
             else
             {
-                var matchingRecordsInDatabase = await _dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to);
-                var recordsWithDriverNames = await _qh.AddNamesToData(matchingRecordsInDatabase);
+                //no group has been chosen, display all groups
+                var recordsWithDriverNames = await _qh.AddNamesToData(_dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to));
 
                 var res = _dataConversionHelper.ConvertDatRowsToBossGroup(recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null).ToList());
                 return Ok(res);

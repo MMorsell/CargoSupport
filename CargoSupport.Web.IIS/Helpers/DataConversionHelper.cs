@@ -228,6 +228,9 @@ namespace CargoSupport.Helpers
                             //Number of deliveries made before estimated time +-0 minutes
                             todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer));
 
+                            //Number of customer service models
+                            todayGraphsModel.NumberOfCustomerServiceReports = allCustomerWhereDeliveryHasBeenDone.Count(customer => customer.CustomerServiceModel.Number != "");
+
                             var allHoursDedicatedOnRoutes = driverGroup.Sum(route => (double)route.Driver.hours);
                             if (allHoursDedicatedOnRoutes <= 0)
                             {
@@ -372,6 +375,9 @@ namespace CargoSupport.Helpers
 
                         //Number of deliveries made before estimated time +-0 minutes
                         todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer));
+
+                        //Number of customer service models
+                        todayGraphsModel.NumberOfCustomerServiceReports = allCustomerWhereDeliveryHasBeenDone.Count(customer => customer.CustomerServiceModel.Number != "");
 
                         if (todayGraphsModel.NumberOfValidDeliveries > 0)
                         {

@@ -10,6 +10,8 @@ namespace CargoSupport.Interfaces
     {
         Task<List<DataModel>> AddNamesToData(List<DataModel> Data);
 
+        Task<List<DataModel>> AddNamesToData(Task<List<DataModel>> dataRetrievalTask);
+
         Task<List<QuinyxModel>> GetAllDriversSorted(DateTime date, bool clearNames = true);
 
         Task<QuinyxModel[]> GetAllDriversSortedToArray(DateTime date, bool clearNames = true);

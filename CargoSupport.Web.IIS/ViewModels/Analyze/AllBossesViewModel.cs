@@ -6,6 +6,7 @@
         public int StaffCatId { get; set; }
         public int SectionId { get; set; }
         public int DriverId { get; set; } = 0;
+        public int NumberOfCustomerServiceReports { get; set; }
         public double NumberOfValidDeliveries { get; set; }
         public double NumberOfValidDeliveriesLeft { get; set; }
         public double CustomersWithinTimeSlot { get; set; }
