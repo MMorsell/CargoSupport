@@ -375,7 +375,6 @@ $('#downloadPdf').click(function (event) {
 
     document.getElementById('mainName').innerText = oldValue + ', ' + from + ' till ' + to;
     // create new pdf and add our new canvas as an image
-    //var pdf = new jsPDF('l', 'pt', [reportPageWidth, reportPageHeight]);
     var doc = new jsPDF('l', 'pt', [reportPageWidth, reportPageHeight]);
     var elementHTML = $('#reportPage').html();
     var specialElementHandlers = {
@@ -388,7 +387,7 @@ $('#downloadPdf').click(function (event) {
         'elementHandlers': specialElementHandlers
     });
 
-    doc.addImage($(pdfCanvas)[0], 'PNG', 0, 600);
+    doc.addImage($(pdfCanvas)[0], 'PNG', 0, reportPageHeight - pdfctxY - 200);
     // Save the PDF
     doc.save(`${fileName}.pdf`);
 
