@@ -304,6 +304,10 @@ namespace CargoSupport.Helpers
                         //Number of deliveries made before estimated time +-0 minutes
                         innerTodayGraphsModel.CustomersBeforeEstimatedTime = innerAllCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer));
 
+                        //Number of customer service models
+                        innerTodayGraphsModel.NumberOfCustomerServiceReports = innerAllCustomerWhereDeliveryHasBeenDone.Count(customer => customer.CustomerServiceModel.Number != "");
+
+
                         var allHoursDedicatedOnRoutes = innerDriverGroup.Sum(route => (double)route.Driver.hours);
                         if (allHoursDedicatedOnRoutes <= 0)
                         {
