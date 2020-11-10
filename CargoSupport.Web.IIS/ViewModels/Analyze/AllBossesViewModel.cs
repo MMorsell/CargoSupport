@@ -1,4 +1,6 @@
-﻿namespace CargoSupport.ViewModels.Analyze
+﻿using CargoSupport.Models;
+
+namespace CargoSupport.ViewModels.Analyze
 {
     public class AllBossesViewModel
     {
@@ -16,5 +18,6 @@
         public double percentageWithin5MinOfTimeSlot { get; set; }
         public double percentageWithin15MinOfCustomerEstimatedTime { get; set; }
         public double CustomersDividedByWorkHours { get; set; }
+        public CustomerReportModel[] CustomerComments { get; set; } = new CustomerReportModel[] { new CustomerReportModel { Comment = "Tomt" } };
     }
 }

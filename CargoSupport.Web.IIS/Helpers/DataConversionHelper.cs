@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using CargoSupport.Models.PinModels;
 using CargoSupport.Interfaces;
 using Serilog;
+using CargoSupport.Models;
 
 namespace CargoSupport.Helpers
 {
@@ -204,9 +205,11 @@ namespace CargoSupport.Helpers
                     }
                     else
                     {
+                        var allCommentsAsList = new List<CustomerReportModel>();
                         foreach (var route in driverGroup)
                         {
                             allCustomerWhereDeliveryHasBeenDone.AddRange(route.PinRouteModel.Customers.Where(customer => customer.PinCustomerDeliveryInfo.time_handled != null));
+                            allCommentsAsList.AddRange(route.PinRouteModel.Customers.Select(customer => customer.CustomerReportModel));
                         }
                         if (allCustomerWhereDeliveryHasBeenDone.Count > 0)
                         {
@@ -256,6 +259,7 @@ namespace CargoSupport.Helpers
                             todayGraphsModel.LabelTitle = listOfGroup[0].Driver.ExtendedInformationModel.StaffCatName;
                             todayGraphsModel.StaffCatId = listOfGroup[0].Driver.ExtendedInformationModel.StaffCat;
                             todayGraphsModel.SectionId = listOfGroup[0].Driver.ExtendedInformationModel.Section;
+                            todayGraphsModel.CustomerComments = allCommentsAsList.ToArray();
                             resultModels.Add(todayGraphsModel);
                         }
                     }
@@ -279,10 +283,12 @@ namespace CargoSupport.Helpers
                 {
                     var innerAllCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
                     var innerTodayGraphsModel = new AllBossesViewModel();
+                    var innerAllCommentsAsList = new List<CustomerReportModel>();
 
                     foreach (var route in innerDriverGroup)
                     {
                         innerAllCustomerWhereDeliveryHasBeenDone.AddRange(route.PinRouteModel.Customers.Where(customer => customer.PinCustomerDeliveryInfo.time_handled != null));
+                        innerAllCommentsAsList.AddRange(route.PinRouteModel.Customers.Select(customer => customer.CustomerReportModel));
                     }
                     if (innerAllCustomerWhereDeliveryHasBeenDone.Count > 0)
                     {
@@ -306,7 +312,6 @@ namespace CargoSupport.Helpers
 
                         //Number of customer service models
                         innerTodayGraphsModel.NumberOfCustomerServiceReports = innerAllCustomerWhereDeliveryHasBeenDone.Count(customer => customer.CustomerServiceModel.Number != "");
-
 
                         var allHoursDedicatedOnRoutes = innerDriverGroup.Sum(route => (double)route.Driver.hours);
                         if (allHoursDedicatedOnRoutes <= 0)
@@ -333,6 +338,7 @@ namespace CargoSupport.Helpers
                         innerTodayGraphsModel.LabelTitle = listOfGroup[0].Driver.ExtendedInformationModel.SectionName;
                         innerTodayGraphsModel.StaffCatId = listOfGroup[0].Driver.ExtendedInformationModel.StaffCat;
                         innerTodayGraphsModel.SectionId = listOfGroup[0].Driver.ExtendedInformationModel.Section;
+                        innerTodayGraphsModel.CustomerComments = innerAllCommentsAsList.ToArray();
                         resultModels.Add(innerTodayGraphsModel);
                     }
                 });
@@ -356,9 +362,11 @@ namespace CargoSupport.Helpers
                     var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
                     var todayGraphsModel = new AllBossesViewModel();
 
+                    var allCommentsAsList = new List<CustomerReportModel>();
                     foreach (var route in group)
                     {
                         allCustomerWhereDeliveryHasBeenDone.AddRange(route.PinRouteModel.Customers.Where(customer => customer.PinCustomerDeliveryInfo.time_handled != null));
+                        allCommentsAsList.AddRange(route.PinRouteModel.Customers.Select(customer => customer.CustomerReportModel));
                     }
                     if (allCustomerWhereDeliveryHasBeenDone.Count > 0)
                     {
@@ -395,6 +403,7 @@ namespace CargoSupport.Helpers
                         todayGraphsModel.DriverId = groupAsList[0].Driver.Id;
                         todayGraphsModel.StaffCatId = groupAsList[0].Driver.ExtendedInformationModel.StaffCat;
                         todayGraphsModel.SectionId = groupAsList[0].Driver.ExtendedInformationModel.Section;
+                        todayGraphsModel.CustomerComments = allCommentsAsList.ToArray();
                         resultModels.Add(todayGraphsModel);
                     }
                 });
