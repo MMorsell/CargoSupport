@@ -64,11 +64,16 @@
         }
 
         function colorcolumns() {
-            colorColumnDependingOnValue(4, true);
-            colorColumnDependingOnValue(5, false);
-            colorColumnDependingOnValue(6, false);
-            colorColumnDependingOnValue(7, true);
-            colorColumnDependingOnValue(8, true);
+            try {
+                colorColumnDependingOnValue(4, true);
+                colorColumnDependingOnValue(5, true);
+                colorColumnDependingOnValue(6, false);
+                colorColumnDependingOnValue(7, false);
+                colorColumnDependingOnValue(8, true);
+            } catch (e) {
+                console.log(e);
+            }
+
         }
 
         function getMaxValue(columnIndex) {
@@ -165,6 +170,10 @@
                     { data: 'customersBeforeEstimatedTime', title: 'Före beräknad tid -15' },
                     { data: 'percentageWithin5MinOfTimeSlot', title: 'Procent inom tidsfönster +-5' },
                     { data: 'percentageWithin15MinOfCustomerEstimatedTime', title: 'Procent inom beräknad leveranstid +-15' },
+                    { data: 'customerComments', title: 'Snitt nöjdskala', render: customerSatisfaction_render },
+                    { data: 'customerComments', title: 'Snitt leveransen kom i tid', render: customerTiming_render },
+                    { data: 'customerComments', title: 'Snitt bemötande', render: customerDriver_render },
+                    { data: 'customerComments', title: 'Snitt varor', render: customerProduce_render },
                 ]
             });
 
