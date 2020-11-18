@@ -14,6 +14,7 @@ using CargoSupport.Models.Auth;
 using CargoSupport.Interfaces;
 using Serilog;
 using System.Linq;
+using Microsoft.AspNetCore.ResponseCompression;
 
 namespace CargoSupport.Web.IIS
 {
@@ -51,6 +52,16 @@ namespace CargoSupport.Web.IIS
 
             services.AddHttpContextAccessor();
 
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+                options.MimeTypes =
+                    ResponseCompressionDefaults.MimeTypes.Concat(
+                        new[] { "image/svg+xml" });
+            });
+
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,
@@ -80,7 +91,7 @@ namespace CargoSupport.Web.IIS
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseResponseCompression();
             app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
