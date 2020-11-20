@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Collections.Concurrent;
+using CargoSupport.Interfaces;
+using CargoSupport.ViewModels.Public;
+using CargoSupport.Models.QuinyxModels;
 using CargoSupport.Models.DatabaseModels;
 using Microsoft.AspNetCore.Mvc;
-using CargoSupport.ViewModels.Public;
-using System.Linq;
-using CargoSupport.Models.QuinyxModels;
-using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Authorization;
-using CargoSupport.Interfaces;
 
 namespace CargoSupport.Web.Controllers.API
 {

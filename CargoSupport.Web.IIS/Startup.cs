@@ -40,6 +40,7 @@ namespace CargoSupport.Web.IIS
                     .AddDefaultTokenProviders();
 
             //Dependency Injection and services
+            services.AddLazyCache();
             services.AddSingleton<IMongoDbService, MongoDbService>();
             services.AddHostedService<PinUpdateService>();
             services.AddScoped<IDataConversionHelper, DataConversionHelper>();

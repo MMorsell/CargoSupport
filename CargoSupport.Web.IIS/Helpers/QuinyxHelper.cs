@@ -15,17 +15,23 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.IO;
 using System.Reflection;
+using LazyCache;
 
 namespace CargoSupport.Helpers
 {
     public class QuinyxHelper : IQuinyxHelper
     {
         private readonly IConfiguration _configuration;
+        private readonly IAppCache _cache;
         private readonly RestClient _client;
 
-        public QuinyxHelper(IConfiguration configuration, IWebHostEnvironment env)
+        public QuinyxHelper(
+            IConfiguration configuration,
+            IWebHostEnvironment env,
+            IAppCache cache)
         {
             this._configuration = configuration;
+            this._cache = cache;
             if (env.IsDevelopment())
             {
                 _client = new RestClient(Constants.SoapApi.Connection);
@@ -96,13 +102,7 @@ namespace CargoSupport.Helpers
                 }
                 else
                 {
-                    var request = new RestRequest(Method.POST);
-                    request.AddHeader("Content-Type", "text/xml");
-                    request.AddHeader("Cookie", "QWFMSESSION=B3sAtHUIsYKEGfzcSW98Lsbqu4jAxdfy");
-                    request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"><soapenv:Header/><soapenv:Body><uri:wsdlGetSchedulesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey><getSchedulesV2Request xsi:type=\"flex:getSchedulesV2Request\" xmlns:flex=\"http://qwfm/soap/FlexForce\"><fromDate xsi:type=\"xsd:string\">{fromDate}</fromDate><fromTime xsi:type=\"xsd:string\">00:00:00</fromTime><toDate xsi:type=\"xsd:string\">{toDate}</toDate><toTime xsi:type=\"xsd:string\">23:59:59</toTime><scheduledShifts xsi:type=\"xsd:boolean\">true</scheduledShifts><absenceShifts xsi:type=\"xsd:boolean\">false</absenceShifts><allUnits xsi:type=\"xsd:boolean\">false</allUnits><includeCosts xsi:type=\"xsd:boolean\">false</includeCosts></getSchedulesV2Request></uri:wsdlGetSchedulesV2></soapenv:Body></soapenv:Envelope>", ParameterType.RequestBody);
-                    IRestResponse response = await _client.ExecuteAsync(request);
-
-                    doc2 = XDocument.Parse(response.Content);
+                    doc2 = await RetrieveSchedualDriversFromQuinyx(fromDate, toDate);
                 }
 
                 var result = new List<QuinyxModel>();
@@ -219,12 +219,7 @@ namespace CargoSupport.Helpers
                 }
                 else
                 {
-                    var request = new RestRequest(Method.POST);
-                    request.AddHeader("Content-Type", "text/xml");
-                    request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
-                    request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
-                    IRestResponse response = await _client.ExecuteAsync(request);
-                    doc = XDocument.Parse(response.Content);
+                    doc = await RetrieveAllDriversFromQuinyx();
                 }
 
                 var quinyxBasicModels = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new BasicQuinyxModel
@@ -260,12 +255,7 @@ namespace CargoSupport.Helpers
                 }
                 else
                 {
-                    var request = new RestRequest(Method.POST);
-                    request.AddHeader("Content-Type", "text/xml");
-                    request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
-                    request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
-                    IRestResponse response = await _client.ExecuteAsync(request);
-                    doc = XDocument.Parse(response.Content);
+                    doc = await RetrieveAllDriversFromQuinyx();
                 }
 
                 var extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
@@ -312,12 +302,7 @@ namespace CargoSupport.Helpers
                 }
                 else
                 {
-                    var request = new RestRequest(Method.POST);
-                    request.AddHeader("Content-Type", "text/xml");
-                    request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
-                    request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
-                    IRestResponse response = await _client.ExecuteAsync(request);
-                    doc = XDocument.Parse(response.Content);
+                    doc = await RetrieveAllDriversFromQuinyx();
                 }
 
                 var extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
@@ -363,12 +348,7 @@ namespace CargoSupport.Helpers
                 }
                 else
                 {
-                    var request = new RestRequest(Method.POST);
-                    request.AddHeader("Content-Type", "text/xml");
-                    request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
-                    request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
-                    IRestResponse response = await _client.ExecuteAsync(request);
-                    doc = XDocument.Parse(response.Content);
+                    doc = await RetrieveAllDriversFromQuinyx();
                 }
 
                 var extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
@@ -388,6 +368,44 @@ namespace CargoSupport.Helpers
             {
                 Log.Logger.Error(ex, "Exception in function GetExtraInformationForDrivers");
                 return new List<ExtendedInformationModel>();
+            }
+        }
+
+        public async Task<XDocument> RetrieveAllDriversFromQuinyx()
+        {
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Content-Type", "text/xml");
+            request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
+            request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
+            IRestResponse response = await _client.ExecuteAsync(request);
+
+            if (response.IsSuccessful)
+            {
+                return XDocument.Parse(response.Content);
+            }
+            else
+            {
+                Log.Error($"Unsuccesful retrieval of soap request from RetrieveAllDriversFromQuinyx, code: '{response.StatusCode}'");
+                return null;
+            }
+        }
+
+        public async Task<XDocument> RetrieveSchedualDriversFromQuinyx(string fromDate, string toDate)
+        {
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Content-Type", "text/xml");
+            request.AddHeader("Cookie", "QWFMSESSION=B3sAtHUIsYKEGfzcSW98Lsbqu4jAxdfy");
+            request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"><soapenv:Header/><soapenv:Body><uri:wsdlGetSchedulesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey><getSchedulesV2Request xsi:type=\"flex:getSchedulesV2Request\" xmlns:flex=\"http://qwfm/soap/FlexForce\"><fromDate xsi:type=\"xsd:string\">{fromDate}</fromDate><fromTime xsi:type=\"xsd:string\">00:00:00</fromTime><toDate xsi:type=\"xsd:string\">{toDate}</toDate><toTime xsi:type=\"xsd:string\">23:59:59</toTime><scheduledShifts xsi:type=\"xsd:boolean\">true</scheduledShifts><absenceShifts xsi:type=\"xsd:boolean\">false</absenceShifts><allUnits xsi:type=\"xsd:boolean\">false</allUnits><includeCosts xsi:type=\"xsd:boolean\">false</includeCosts></getSchedulesV2Request></uri:wsdlGetSchedulesV2></soapenv:Body></soapenv:Envelope>", ParameterType.RequestBody);
+            IRestResponse response = await _client.ExecuteAsync(request);
+
+            if (response.IsSuccessful)
+            {
+                return XDocument.Parse(response.Content);
+            }
+            else
+            {
+                Log.Error($"Unsuccesful retrieval of soap request from RetrieveSchedualDriversFromQuinyx, code: '{response.StatusCode}'");
+                return null;
             }
         }
     }
