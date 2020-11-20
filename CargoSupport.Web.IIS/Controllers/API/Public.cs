@@ -131,7 +131,6 @@ namespace CargoSupport.Web.Controllers.API
         private async Task<List<StorageViewModel>> ConvertToStorage(List<DataModel> allRoutes, bool isExtended)
         {
             allRoutes = allRoutes.Where(route => !route.IsResourceRoute).ToList();
-            allRoutes = await _quinyxHelper.AddNamesToData(allRoutes);
             var returnModels = new List<StorageViewModel>();
             for (int i = 0; i < allRoutes.Count; i++)
             {
