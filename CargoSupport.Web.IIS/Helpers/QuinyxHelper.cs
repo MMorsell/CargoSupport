@@ -13,6 +13,8 @@ using Microsoft.Extensions.Configuration;
 using System.Net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using System.IO;
+using System.Reflection;
 
 namespace CargoSupport.Helpers
 {
@@ -81,14 +83,29 @@ namespace CargoSupport.Helpers
                 var fromDate = from.ToString(@"yyyy-MM-dd");
                 var toDate = to.ToString(@"yyyy-MM-dd");
 
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("Content-Type", "text/xml");
-                request.AddHeader("Cookie", "QWFMSESSION=B3sAtHUIsYKEGfzcSW98Lsbqu4jAxdfy");
-                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"><soapenv:Header/><soapenv:Body><uri:wsdlGetSchedulesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey><getSchedulesV2Request xsi:type=\"flex:getSchedulesV2Request\" xmlns:flex=\"http://qwfm/soap/FlexForce\"><fromDate xsi:type=\"xsd:string\">{fromDate}</fromDate><fromTime xsi:type=\"xsd:string\">00:00:00</fromTime><toDate xsi:type=\"xsd:string\">{toDate}</toDate><toTime xsi:type=\"xsd:string\">23:59:59</toTime><scheduledShifts xsi:type=\"xsd:boolean\">true</scheduledShifts><absenceShifts xsi:type=\"xsd:boolean\">false</absenceShifts><allUnits xsi:type=\"xsd:boolean\">false</allUnits><includeCosts xsi:type=\"xsd:boolean\">false</includeCosts></getSchedulesV2Request></uri:wsdlGetSchedulesV2></soapenv:Body></soapenv:Envelope>", ParameterType.RequestBody);
-                IRestResponse response = await _client.ExecuteAsync(request);
+                XDocument doc2 = null;
+                if (fromDate == "2020-11-20")
+                {
+                    string xmlFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "XMLDOC", "20.xml");
+                    doc2 = XDocument.Load(xmlFile);
+                }
+                else if (fromDate == "2020-11-21")
+                {
+                    string xmlFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "XMLDOC", "21.xml");
+                    doc2 = XDocument.Load(xmlFile);
+                }
+                else
+                {
+                    var request = new RestRequest(Method.POST);
+                    request.AddHeader("Content-Type", "text/xml");
+                    request.AddHeader("Cookie", "QWFMSESSION=B3sAtHUIsYKEGfzcSW98Lsbqu4jAxdfy");
+                    request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"><soapenv:Header/><soapenv:Body><uri:wsdlGetSchedulesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey><getSchedulesV2Request xsi:type=\"flex:getSchedulesV2Request\" xmlns:flex=\"http://qwfm/soap/FlexForce\"><fromDate xsi:type=\"xsd:string\">{fromDate}</fromDate><fromTime xsi:type=\"xsd:string\">00:00:00</fromTime><toDate xsi:type=\"xsd:string\">{toDate}</toDate><toTime xsi:type=\"xsd:string\">23:59:59</toTime><scheduledShifts xsi:type=\"xsd:boolean\">true</scheduledShifts><absenceShifts xsi:type=\"xsd:boolean\">false</absenceShifts><allUnits xsi:type=\"xsd:boolean\">false</allUnits><includeCosts xsi:type=\"xsd:boolean\">false</includeCosts></getSchedulesV2Request></uri:wsdlGetSchedulesV2></soapenv:Body></soapenv:Envelope>", ParameterType.RequestBody);
+                    IRestResponse response = await _client.ExecuteAsync(request);
+
+                    doc2 = XDocument.Parse(response.Content);
+                }
 
                 var result = new List<QuinyxModel>();
-                XDocument doc2 = XDocument.Parse(response.Content);
                 var allItems2 = doc2.Descendants().Where(x => x.Name.LocalName == "item");
 
                 foreach (var item in allItems2)
@@ -194,13 +211,21 @@ namespace CargoSupport.Helpers
         {
             try
             {
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("Content-Type", "text/xml");
-                request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
-                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
-                IRestResponse response = await _client.ExecuteAsync(request);
-
-                XDocument doc = XDocument.Parse(response.Content);
+                XDocument doc = null;
+                if (DateTime.Now < new DateTime(2020, 11, 21))
+                {
+                    string xmlFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "XMLDOC", "all.xml");
+                    doc = XDocument.Load(xmlFile);
+                }
+                else
+                {
+                    var request = new RestRequest(Method.POST);
+                    request.AddHeader("Content-Type", "text/xml");
+                    request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
+                    request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
+                    IRestResponse response = await _client.ExecuteAsync(request);
+                    doc = XDocument.Parse(response.Content);
+                }
 
                 var quinyxBasicModels = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new BasicQuinyxModel
                 {
@@ -227,13 +252,21 @@ namespace CargoSupport.Helpers
         {
             try
             {
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("Content-Type", "text/xml");
-                request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
-                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
-                IRestResponse response = await _client.ExecuteAsync(request);
-
-                XDocument doc = XDocument.Parse(response.Content);
+                XDocument doc = null;
+                if (DateTime.Now < new DateTime(2020, 11, 21))
+                {
+                    string xmlFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "XMLDOC", "all.xml");
+                    doc = XDocument.Load(xmlFile);
+                }
+                else
+                {
+                    var request = new RestRequest(Method.POST);
+                    request.AddHeader("Content-Type", "text/xml");
+                    request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
+                    request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
+                    IRestResponse response = await _client.ExecuteAsync(request);
+                    doc = XDocument.Parse(response.Content);
+                }
 
                 var extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
                 {
@@ -271,13 +304,21 @@ namespace CargoSupport.Helpers
         {
             try
             {
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("Content-Type", "text/xml");
-                request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
-                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
-                IRestResponse response = await _client.ExecuteAsync(request);
-
-                XDocument doc = XDocument.Parse(response.Content);
+                XDocument doc = null;
+                if (DateTime.Now < new DateTime(2020, 11, 21))
+                {
+                    string xmlFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "XMLDOC", "all.xml");
+                    doc = XDocument.Load(xmlFile);
+                }
+                else
+                {
+                    var request = new RestRequest(Method.POST);
+                    request.AddHeader("Content-Type", "text/xml");
+                    request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
+                    request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
+                    IRestResponse response = await _client.ExecuteAsync(request);
+                    doc = XDocument.Parse(response.Content);
+                }
 
                 var extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
                 {
@@ -314,13 +355,22 @@ namespace CargoSupport.Helpers
         {
             try
             {
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("Content-Type", "text/xml");
-                request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
-                request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
-                IRestResponse response = await _client.ExecuteAsync(request);
+                XDocument doc = null;
+                if (DateTime.Now < new DateTime(2020, 11, 21))
+                {
+                    string xmlFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "XMLDOC", "all.xml");
+                    doc = XDocument.Load(xmlFile);
+                }
+                else
+                {
+                    var request = new RestRequest(Method.POST);
+                    request.AddHeader("Content-Type", "text/xml");
+                    request.AddHeader("Cookie", "QWFMSESSION=8K1nfQjkE56AmcKVN9dQdEhPCqsH0IhY");
+                    request.AddParameter("text/xml", $"<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:uri=\"uri:FlexForce\"> <soapenv:Header/> <soapenv:Body> <uri:wsdlGetEmployeesV2 soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"> <apiKey>{_configuration.GetValue<string>("soapKey")}</apiKey> </uri:wsdlGetEmployeesV2> </soapenv:Body> </soapenv:Envelope>", ParameterType.RequestBody);
+                    IRestResponse response = await _client.ExecuteAsync(request);
+                    doc = XDocument.Parse(response.Content);
+                }
 
-                XDocument doc = XDocument.Parse(response.Content);
                 var extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
                 {
                     Id = (int)y.Elements().FirstOrDefault(z => z.Name.LocalName == "id"),
