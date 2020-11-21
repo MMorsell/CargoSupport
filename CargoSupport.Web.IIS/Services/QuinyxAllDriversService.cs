@@ -22,7 +22,7 @@ namespace CargoSupport.Services
             IWebHostEnvironment env,
             IAppCache cache)
         {
-            this._qh = new QuinyxHelper(configuration, env);
+            this._qh = new QuinyxHelper(configuration, env, cache);
             this._cache = cache;
         }
 
@@ -33,7 +33,7 @@ namespace CargoSupport.Services
                 UpdateRetrieveAllDriversFromQuinyxCache,
                 null,
                 TimeSpan.Zero,
-                TimeSpan.FromMinutes(10)
+                TimeSpan.FromMinutes(60)
             );
 
             return Task.CompletedTask;
@@ -56,20 +56,20 @@ namespace CargoSupport.Services
 
                 if (result == null)
                 {
-                    Log.Logger.Error($"Unsuccesful retrieval of RetrieveAllDriversFromQuinyx when updating all drivers cache, will prolong lifetime of cache");
+                    Log.Logger.Error($"Unsuccesful retrieval of RetrieveAllDriversFromQuinyx when updating all drivers cache");
 
-                    CacheHelper.ReaddCache<XDocument>(_cache, Constants.Cache.AllDrivers, new TimeSpan(3, 0, 0));
+                    //CacheHelper.ReaddCache<XDocument>(_cache, Constants.Cache.AllDrivers, new TimeSpan(3, 0, 0));
                 }
                 else
                 {
-                    CacheHelper.UpdateCache(_cache, Constants.Cache.AllDrivers, new TimeSpan(3, 0, 0), result);
+                    CacheHelper.UpdateCache(_cache, Constants.Cache.AllDrivers, new TimeSpan(168, 0, 0), result);
                 }
                 Log.Logger.Debug($"Finished updating all drivers cache at {DateTime.Now.ToShortTimeString()}");
             }
             catch (Exception ex)
             {
-                Log.Logger.Error(ex, $"Exception when updating all drivers cache, will prolong lifetime of cache");
-                CacheHelper.ReaddCache<XDocument>(_cache, Constants.Cache.AllDrivers, new TimeSpan(3, 0, 0));
+                Log.Logger.Error(ex, $"Exception when updating all drivers cache");
+                //CacheHelper.ReaddCache<XDocument>(_cache, Constants.Cache.AllDrivers, new TimeSpan(3, 0, 0));
             }
         }
     }

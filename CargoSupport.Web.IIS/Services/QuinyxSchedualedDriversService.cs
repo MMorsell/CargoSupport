@@ -65,23 +65,21 @@ namespace CargoSupport.Services
 
                 if (result == null)
                 {
-                    Log.Logger.Error($"Unsuccesful retrieval of RetrieveAllDriversFromQuinyx when updating schedualdrivers cache for date '{targetDate}', " +
-                        $"will prolong lifetime of cache");
+                    Log.Logger.Error($"Unsuccesful retrieval of RetrieveAllDriversFromQuinyx when updating schedualdrivers cache for date '{targetDate}',");
 
-                    CacheHelper.ReaddCache<XDocument>(_cache, $"{Constants.Cache.SchedualedDrivers}-{targetDate}", new TimeSpan(3, 0, 0));
+                    //CacheHelper.ReaddCache<XDocument>(_cache, $"{Constants.Cache.SchedualedDrivers}-{targetDate}", new TimeSpan(3, 0, 0));
                 }
                 else
                 {
-                    CacheHelper.UpdateCache(_cache, $"{Constants.Cache.SchedualedDrivers}-{targetDate}", new TimeSpan(3, 0, 0), result);
+                    CacheHelper.UpdateCache(_cache, $"{Constants.Cache.SchedualedDrivers}-{targetDate}-{targetDate}", new TimeSpan(168, 0, 0), result);
                 }
                 Log.Logger.Debug($"Finished updating schedualdrivers cache for date '{targetDate}' at {DateTime.Now.ToShortTimeString()}");
             }
             catch (Exception ex)
             {
-                Log.Logger.Error(ex, $"Exception when updating schedualdrivers cache, will prolong lifetime of cache for date '{targetDate}', " +
-                        $"will prolong lifetime of cache");
+                Log.Logger.Error(ex, $"Exception when updating schedualdrivers cache, will prolong lifetime of cache for date '{targetDate}'");
 
-                CacheHelper.ReaddCache<XDocument>(_cache, $"{Constants.Cache.SchedualedDrivers}-{targetDate}", new TimeSpan(3, 0, 0));
+                //CacheHelper.ReaddCache<XDocument>(_cache, $"{Constants.Cache.SchedualedDrivers}-{targetDate}", new TimeSpan(3, 0, 0));
             }
         }
     }

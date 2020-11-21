@@ -24,6 +24,19 @@
 
   <ItemGroup>
     <Folder Include="Models\Auth\" />
+    <Folder Include="wwwroot\lib\chart\css\" />
+    <Folder Include="wwwroot\lib\chart\js\" />
+    <Folder Include="wwwroot\lib\datatables\css\" />
+    <Folder Include="wwwroot\lib\datatables\js\" />
+    <Folder Include="wwwroot\lib\flatpickr\js\" />
+    <Folder Include="wwwroot\lib\jquery\css\" />
+    <Folder Include="wwwroot\lib\jquery\js\" />
+    <Folder Include="wwwroot\lib\jspdf\css\" />
+    <Folder Include="wwwroot\lib\jspdf\js\" />
+    <Folder Include="wwwroot\lib\leaflet\js\" />
+    <Folder Include="wwwroot\lib\moment\css\" />
+    <Folder Include="wwwroot\lib\moment\js\" />
+    <Folder Include="wwwroot\lib\popper\" />
   </ItemGroup>
 
   <ItemGroup>

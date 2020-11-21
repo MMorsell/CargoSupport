@@ -13,7 +13,7 @@ namespace CargoSupport.Helpers
             {
                 AbsoluteExpirationRelativeToNow = absoluteLifetimeOfCache
             };
-            cache.Add(Constants.Cache.AllDrivers, res, policy);
+            cache.Add(cacheKey, res, policy);
         }
 
         public static void UpdateCache<T>(IAppCache cache, string cacheKey, TimeSpan absoluteLifetimeOfCache, T contentToCache)
@@ -23,7 +23,7 @@ namespace CargoSupport.Helpers
             {
                 AbsoluteExpirationRelativeToNow = absoluteLifetimeOfCache
             };
-            cache.Add(Constants.Cache.AllDrivers, contentToCache, policy);
+            cache.Add(cacheKey, contentToCache, policy);
         }
     }
 }

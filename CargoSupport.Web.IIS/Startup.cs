@@ -47,6 +47,8 @@ namespace CargoSupport.Web.IIS
             services.AddScoped<IQuinyxHelper, QuinyxHelper>();
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddHostedService<QuinyxAllDriversService>();
+            services.AddHostedService<QuinyxSchedualedDriversService>();
 
             services.AddControllersWithViews();
             services.AddSignalR();
