@@ -172,12 +172,14 @@ namespace CargoSupport.Helpers
                     {
                         quinyxResult.RemoveAt(i);
                     }
+                    else
+                    {
+                        TimeSpan.TryParse(quinyxResult[i].begTimeString, out TimeSpan begTime);
+                        TimeSpan.TryParse(quinyxResult[i].endTimeString, out TimeSpan endTime);
 
-                    TimeSpan.TryParse(quinyxResult[i].begTimeString, out TimeSpan begTime);
-                    TimeSpan.TryParse(quinyxResult[i].endTimeString, out TimeSpan endTime);
-
-                    quinyxResult[i].begTime = begTime;
-                    quinyxResult[i].endTime = endTime;
+                        quinyxResult[i].begTime = begTime;
+                        quinyxResult[i].endTime = endTime;
+                    }
                 }
                 return quinyxResult;
             }
