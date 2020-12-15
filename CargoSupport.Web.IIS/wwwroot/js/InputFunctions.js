@@ -65,22 +65,22 @@ const convert_loadingLevel_toSelectbox = function (data, type, full, meta) {
     switch (data) {
         case 0:
             selectBox.push(
-                `<div><select ${bootstrapSelectDropdownStyle} data-style="btn-danger" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
+                `<div><select data-width="fit" ${bootstrapSelectDropdownStyle} data-style="btn-danger" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
             );
             break;
         case 1:
             selectBox.push(
-                `<div><select ${bootstrapSelectDropdownStyle} data-style="btn-warning" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
+                `<div><select data-width="fit" ${bootstrapSelectDropdownStyle} data-style="btn-warning" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
             );
             break;
         case 2:
             selectBox.push(
-                `<div><select ${bootstrapSelectDropdownStyle} data-style="btn-warning" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
+                `<div><select data-width="fit" ${bootstrapSelectDropdownStyle} data-style="btn-warning" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
             );
             break;
         case 3:
             selectBox.push(
-                `<div><select ${bootstrapSelectDropdownStyle} data-style="btn-success" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
+                `<div><select data-width="fit" ${bootstrapSelectDropdownStyle} data-style="btn-success" id="convert_loadingLevel_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
             );
             break;
     }

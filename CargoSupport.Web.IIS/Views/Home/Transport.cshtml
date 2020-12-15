@@ -122,7 +122,7 @@
 
             var selectBox = [];
             selectBox.push(
-                `<select ${bootstrapSelectDropdownStyleWithLiveSearch}  id="port_selectBox" onChange=updateRow(this)>`
+                `<select data-width="fit" ${bootstrapSelectDropdownStyleWithLiveSearch}  id="port_selectBox" onChange=updateRow(this)>`
             );
 
             if (data === 0) {
@@ -152,27 +152,31 @@
                 return data;
             }
 
+            let selectedCarWeight = "";
             var selectBox = [];
             selectBox.push(
-                `<select data-show-subtext="true" ${bootstrapSelectDropdownStyleWithLiveSearch} id="carNumber_selectBox" onChange=updateRow(this)>`
+                `<div align="center"><select data-show-subtext="true" data-width="fit" ${bootstrapSelectDropdownStyleWithLiveSearch} id="carNumber_selectBox" onChange=updateRow(this)>`
             );
 
             selectBox.push(
                 '<option value=""></option>'
             );
-
             const avaialableCars = table.ajax.json().carOptions;
             for (i = 0; i < avaialableCars.length; i++) {
                 if (avaialableCars[i].name === data) {
-                    selectBox.push(`<option data-subtext="${avaialableCars[i].maxWeight} kg" value="${avaialableCars[i].name}" selected>${avaialableCars[i].name}</option>`)
+                    selectedCarWeight = avaialableCars[i].maxWeight;
+                    selectBox.push(`<option value="${avaialableCars[i].name}" selected>${avaialableCars[i].name}</option>`)
                 }
                 else {
-                    selectBox.push(`<option data-subtext="${avaialableCars[i].maxWeight} kg" value="${avaialableCars[i].name}" >${avaialableCars[i].name}</option>`)
+                    selectBox.push(`<option value="${avaialableCars[i].name}" >${avaialableCars[i].name}</option>`)
                 }
             }
 
             selectBox.push(
                 '</select>'
+            );
+            selectBox.push(
+                `<br><p>${selectedCarWeight}</p></div>`
             );
             return selectBox.join("");
         }
@@ -252,8 +256,6 @@
                 },
                 columnDefs: [
                     { "width": "20%", "targets": 3 },
-                    { "width": "10%", "targets": 4 },
-                    { "width": "10%", "targets": 5 },
                 ],
                 columns: [
                     {
