@@ -126,7 +126,10 @@
             );
 
             if (data === 0) {
-                selectBox.push('<option value="0" selected></option>')
+                selectBox.push('<option value="0" selected>Ej vald</option>')
+            }
+            else {
+                selectBox.push('<option value="0">Ej vald</option>')
             }
 
             for (i = 0; i < availablePorts.length; i++) {

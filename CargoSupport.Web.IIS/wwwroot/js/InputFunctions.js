@@ -181,7 +181,16 @@ const disabled_intInput = function (data, type, full, meta) {
         data + '"  />';
 }
 
-const renderEjSattIfZeroOrEmpty = function (data, type, full, meta) {
+const renderEjValdIfZeroOrEmpty = function (data, type, full, meta) {
+    if (data === 0 || data === "0" || data === "" || data === "Ej satt") {
+        return '<p>Ej vald</p>'
+    }
+    else {
+        return '<p>' + data + '</p>';
+    }
+}
+
+const renderEmptyIfZeroOrEmpty = function (data, type, full, meta) {
     if (data === 0 || data === "0" || data === "" || data === "Ej satt") {
         return '<p></p>'
     }
