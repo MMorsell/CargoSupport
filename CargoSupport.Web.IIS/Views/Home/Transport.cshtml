@@ -191,16 +191,8 @@
             }
 
             var selectBox = [];
-
-            if (driverObject.id === -1) {
-                selectBox.push(
-                    `<select data-show-subtext="true" data-style="btn-danger" data-width="auto" title="Inget valt" class="selectpicker show-tick" data-live-search="true" id="driver_select" onChange=updateRow(this)>`
-                );
-                selectBox.push(
-                    '<option value="-1" selected></option>'
-                );
-            }
-            else {
+            const availableDrivers = table.ajax.json().selectValues;
+            if (availableDrivers.find(i => i.id == driverObject.id)) {
                 selectBox.push(
                     `<select data-show-subtext="true" data-width="auto" ${bootstrapSelectDropdownStyleWithLiveSearch} id="driver_select" onChange=updateRow(this)>`
                 );
@@ -208,8 +200,15 @@
                     '<option value="-1"></option>'
                 );
             }
+            else {
+                selectBox.push(
+                    `<select data-show-subtext="true" data-style="btn-danger" data-width="auto" title="Inget valt" class="selectpicker show-tick" data-live-search="true" id="driver_select" onChange=updateRow(this)>`
+                );
+                selectBox.push(
+                    '<option value="-1" selected></option>'
+                );
+            }
 
-            const availableDrivers = table.ajax.json().selectValues;
             for (i = 0; i < availableDrivers.length; i++) {
                 if (availableDrivers[i].id === driverObject.id) {
                     selectBox.push(`<option data-subtext="${availableDrivers[i].begTimeString} - ${availableDrivers[i].endTimeString}" value="${availableDrivers[i].id}" selected>${availableDrivers[i].fullName}</option>`)
