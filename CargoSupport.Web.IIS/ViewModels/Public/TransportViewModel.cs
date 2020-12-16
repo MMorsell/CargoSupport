@@ -14,6 +14,7 @@ namespace CargoSupport.ViewModels.Public
             DriverViewModel driverModel,
             string carNumberString,
             int portNumber,
+            KeyStatus keyStatus,
             LoadingLevel loadingIsDone,
             string preRideAnnotation,
             string postRideAnnotation,
@@ -33,6 +34,7 @@ namespace CargoSupport.ViewModels.Public
             Driver = driverModel;
             CarNumber = carNumberString;
             PortNumber = portNumber;
+            KeyStatus = keyStatus;
             LoadingLevel = loadingIsDone;
             PreRideAnnotation = preRideAnnotation;
             PostRideAnnotation = postRideAnnotation;
@@ -49,6 +51,7 @@ namespace CargoSupport.ViewModels.Public
             DriverViewModel driverModel,
             string carNumberString,
             int portNumber,
+            KeyStatus keyStatus,
             LoadingLevel loadingLevel,
             string preRideAnnotation,
             double numberOfCustomers,
@@ -65,6 +68,7 @@ namespace CargoSupport.ViewModels.Public
             Driver = driverModel;
             CarNumber = carNumberString;
             PortNumber = portNumber;
+            KeyStatus = keyStatus;
             LoadingLevel = loadingLevel;
             PreRideAnnotation = preRideAnnotation;
             NumberOfCustomers = numberOfCustomers;
@@ -131,6 +135,7 @@ namespace CargoSupport.ViewModels.Public
         public DriverViewModel Driver { get; set; }
         public string CarNumber { get; set; }
         public int PortNumber { get; set; }
+        public KeyStatus KeyStatus { get; set; }
         public LoadingLevel LoadingLevel { get; set; }
         public string PreRideAnnotation { get; set; } = "";
         public string PostRideAnnotation { get; set; } = "";

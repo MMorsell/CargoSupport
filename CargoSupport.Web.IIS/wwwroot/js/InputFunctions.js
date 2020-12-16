@@ -59,6 +59,94 @@ const postRideInput_fat = function (data, type, full, meta) {
     return '<textarea id="postRideInput" onfocusout=updateRow(this) style="background: white;" class=" form-control" rows="2" cols="50">' + data + '</textarea >';
 }
 
+const convert_keyStatus_toSelectbox = function (data, type, full, meta) {
+    var selectBox = [];
+
+    switch (data) {
+        case 0:
+            selectBox.push(
+                `<div><select data-width="fit" ${bootstrapSelectDropdownStyle} data-style="btn-danger" id="convert_keyStatus_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
+            );
+            break;
+        case 1:
+            selectBox.push(
+                `<div><select data-width="fit" ${bootstrapSelectDropdownStyle} data-style="btn-warning" id="convert_keyStatus_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
+            );
+            break;
+        case 2:
+            selectBox.push(
+                `<div><select data-width="fit" ${bootstrapSelectDropdownStyle} data-style="btn-success" id="convert_keyStatus_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
+            );
+            break;
+        case 3:
+            selectBox.push(
+                `<div><select data-width="fit" ${bootstrapSelectDropdownStyle} data-style="btn-primary" id="convert_keyStatus_toSelectbox" onChange=colorBasedOnLoadingValue(this) class="form-control">`
+            );
+            break;
+    }
+
+    for (i = 0; i < 4; i++) {
+        if (i === 0) {
+            if (data === 0) {
+                selectBox.push('<option selected>Ej påbörjad</option>')
+            }
+            else {
+                selectBox.push('<option>Ej påbörjad</option>')
+            }
+        }
+
+        if (i === 1) {
+            if (data === 1) {
+                selectBox.push('<option selected>Lastas</option>')
+            }
+            else {
+                selectBox.push('<option>Lastas</option>')
+            }
+        }
+
+        if (i === 2) {
+            if (data === 2) {
+                selectBox.push('<option selected>Kontor</option>')
+            }
+            else {
+                selectBox.push('<option>Kontor</option>')
+            }
+        }
+
+        if (i === 3) {
+            if (data === 3) {
+                selectBox.push('<option selected>Tomgång</option>')
+            }
+            else {
+                selectBox.push('<option>Tomgång</option>')
+            }
+        }
+    }
+
+    selectBox.push(
+        '</select>'
+    );
+
+    return selectBox.join("");
+}
+
+const convert_keyStatus_toValue = function (data, type, full, meta) {
+    if (data === 0) {
+        return '<p style="background-color: red;" class="">Ej påbörjad</p>';
+    }
+
+    if (data === 1) {
+        return '<p style="background-color: yellow;" class="">Lastas</p>';
+    }
+
+    if (data === 2) {
+        return '<p style="background-color: lightgreen;"class="">Kontor</p>';
+    }
+
+    if (data === 3) {
+        return '<p style="background-color: blue;" class="">Tomgång</p>';
+    }
+}
 const convert_loadingLevel_toSelectbox = function (data, type, full, meta) {
     var selectBox = [];
 

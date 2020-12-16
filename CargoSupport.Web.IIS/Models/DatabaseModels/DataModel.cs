@@ -45,6 +45,7 @@ namespace CargoSupport.Models.DatabaseModels
         public string CarModel { get; set; } = "Ej satt";
         public int PortNumber { get; set; } = 0;
         public LoadingLevel LoadingLevel { get; set; } = LoadingLevel.Ej_påbörjad;
+        public KeyStatus KeyStatus { get; set; } = KeyStatus.Ej_påbörjad;
         public DateTime DateOfRoute { get; set; }
         public List<PickingVerifyBooleanModel> ControlIsDone { get; set; }
         public List<PickingVerifyIntModel> NumberOfColdBoxes { get; set; }

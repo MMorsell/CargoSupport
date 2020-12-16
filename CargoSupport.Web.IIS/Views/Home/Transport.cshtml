@@ -75,6 +75,21 @@
                 case 'carNumber_selectBox':
                     upsertDictionary[thisRef.id] = thisRef.value;
                     break;
+                case 'convert_keyStatus_toSelectbox':
+                    switch (thisRef.value) {
+                        case 'Ej påbörjad':
+                            upsertDictionary[thisRef.id] = 0;
+                            break;
+                        case 'Lastas':
+                            upsertDictionary[thisRef.id] = 1;
+                            break;
+                        case 'Kontor':
+                            upsertDictionary[thisRef.id] = 2;
+                            break;
+                        case 'Tomgång':
+                            upsertDictionary[thisRef.id] = 3;
+                            break;
+                    }
                 case 'convert_loadingLevel_toSelectbox':
                     switch (thisRef.value) {
                         case 'Ej påbörjad':
@@ -266,6 +281,7 @@
                     { data: 'driver', title: 'Lev. Ansvarig', render: current_Driver },
                     { data: 'carNumber', title: 'Bilnr', render: carNumber_selectBox },
                     { data: 'portNumber', title: 'Port', render: port_selectBox },
+                    { data: 'keyStatus', title: 'Nyckelstatus', render: convert_keyStatus_toSelectbox },
                     { data: 'loadingLevel', title: 'Lastningsstatus', render: convert_loadingLevel_toSelectbox },
                     { data: 'preRideAnnotation', title: 'Kommentar', render: preRideInput_fat },
                     { data: 'postRideAnnotation', title: 'Dold Kommentar', render: postRideInput_fat },

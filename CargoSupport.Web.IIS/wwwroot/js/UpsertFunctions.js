@@ -24,8 +24,17 @@
                 object.carNumber = newObject["carNumber_selectBox"];
                 update = true;
             }
+            else if (newObject["convert_keyStatus_toSelectbox"] !== undefined) {
+                object.keyStatus = newObject["convert_keyStatus_toSelectbox"];
+                update = true;
+            }
             else if (newObject["convert_loadingLevel_toSelectbox"] !== undefined) {
                 object.loadingLevel = newObject["convert_loadingLevel_toSelectbox"];
+
+                if (newObject["convert_loadingLevel_toSelectbox"] === 2 &&
+                    object.keyStatus === 0) {
+                    object.keyStatus = 1;
+                }
                 update = true;
             }
             else if (newObject["driver_select"] !== undefined) {
@@ -104,8 +113,16 @@
                 object.carNumber = newObject["carNumber_selectBox"];
                 update = true;
             }
+            else if (newObject["convert_keyStatus_toSelectbox"] !== undefined) {
+                object.keyStatus = newObject["convert_keyStatus_toSelectbox"];
+                update = true;
+            }
             else if (newObject["convert_loadingLevel_toSelectbox"] !== undefined) {
                 object.loadingLevel = newObject["convert_loadingLevel_toSelectbox"];
+                if (newObject["convert_loadingLevel_toSelectbox"] === 2 &&
+                    object.keyStatus === 0) {
+                    object.keyStatus = 1;
+                }
                 update = true;
             }
             else if (newObject["driver_select"] !== undefined) {

@@ -111,10 +111,24 @@ namespace CargoSupport.Web.IIS.Controllers.API
                     }
                     break;
 
+                case "convert_keystatus_toselectbox":
+                    if (int.Parse(updateKeyValuePair.Value.ToString()) != -1)
+                    {
+                        existingRecord.KeyStatus = (KeyStatus)Enum.Parse(typeof(KeyStatus), updateKeyValuePair.Value.ToString(), true);
+                        update = true;
+                    }
+                    break;
+
                 case "convert_loadinglevel_toselectbox":
                     if (int.Parse(updateKeyValuePair.Value.ToString()) != -1)
                     {
                         existingRecord.LoadingLevel = (LoadingLevel)Enum.Parse(typeof(LoadingLevel), updateKeyValuePair.Value.ToString(), true);
+                        if (existingRecord.LoadingLevel.Equals(LoadingLevel.Påbörjad) &&
+                            existingRecord.KeyStatus.Equals(KeyStatus.Ej_påbörjad))
+                        {
+                            existingRecord.KeyStatus = KeyStatus.Lastas;
+                        }
+
                         update = true;
                     }
                     break;
