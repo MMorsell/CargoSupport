@@ -2,7 +2,7 @@
 {
     public static class Cache
     {
-        public static readonly string AllDrivers = "RetrieveAllDriversFromQuinyx";
-        public static readonly string SchedualedDrivers = "RetrieveSchedualedDriversFromQuinyx";
+        public const string AllDrivers = "RetrieveAllDriversFromQuinyx";
+        public const string SchedualedDrivers = "RetrieveSchedualedDriversFromQuinyx";
     }
 }

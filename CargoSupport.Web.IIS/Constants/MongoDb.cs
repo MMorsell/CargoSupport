@@ -2,8 +2,8 @@
 {
     public static class MongoDb
     {
-        public static string OutputScreenCollectionName => "ICOutputScreen";
-        public static string CarCollectionName => "ICCars";
-        public static string BackupCollectionName => "ICOutputScreen_Backup";
+        public const string OutputScreenCollectionName = "ICOutputScreen";
+        public const string CarCollectionName = "ICCars";
+        public const string BackupCollectionName = "ICOutputScreen_Backup";
     }
 }
