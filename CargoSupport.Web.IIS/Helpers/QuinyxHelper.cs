@@ -18,6 +18,9 @@ using System.Diagnostics;
 
 namespace CargoSupport.Helpers
 {
+    /// <summary>
+    /// Helper class for retrieving api requests from Quinyx
+    /// </summary>
     public class QuinyxHelper : IQuinyxHelper
     {
         private readonly IConfiguration _configuration;

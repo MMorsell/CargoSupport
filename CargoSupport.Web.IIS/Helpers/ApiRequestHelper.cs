@@ -12,10 +12,18 @@ using System.Threading.Tasks;
 
 namespace CargoSupport.Helpers
 {
+    /// <summary>
+    /// Api helper class to call PinDeliver API
+    /// </summary>
     public class ApiRequestHelper
     {
         private readonly HttpClient _client;
 
+        /// <summary>
+        /// Default constructor that should be used
+        /// </summary>
+        /// <param name="Configuration"><see cref="IConfiguration"/> object from program startup</param>
+        /// <param name="env"><see cref="IWebHostEnvironment"/> object from program startup</param>
         public ApiRequestHelper(IConfiguration Configuration, IWebHostEnvironment env)
         {
             var proxy = new WebProxy
@@ -43,6 +51,12 @@ namespace CargoSupport.Helpers
             _client.DefaultRequestHeaders.Add("X-PINDELIVER-API-CLIENT-KEY", Configuration.GetValue<string>("pinClient"));
         }
 
+        /// <summary>
+        /// Returns a single API call of type <see cref="T"/>
+        /// </summary>
+        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="url">The API url to call</param>
+        /// <returns>Promise to a Task{<T>}</returns>
         public async Task<T> GetSingleResult<T>(string url)
         {
             var response = await _client.GetAsync(
@@ -53,6 +67,12 @@ namespace CargoSupport.Helpers
             return result;
         }
 
+        /// <summary>
+        /// Returns a list of results of type <see cref="List{T}"/>
+        /// </summary>
+        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="url">The API url to call</param>
+        /// <returns>Promise to a Task{List{T}}</returns>
         public async Task<List<T>> GetMultipleResult<T>(string url)
         {
             var response = await _client.GetAsync(
@@ -63,6 +83,12 @@ namespace CargoSupport.Helpers
             return results;
         }
 
+        /// <summary>
+        /// This method batches <see cref="GetSingleResult"/> API calls to retrieve the resposes faster
+        /// Batching calls is faster in this case since the throughput of the external API cant handle more than 100 calls at a given time
+        /// </summary>
+        /// <param name="routeIds">ID's of Routes to ask for in the API Calls</param>
+        /// <returns>Promise to a Task{List{PinRouteModel}}</returns>
         public async Task<List<PinRouteModel>> GetRoutesBatchParalellAsync(IEnumerable<int> routeIds)
         {
             var routes = new List<PinRouteModel>();

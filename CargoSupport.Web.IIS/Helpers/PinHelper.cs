@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace CargoSupport.Helpers
 {
+    /// <summary>
+    /// Helper class for saving/updating api requests from PinDeliver to the database
+    /// </summary>
     public class PinHelper
     {
         private readonly ApiRequestHelper _apiRequestHelper;

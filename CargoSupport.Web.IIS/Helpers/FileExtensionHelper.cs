@@ -6,6 +6,9 @@ using System.IO;
 
 namespace CargoSupport.Helpers
 {
+    /// <summary>
+    /// Extension methods to determine file extensions
+    /// </summary>
     public static class FileExtensionHelper
     {
         private static List<string> knownTypes;
@@ -20,6 +23,11 @@ namespace CargoSupport.Helpers
         string pwzMimeProposed, UInt32 dwMimeFlags, ref UInt32 ppwzMimeOut, UInt32 dwReserverd
         );
 
+        /// <summary>
+        /// Get contenttype of a given file name
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns>The type of the file as a <see cref="string"/></returns>
         public static string GetContentType(string fileName)
         {
             if (knownTypes == null || mimeTypes == null)
