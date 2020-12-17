@@ -5,6 +5,10 @@
     <UserSecretsId>e4c4a0c5-a864-4f0d-b499-64a0f4cfb7fd</UserSecretsId>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Users\Eraza\Source\Repos\MMorsell\CargoSupport\CargoSupport.Web.IIS\CargoSupport.Web.IIS.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AspNetCore.Identity.MongoDbCore" Version="2.1.1" />
     <PackageReference Include="EPPlus" Version="5.4.0" />
