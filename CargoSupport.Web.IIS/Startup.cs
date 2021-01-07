@@ -45,8 +45,6 @@ namespace CargoSupport.Web.IIS
             services.AddHostedService<PinUpdateService>();
             services.AddScoped<IDataConversionHelper, DataConversionHelper>();
             services.AddScoped<IQuinyxHelper, QuinyxHelper>();
-            services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<ISmsSender, AuthMessageSender>();
             services.AddHostedService<QuinyxAllDriversService>();
             services.AddHostedService<QuinyxSchedualedDriversService>();
 

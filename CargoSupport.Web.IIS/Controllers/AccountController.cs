@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNetCore.Identity.MongoDbCore.Models;
 using CargoSupport.Helpers;
-using CargoSupport.Interfaces;
 using CargoSupport.Models.Auth;
 using CargoSupport.Models.Auth.AccountViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -20,22 +19,23 @@ namespace CargoSupport.Web.IIS.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<MongoIdentityRole> _roleManager;
-        private readonly IEmailSender _emailSender;
-        private readonly ISmsSender _smsSender;
+
+        //private readonly IEmailSender _emailSender;
+        //private readonly ISmsSender _smsSender;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<MongoIdentityRole> roleManager,
-            IEmailSender emailSender,
-            ISmsSender smsSender
+            RoleManager<MongoIdentityRole> roleManager
+            //IEmailSender emailSender,
+            //ISmsSender smsSender
             )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
-            _emailSender = emailSender;
-            _smsSender = smsSender;
+            //_emailSender = emailSender;
+            //_smsSender = smsSender;
         }
 
         //
@@ -426,14 +426,14 @@ namespace CargoSupport.Web.IIS.Controllers
             }
 
             var message = "Your security code is: " + code;
-            if (model.SelectedProvider == "Email")
-            {
-                await _emailSender.SendEmailAsync(await _userManager.GetEmailAsync(user), "Security Code", message);
-            }
-            else if (model.SelectedProvider == "Phone")
-            {
-                await _smsSender.SendSmsAsync(await _userManager.GetPhoneNumberAsync(user), message);
-            }
+            //if (model.SelectedProvider == "Email")
+            //{
+            //    await _emailSender.SendEmailAsync(await _userManager.GetEmailAsync(user), "Security Code", message);
+            //}
+            //else if (model.SelectedProvider == "Phone")
+            //{
+            //    await _smsSender.SendSmsAsync(await _userManager.GetPhoneNumberAsync(user), message);
+            //}
 
             return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
