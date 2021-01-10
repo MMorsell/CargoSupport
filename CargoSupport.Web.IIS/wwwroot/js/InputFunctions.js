@@ -144,7 +144,7 @@ const convert_keyStatus_toValue = function (data, type, full, meta) {
     }
 
     if (data === 3) {
-        return '<p style="background-color: blue;" class="">Tomgång</p>';
+        return '<p style="background-color: blue; color: white;" class="">Tomgång</p>';
     }
 }
 const convert_loadingLevel_toSelectbox = function (data, type, full, meta) {
