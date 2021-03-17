@@ -15,6 +15,10 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+
+- task: MMinify@0
+  inputs:
+    samplestring: "Human"
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
