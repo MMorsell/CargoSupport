@@ -83,20 +83,15 @@
             upsertDictionary['signature'] = signature;
 
             switch (thisRef.id) {
-                case 'numberOfColdBoxes_input':
-                    upsertDictionary[thisRef.id] = parseInt(thisRef.value);
-                    break;
                 case 'restPicking_input':
-                    upsertDictionary[thisRef.id] = thisRef.checked;
-                    break;
-                case 'numberOfFrozenBoxes_input':
-                    upsertDictionary[thisRef.id] = parseInt(thisRef.value);
-                    break;
-                case 'numberOfBreadBoxes_input':
-                    upsertDictionary[thisRef.id] = parseInt(thisRef.value);
-                    break;
                 case 'controlIsDone_input':
                     upsertDictionary[thisRef.id] = thisRef.checked;
+                    break;
+                case 'numberOfColdBoxes_input':
+                case 'numberOfFrozenBoxes_input':
+                case 'numberOfBreadBoxes_input':
+                case 'location_input':
+                    upsertDictionary[thisRef.id] = parseInt(thisRef.value);
                     break;
             }
             postUpdate(JSON.stringify(upsertDictionary), upsertDictionary);
@@ -125,24 +120,24 @@
             var is_checked = data == true ? "checked" : "";
 
             return `<div class="pretty p-icon p-round p-pulse p-jelly p-bigger">
-                                                                <input type="checkbox" id="restPicking_input" onChange=proptForSignatureBool(this) ${is_checked} />
-                                                                <div class="state p-success">
-                                                                    <i class="icon mdi mdi-check"></i>
-                                                                    <label></label>
-                                                                </div>
-                                                            </div>`;
+                                                                                                                                                                                                    <input type="checkbox" id="restPicking_input" onChange=proptForSignatureBool(this) ${is_checked} />
+                                                                                                                                                                                                    <div class="state p-success">
+                                                                                                                                                                                                        <i class="icon mdi mdi-check"></i>
+                                                                                                                                                                                                        <label></label>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                </div>`;
         }
 
         const controlIsDone_input = function (data, type, full, meta) {
             var is_checked = data == true ? "checked" : "";
 
             return `<div class="pretty p-icon p-round p-pulse p-jelly p-bigger">
-                                                                <input type="checkbox" id="controlIsDone_input" onChange=proptForSignatureBool(this) ${is_checked} />
-                                                                <div class="state p-success">
-                                                                    <i class="icon mdi mdi-check"></i>
-                                                                    <label></label>
-                                                                </div>
-                                                            </div>`;
+                                                                                                                                                                                                    <input type="checkbox" id="controlIsDone_input" onChange=proptForSignatureBool(this) ${is_checked} />
+                                                                                                                                                                                                    <div class="state p-success">
+                                                                                                                                                                                                        <i class="icon mdi mdi-check"></i>
+                                                                                                                                                                                                        <label></label>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                </div>`;
         }
 
         const numberOfBreadBoxes_input = function (data, type, full, meta) {
@@ -162,6 +157,42 @@
             selectBox.push(
                 '</select>'
             );
+            return selectBox.join("");
+        }
+
+        const location_input = function (data, type, full, meta) {
+            var selectBox = [];
+
+            //Ordinarie = 0, Dynamisk = 1
+            if (data == null) {
+                selectBox.push(
+                    `<div>
+                                         <select data-width="fit" ${bootstrapSelectDropdownStyle} id="location_input" onChange=proptForSignatureInt(this)>
+                                             <option value="0">Ordinarie</option>
+                                             <option value="1">Dynamisk</option>
+                                         </select>
+                                     </div>`
+                );
+            } else if (data === 0) {
+                selectBox.push(
+                    `<div>
+                                         <select data-width="fit" data-style="btn-info" ${bootstrapSelectDropdownStyle} id="location_input" onChange=proptForSignatureInt(this)>
+                                             <option value="0" selected>Ordinarie</option>
+                                             <option value="1">Dynamisk</option>
+                                         </select>
+                                     </div>`
+                );
+            } else {
+                selectBox.push(
+                    `<div>
+                                         <select data-width="fit" ${bootstrapSelectDropdownStyle} data-style="btn-danger" id="location_input" onChange=proptForSignatureInt(this)>
+                                             <option value="0">Ordinarie</option>
+                                             <option value="1" selected>Dynamisk</option>
+                                         </select>
+                                     </div>`
+                );
+            }
+
             return selectBox.join("");
         }
 
@@ -247,6 +278,7 @@
                     { data: 'numberOfCustomers', title: 'Kunder' },
                     { data: 'numberOfColdBoxes.value', title: 'Lådor', render: numberOfColdBoxes_input },
                     { data: 'restPicking.value', title: 'Restplock', render: restPicking_input },
+                    { data: 'locationStatus', title: 'Plats', render: location_input },
                     { data: 'numberOfFrozenBoxes.value', title: 'Frys', render: numberOfFrozenBoxes_input },
                     { data: 'numberOfBreadBoxes.value', title: 'Bröd', render: numberOfBreadBoxes_input },
                     { data: 'controlIsDone.value', title: 'Kontroll', render: controlIsDone_input },

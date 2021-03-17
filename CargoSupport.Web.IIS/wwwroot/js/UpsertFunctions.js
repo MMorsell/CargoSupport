@@ -79,6 +79,10 @@
                 object.restPicking.value = newObject["restPicking_input"];
                 update = true;
             }
+            else if (newObject["location_input"] !== undefined) {
+                object.locationStatus = newObject["location_input"];
+                update = true;
+            }
             else if (newObject["numberOfFrozenBoxes_input"] !== undefined) {
                 object.numberOfFrozenBoxes.value = newObject["numberOfFrozenBoxes_input"];
                 update = true;

@@ -141,6 +141,7 @@ namespace CargoSupport.Web.Controllers.API
                     allRoutes[i].PinRouteModel.RouteName,
                     allRoutes[i].CarModel,
                     allRoutes[i].PortNumber,
+                    allRoutes[i].LocationStatus,
                     allRoutes[i].LoadingLevel,
                     allRoutes[i].PinRouteModel.NumberOfCustomers,
                     allRoutes[i].ControlIsDone,

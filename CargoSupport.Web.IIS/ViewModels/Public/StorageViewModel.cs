@@ -14,6 +14,7 @@ namespace CargoSupport.ViewModels.Public
             string routeName,
             string carNumberString,
             int portNumber,
+            LocationStatus? locationStatus,
             LoadingLevel loadingLevel,
             double numberOfCustomers,
             List<PickingVerifyBooleanModel> controlIsDone,
@@ -30,6 +31,7 @@ namespace CargoSupport.ViewModels.Public
             CarNumber = carNumberString;
             PortNumber = portNumber;
             LoadingLevel = loadingLevel;
+            LocationStatus = locationStatus;
             NumberOfCustomers = numberOfCustomers;
 
             if (isExteded)
@@ -106,6 +108,7 @@ namespace CargoSupport.ViewModels.Public
         public string CarNumber { get; set; }
         public int PortNumber { get; set; }
         public LoadingLevel LoadingLevel { get; set; }
+        public LocationStatus? LocationStatus { get; set; }
         public double NumberOfCustomers { get; set; }
         public PickingVerifyIntModel NumberOfColdBoxes { get; set; }
         public PickingVerifyBooleanModel RestPicking { get; set; }

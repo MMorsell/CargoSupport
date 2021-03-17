@@ -212,6 +212,22 @@ namespace CargoSupport.Web.IIS.Controllers.API
                     update = true;
                     break;
 
+                case "location_input":
+                    if (updateKeyValuePair.Value == null)
+                    {
+                        existingRecord.LocationStatus = null;
+                    }
+                    else if (Enum.TryParse(typeof(LocationStatus), updateKeyValuePair.Value.ToString(), out object successfulResult))
+                    {
+                        existingRecord.LocationStatus = (LocationStatus)successfulResult;
+                    }
+                    else
+                    {
+                        existingRecord.LocationStatus = null;
+                    }
+                    update = true;
+                    break;
+
                 case "controlisdone_input":
                     existingRecord.ControlIsDone.Insert(0, new PickingVerifyBooleanModel(bool.Parse(updateKeyValuePair.Value.ToString()), signature.ToString()));
                     update = true;

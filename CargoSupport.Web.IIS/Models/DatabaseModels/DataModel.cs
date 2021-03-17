@@ -54,6 +54,7 @@ namespace CargoSupport.Models.DatabaseModels
         public List<PickingVerifyIntModel> NumberOfBreadBoxes { get; set; }
         public string PreRideAnnotation { get; set; } = "";
         public string PostRideAnnotation { get; set; } = "";
+        public LocationStatus? LocationStatus { get; set; } = null;
 
         public void ConvertAllDatesToUniversalTime()
         {
