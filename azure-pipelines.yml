@@ -1,35 +1,55 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
-- master
+  - master
 
 pool:
-  vmImage: 'windows-latest'
+  name: "windows-latest"
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  solution: "**/*.sln"
+  buildPlatform: "Any CPU"
+  buildConfiguration: "Release"
+  websitename: "ehlsolna.tk"
 
-steps:
-- task: NuGetToolInstaller@1
+stages:
+  - stage: build
+    displayName: Build
+    jobs:
+      - job: Build
+        pool:
+          name: "windows-latest"
+        steps:
+          - task: NuGetToolInstaller@1
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
+          - task: NuGetCommand@2
+            inputs:
+              restoreSolution: '$(solution)'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-     
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(build.artifactStagingDirectory)\WebApp.zip'
-    ArtifactName: 'DeployFolder'
-    publishLocation: 'Container'
+          - task: VSBuild@1
+            inputs:
+              solution: '$(solution)'
+              msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+              platform: '$(buildPlatform)'
+              configuration: '$(buildConfiguration)'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(build.artifactStagingDirectory)\WebApp.zip'
+              ArtifactName: 'DeployFolder'
+              publishLocation: 'Container'
+              
+  - stage: Release
+    displayName: Release
+    condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+    jobs:
+      - deployment:
+        displayName: Release
+        environment: MK1
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: IISWebAppDeploymentOnMachineGroup@0
+                  inputs:
+                    WebSiteName: '$(websitename)'
+                    Package: '$(System.DefaultWorkingDirectory)/_MMorsell.CargoSupport/DeployFolder\WebApp.zip'
+                    TakeAppOfflineFlag: true
