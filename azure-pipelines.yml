@@ -2,7 +2,7 @@ trigger:
   - master
 
 pool:
-  name: "windows-latest"
+  name: "default"
 
 variables:
   solution: "**/*.sln"
@@ -16,7 +16,7 @@ stages:
     jobs:
       - job: Build
         pool:
-          name: "windows-latest"
+          name: "default"
         steps:
           - task: NuGetToolInstaller@1
 
