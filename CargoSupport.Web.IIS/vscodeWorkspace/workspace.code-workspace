@@ -1,0 +1,11 @@
+{
+  "folders": [
+	{
+		"path": "..\\wwwroot\\js"
+	},
+	{
+		"path": "..\\Views"
+	}
+],
+  "settings": {}
+}
