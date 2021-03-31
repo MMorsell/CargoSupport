@@ -1,18 +1,19 @@
 ﻿"use strict";
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 connection.on("Upsert", function (upsertDirectory) {
-    updateSingleRecord(upsertDirectory);
+  updateSingleRecord(upsertDirectory);
 });
 
 connection.on("ReloadDataTable", function () {
-    reloadDatatableAjax();
+  reloadDatatableAjax();
 });
 
-connection.start().then(function () {
-    //document.getElementById("sendButton").disabled = false;
-}).catch(function (err) {
-    toggleConnectStatus('error');
+connection
+  .start()
+  .then(function () {})
+  .catch(function (err) {
+    toggleConnectStatus("error");
     return console.error(err.toString());
-});
+  });

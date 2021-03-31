@@ -14,7 +14,7 @@
         <h6>Datum</h6>
         <div>
             <div style="padding-left: 20px;" class="group">
-                <input type="text" id="calendar-from-table-tr">
+                <input type="text" id="calendar-from">
                 <span class="bar"></span>
             </div>
         </div>
@@ -43,6 +43,15 @@
         let table;
         let currentTab;
         const mainApiEndpoint = '/api/v1/public/GetTransport';
+
+        generateFlatPickrElement("#calendar-from", new Date().fp_incr(3), new Date().fp_incr(-365), new Date(), 
+        function (selectedDates, dateStr, instance) {
+            currentTab = undefined;
+            ajaxDate = new Date(dateStr);
+            reloadDatatableAjax();
+        });
+
+
         async function updateRow(thisRef) {
             var dataRef = table.row($(thisRef).parents('tr')).data();
             /*

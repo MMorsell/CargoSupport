@@ -13,7 +13,7 @@
         <h6>Datum</h6>
         <div>
             <div style="padding-left: 20px;" class="group">
-                <input type="text" id="calendar-from-table">
+                <input type="text" id="calendar-from">
                 <span class="bar"></span>
             </div>
         </div>
@@ -36,6 +36,12 @@
     <script src="~/js/chat.js" asp-append-version="true"></script>
     <script>
         let currentTab;
+
+        generateFlatPickrElement("#calendar-from", new Date().fp_incr(1), new Date(), new Date(), 
+        function (selectedDates, dateStr, instance) {
+            ajaxDate = new Date(dateStr);
+            reloadDatatableAjax();
+        });
         $(document).ready(function () {
             table = $('#dataTable').DataTable({
                 "aoColumnDefs": [

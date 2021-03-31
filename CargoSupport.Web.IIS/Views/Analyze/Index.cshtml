@@ -10,7 +10,7 @@
             <div>
                 <div style="padding-left: 20px;" class="group">
                     <label class="input-label">Från</label>
-                    <input type="text" id="calendar-from-driverIndex">
+                    <input type="text" id="calendar-from">
                     <span class="bar"></span>
                 </div>
                 <div style="padding-left: 30px;" class="group">
@@ -32,6 +32,12 @@
 {
     <script>
         let table;
+
+        generateFlatPickrElement("#calendar-from", new Date().fp_incr(365), new Date().fp_incr(-365), new Date().fp_incr(-7), 
+        function (selectedDates, dateStr, instance) {
+            fromDate = moment(dateStr);
+            reloadDatatableWithNoStatusAjax();
+        });
 
         const driver_extendedInfo = function (data, type, full, meta) {
             if (type === 'sort' || type === 'filter') {
