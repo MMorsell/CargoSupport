@@ -36,19 +36,19 @@ function toggleConnectStatus(status) {
 }
 
 const preRideInput = function (data, type, full, meta) {
-  return '<input contenteditable="true" type="text" id="preRideInput" onfocusout=updateRow(this) class=" form-control" value="' + data + '"  />';
+  return `<input contenteditable="true" type="text" id="preRideInput" onfocusout=updateRow(this) class=" form-control" value="${data}" />`;
 };
 
 const preRideInput_fat = function (data, type, full, meta) {
-  return '<textarea id="preRideInput" onfocusout=updateRow(this) style="background: white;" class=" form-control" rows="2" cols="50">' + data + "</textarea >";
+  return `<textarea id="preRideInput" onfocusout=updateRow(this) style="background: white;" class=" form-control" rows="2" cols="50">${data}</textarea >`;
 };
 
 const postRideInput = function (data, type, full, meta) {
-  return '<input contenteditable="true" type="text" id="postRideInput" onfocusout=updateRow(this) class=" form-control" value="' + data + '"  />';
+  return `<input contenteditable="true" type="text" id="postRideInput" onfocusout=updateRow(this) class=" form-control" value="${data}"  />`;
 };
 
 const postRideInput_fat = function (data, type, full, meta) {
-  return '<textarea id="postRideInput" onfocusout=updateRow(this) style="background: white;" class=" form-control" rows="2" cols="50">' + data + "</textarea >";
+  return `<textarea id="postRideInput" onfocusout=updateRow(this) style="background: white;" class=" form-control" rows="2" cols="50">${data}</textarea>`;
 };
 
 const convert_keyStatus_toSelectbox = function (data, type, full, meta) {
@@ -237,21 +237,21 @@ const disabled_checkbox = function (data, type, full, meta) {
 };
 
 const disabled_textInput = function (data, type, full, meta) {
-  return '<input type="text" readonly style="background: white;" class="form-control" value="' + data + '"  />';
+  return `<input type="text" readonly style="background: white;" class="form-control" value="${data}"  />`;
 };
 const disabled_fat_textInput = function (data, type, full, meta) {
-  return '<textarea readonly style="background: white;" class="form-control" rows="5" cols="50">' + data + "</textarea >";
+  return `<textarea readonly style="background: white;" class="form-control" rows="5" cols="50">${data}</textarea>`;
 };
 
 const disabled_intInput = function (data, type, full, meta) {
-  return '<input type="number" readonly class="form-control" value="' + data + '"  />';
+  return `<input type="number" readonly class="form-control" value="${data}" />`;
 };
 
 const renderEjValdIfZeroOrEmpty = function (data, type, full, meta) {
   if (data === 0 || data === "0" || data === "" || data === "Ej satt") {
     return "<p>Ej vald</p>";
   } else {
-    return "<p>" + data + "</p>";
+    return `<p>${data}</p>`;
   }
 };
 
@@ -259,15 +259,15 @@ const renderEmptyIfZeroOrEmpty = function (data, type, full, meta) {
   if (data === 0 || data === "0" || data === "" || data === "Ej satt") {
     return "<p></p>";
   } else {
-    return "<p>" + data + "</p>";
+    return `<p>${data}</p>`;
   }
 };
 
 const hidden_IntIfNull = function (data, type, full, meta) {
   if (data === 0) {
-    return '<p class="" ></p>';
+    return "<p></p>";
   } else {
-    return '<p class="">' + data + "</p>";
+    return `<p>${data}</p>`;
   }
 };
 
@@ -294,7 +294,7 @@ const input_kilos = function (data, type, full, meta) {
     return data;
   }
 
-  return "<p>" + data + " Kilo</p>";
+  return `<p>${data} Kilo</p>`;
 };
 
 function percentageToColorHighIsGood(perc) {
@@ -350,7 +350,7 @@ function fnExcelReport(tableId) {
   //Replace select with value of select
   $dataWrapper.find("select").each(function () {
     const innerValue = $("this option:selected").text();
-    const convertedHtml = "<p>" + innerValue + "</p>";
+    const convertedHtml = `<p>${innerValue}</p>`;
     $(this).after(convertedHtml);
     $(this).detach();
   });
@@ -358,7 +358,7 @@ function fnExcelReport(tableId) {
   //Replace textarea with value
   $dataWrapper.find("textarea").each(function () {
     const innerValue = $(this).text();
-    const convertedHtml = "<p>" + innerValue + "</p>";
+    const convertedHtml = `<p>${innerValue}</p>`;
     $(this).after(convertedHtml);
     $(this).detach();
   });
@@ -367,7 +367,7 @@ function fnExcelReport(tableId) {
   $dataWrapper.find(":checkbox").each(function () {
     if ($(this).is(":checked")) {
       const innerValue = "Ja";
-      const convertedHtml = "<p>" + innerValue + "</p>";
+      const convertedHtml = `<p>${innerValue}</p>`;
       $(this).after(convertedHtml);
     }
     $(this).detach();
@@ -444,7 +444,7 @@ $("#downloadPdf").click(function (event) {
 
   let oldValue = document.getElementById("mainName").innerText;
 
-  document.getElementById("mainName").innerText = oldValue + ", " + from + " till " + to;
+  document.getElementById("mainName").innerText = `${oldValue}, ${from} till ${to}`;
   // create new pdf and add our new canvas as an image
   const doc = new jsPDF("l", "pt", [reportPageWidth, reportPageHeight]);
   const elementHTML = $("#reportPage").html();

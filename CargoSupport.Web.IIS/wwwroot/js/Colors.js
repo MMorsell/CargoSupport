@@ -164,8 +164,8 @@ AllColors.rgb = [
   "rgb(255, 255, 0)",
 ];
 
-const getrgbaColorWithOpacity = (index, opacity) => {
-  return AllColors.rgba[index] + ", " + opacity + ")";
+const getRgbaColorWithOpacity = (index, opacity) => {
+  return `${AllColors.rgba[index]}, ${opacity}`;
 };
 const getRgbColor = (index) => {
   return AllColors.rgb[index];
