@@ -7,7 +7,7 @@
 {
     <div style="padding-left: 20px;" class="group">
         <td>Nytt datum</td>
-        <input type="text" asp-for="@Model.DateTimeString" id="calendar-pin-order">
+        <input type="text" asp-for="@Model.DateTimeString" id="calendar-from2">
         <span class="bar"></span>
     </div>
     <br />
@@ -31,4 +31,8 @@
 
 @section Scripts
 {
+    <script>
+        generateFlatPickrElement("#calendar-from2", new Date().fp_incr(365), new Date().fp_incr(-365), new Date(), 
+              function (selectedDates, dateStr, instance) {});
+    </script>
 }

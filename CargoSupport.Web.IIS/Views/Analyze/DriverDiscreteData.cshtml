@@ -16,12 +16,12 @@
                 <h6 id="elementH">Visa data</h6>
                 <div style="padding-left: 20px;" class="group">
                     <label id="elementH" class="input-label">Från</label>
-                    <input type="text" id="calendar-from-graphs-discrete">
+                    <input type="text" id="calendar-from2">
                     <span class="bar"></span>
                 </div>
                 <div style="padding-left: 30px;" class="group">
                     <label id="elementH" class="input-label">Till</label>
-                    <input type="text" id="calendar-to-graphs-discrete">
+                    <input type="text" id="calendar-to2">
                     <span class="bar"></span>
                 </div>
             </div>
@@ -63,6 +63,22 @@
         let staffCat = null;
         let secondTable;
         let fileName = "sample";
+
+        generateFlatPickrElement("#calendar-from2", new Date(), new Date().fp_incr(-365), new Date().fp_incr(-7), 
+        function (selectedDates, dateStr, instance) {
+            fromDate = moment(dateStr, timeFormat);
+            getDataBetweenDates(mainApiEndpoint);
+            redrawTableById(null, null);
+        });
+
+        generateFlatPickrElement("#calendar-to2", new Date(), new Date().fp_incr(-365), new Date(), 
+        function (selectedDates, dateStr, instance) {
+            toDate = moment(dateStr, timeFormat);
+            getDataBetweenDates(mainApiEndpoint);
+            redrawTableById(null, null);
+        });
+        
+
 
         function resetTable() {
             staffCat = null;

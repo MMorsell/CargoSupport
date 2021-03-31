@@ -439,8 +439,8 @@ $("#downloadPdf").click(function (event) {
       pdfctxX += canvasWidth + buffer;
     }
   });
-  let from = document.getElementById("calendar-from-graphs-discrete").value;
-  let to = document.getElementById("calendar-to-graphs-discrete").value;
+  let from = document.getElementById("calendar-from2").value;
+  let to = document.getElementById("calendar-to2").value;
 
   let oldValue = document.getElementById("mainName").innerText;
 

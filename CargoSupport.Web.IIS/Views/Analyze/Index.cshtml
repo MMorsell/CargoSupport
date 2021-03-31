@@ -15,7 +15,7 @@
                 </div>
                 <div style="padding-left: 30px;" class="group">
                     <label class="input-label">Till</label>
-                    <input type="text" id="calendar-to-driverIndex">
+                    <input type="text" id="calendar-to2">
                     <span class="bar"></span>
                 </div>
             </div>
@@ -36,6 +36,12 @@
         generateFlatPickrElement("#calendar-from", new Date().fp_incr(365), new Date().fp_incr(-365), new Date().fp_incr(-7), 
         function (selectedDates, dateStr, instance) {
             fromDate = moment(dateStr);
+            reloadDatatableWithNoStatusAjax();
+        });
+
+        generateFlatPickrElement("#calendar-to2", new Date().fp_incr(365), new Date().fp_incr(-365), new Date(), 
+        function (selectedDates, dateStr, instance) {
+            toDate = moment(dateStr);
             reloadDatatableWithNoStatusAjax();
         });
 
