@@ -122,10 +122,6 @@ namespace CargoSupport.Helpers
                     else
                     {
                         quinyxModel.Id = (int)rawId;
-                    }
-
-                    if (quinyxModel.Id != 0)
-                    {
                         quinyxModel.BadgeNo = (string)item.Elements().FirstOrDefault(z => z.Name.LocalName == "badgeNo");
                         quinyxModel.begTimeString = (string)item.Elements().FirstOrDefault(z => z.Name.LocalName == "begTime");
                         quinyxModel.endTimeString = (string)item.Elements().FirstOrDefault(z => z.Name.LocalName == "endTime");
@@ -215,21 +211,7 @@ namespace CargoSupport.Helpers
         {
             try
             {
-                XDocument doc = await _cache.GetAsync<XDocument>(Constants.Cache.AllDrivers);
-
-                if (doc == null)
-                {
-                    doc = await RetrieveAllDriversFromQuinyx();
-                    if (doc != null)
-                    {
-                        _cache.Add(Constants.Cache.AllDrivers, doc, DateTimeOffset.Now.AddHours(168));
-                    }
-                    else
-                    {
-                        Log.Error($"No cache found for key '{Constants.Cache.AllDrivers}' and attempt to RetrieveAllDriversFromQuinyx failed, will exit with null");
-                        return null;
-                    }
-                }
+                XDocument doc = await RetrieveAllDriversFromQuinyx();
 
                 var quinyxBasicModels = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new BasicQuinyxModel
                 {
@@ -256,21 +238,7 @@ namespace CargoSupport.Helpers
         {
             try
             {
-                XDocument doc = await _cache.GetAsync<XDocument>(Constants.Cache.AllDrivers);
-
-                if (doc == null)
-                {
-                    doc = await RetrieveAllDriversFromQuinyx();
-                    if (doc != null)
-                    {
-                        _cache.Add(Constants.Cache.AllDrivers, doc, DateTimeOffset.Now.AddHours(168));
-                    }
-                    else
-                    {
-                        Log.Error($"No cache found for key '{Constants.Cache.AllDrivers}' and attempt to RetrieveAllDriversFromQuinyx failed, will exit with null");
-                        return null;
-                    }
-                }
+                XDocument doc = await RetrieveAllDriversFromQuinyx();
 
                 var extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
                 {
@@ -308,21 +276,7 @@ namespace CargoSupport.Helpers
         {
             try
             {
-                XDocument doc = await _cache.GetAsync<XDocument>(Constants.Cache.AllDrivers);
-
-                if (doc == null)
-                {
-                    doc = await RetrieveAllDriversFromQuinyx();
-                    if (doc != null)
-                    {
-                        _cache.Add(Constants.Cache.AllDrivers, doc, DateTimeOffset.Now.AddHours(168));
-                    }
-                    else
-                    {
-                        Log.Error($"No cache found for key '{Constants.Cache.AllDrivers}' and attempt to RetrieveAllDriversFromQuinyx failed, will exit with null");
-                        return null;
-                    }
-                }
+                XDocument doc = await RetrieveAllDriversFromQuinyx();
 
                 var extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
                 {
@@ -359,21 +313,7 @@ namespace CargoSupport.Helpers
         {
             try
             {
-                XDocument doc = await _cache.GetAsync<XDocument>(Constants.Cache.AllDrivers);
-
-                if (doc == null)
-                {
-                    doc = await RetrieveAllDriversFromQuinyx();
-                    if (doc != null)
-                    {
-                        _cache.Add(Constants.Cache.AllDrivers, doc, DateTimeOffset.Now.AddHours(168));
-                    }
-                    else
-                    {
-                        Log.Error($"No cache found for key '{Constants.Cache.AllDrivers}' and attempt to RetrieveAllDriversFromQuinyx failed, will exit with null");
-                        return null;
-                    }
-                }
+                XDocument doc = await RetrieveAllDriversFromQuinyx();
 
                 var extendedInformation = doc.Descendants().Where(x => x.Name.LocalName == "item").Select(y => new ExtendedInformationModel
                 {
@@ -396,6 +336,27 @@ namespace CargoSupport.Helpers
         }
 
         public async Task<XDocument> RetrieveAllDriversFromQuinyx()
+        {
+            XDocument doc = await _cache.GetAsync<XDocument>(Constants.Cache.AllDrivers);
+
+            if (doc == null)
+            {
+                doc = await PostToEndpointAndRetrieveAllDriversFromQuinyx();
+                if (doc != null)
+                {
+                    _cache.Add(Constants.Cache.AllDrivers, doc, DateTimeOffset.Now.AddHours(168));
+                }
+                else
+                {
+                    Log.Error($"No cache found for key '{Constants.Cache.AllDrivers}' and attempt to PostToEndpointAndRetrieveAllDriversFromQuinyx failed, will exit with null");
+                    return null;
+                }
+            }
+
+            return doc;
+        }
+
+        internal async Task<XDocument> PostToEndpointAndRetrieveAllDriversFromQuinyx()
         {
             var sw = new Stopwatch();
             sw.Start();

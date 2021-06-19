@@ -6,6 +6,7 @@ namespace CargoSupport.ViewModels.Analyze
     {
         public string LabelTitle { get; set; }
         public int StaffCatId { get; set; }
+        public string ReportingTo { get; set; }
         public int SectionId { get; set; }
         public int DriverId { get; set; } = 0;
         public int NumberOfCustomerServiceReports { get; set; }

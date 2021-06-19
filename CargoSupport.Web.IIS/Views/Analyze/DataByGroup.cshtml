@@ -42,30 +42,30 @@
         const mainApiEndpoint = driverExtendedStats;
         fromDate = moment().subtract(7, 'd');
         toDate = moment();
-        let section = null;
+        let reportingToId = null;
         let staffCat = null;
 
-        generateFlatPickrElement("#calendar-from2", new Date(), new Date().fp_incr(-365), new Date().fp_incr(-7), 
-        function (selectedDates, dateStr, instance) {
-            fromDate = moment(dateStr, timeFormat);
-            redrawTableById(null, null);
-        });
+        generateFlatPickrElement("#calendar-from2", new Date(), new Date().fp_incr(-365), new Date().fp_incr(-7),
+            function (selectedDates, dateStr, instance) {
+                fromDate = moment(dateStr, timeFormat);
+                redrawTableById(null, null);
+            });
 
-        generateFlatPickrElement("#calendar-to2", new Date(), new Date().fp_incr(-365), new Date(), 
-        function (selectedDates, dateStr, instance) {
-            toDate = moment(dateStr, timeFormat);
-            redrawTableById(null, null);
-        });
-        
+        generateFlatPickrElement("#calendar-to2", new Date(), new Date().fp_incr(-365), new Date(),
+            function (selectedDates, dateStr, instance) {
+                toDate = moment(dateStr, timeFormat);
+                redrawTableById(null, null);
+            });
+
         function resetTable() {
             staffCat = null;
-            section = null;
+            reportingToId = null;
             table.ajax.reload(null, false);
         }
 
-        function redrawTableById(sectionId, staffCatId) {
-            if (sectionId != null) {
-                section = sectionId;
+        function redrawTableById(reportingTo, staffCatId) {
+            if (reportingTo != null) {
+                reportingToId = reportingTo;
             }
 
             if (staffCatId != null) {
@@ -127,7 +127,7 @@
                 return '<a style="color: blue;cursor: pointer;text-decoration: underline" href="DriverDiscreteData/' + full.driverId + '" class="dropdown-item">' + data + '</a>';
             }
             else {
-                return '<a style="color: blue;cursor: pointer;text-decoration: underline" onClick="redrawTableById(' + full.sectionId + ',' + full.staffCatId + ')">' + data + '</a>';
+                return '<a style="color: blue;cursor: pointer;text-decoration: underline" onClick="redrawTableById(' + full.reportingTo + ',' + full.staffCatId + ')">' + data + '</a>';
             }
         }
 
@@ -155,7 +155,7 @@
                     "data": {
                         "fromDate": function () { return fromDate.format(timeFormat) },
                         "toDate": function () { return toDate.format(timeFormat) },
-                        "sectionId": function () { return section },
+                        "reportingTo": function () { return reportingToId },
                         "staffCatId": function () { return staffCat }
                     },
                     "dataSrc": "",
@@ -169,7 +169,7 @@
                     { "width": "20%", "targets": 3 }
                 ],
                 columns: [
-                    { data: 'sectionId', title: 'SectionId', "visible": false, "searchable": false },
+                    { data: 'reportingTo', title: 'ReportingTo', "visible": false, "searchable": false },
                     { data: 'staffCatId', title: 'StaffCatId', "visible": false, "searchable": false },
                     { data: 'driverId', title: 'DriverId', "visible": false, "searchable": false },
                     { data: 'labelTitle', title: 'Gruppnamn', render: boss_extendedInfo },

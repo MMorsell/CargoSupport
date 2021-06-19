@@ -52,7 +52,7 @@ namespace CargoSupport.Services
             try
             {
                 Log.Logger.Debug($"Start updating all drivers cache {DateTime.Now.ToShortTimeString()}");
-                var result = _qh.RetrieveAllDriversFromQuinyx().Result;
+                var result = _qh.PostToEndpointAndRetrieveAllDriversFromQuinyx().Result;
 
                 if (result == null)
                 {

@@ -106,23 +106,27 @@ namespace CargoSupport.Web.IIS.Controllers.API
 
         [HttpGet]
         [Authorize(Roles = Constants.MinRoleLevel.GruppChefAndUp)]
-        public async Task<ActionResult> GetUnderBoss(int? sectionId, int? staffCatId, string fromDate, string toDate)
+        public async Task<ActionResult> GetUnderBoss(string reportingTo, int? staffCatId, string fromDate, string toDate)
         {
             if (DatesAreNotValid(fromDate, toDate, out string errorMessage, out DateTime from, out DateTime to))
             {
                 return BadRequest(errorMessage);
             }
 
-            if (sectionId != null)
-            {
-                var recordsWithDriverNames = await _qh.AddNamesToData(_dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to));
+            var recordsWithDriverNames = await _qh.AddNamesToData(_dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to));
 
-                var matchingRecordsBySectionId = recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null && d.Driver.ExtendedInformationModel.Section == sectionId).ToList();
+            if (reportingTo != null)
+            {
+                var matchingRecordsBySectionId = recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null);
 
                 if (staffCatId == 28899)
                 {
                     //user has selected an Internal group
-                    var res = _dataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId);
+                    var res = _dataConversionHelper.ConvertDataModelsToMultipleDriverTableData(
+                        matchingRecordsBySectionId
+                        .Where(d => d.Driver.ExtendedInformationModel.ReportingTo.Equals(reportingTo, StringComparison.CurrentCultureIgnoreCase) &&
+                        d.Driver.ExtendedInformationModel.StaffCat.Equals(staffCatId))
+                        .ToList());
                     return Ok(res);
                 }
                 else
@@ -131,16 +135,14 @@ namespace CargoSupport.Web.IIS.Controllers.API
                      * Since all external drivers are grouped by same section id, we need extra grouping to correctly seperate by external company
                      */
                     matchingRecordsBySectionId = matchingRecordsBySectionId.Where(d => d.Driver.ExtendedInformationModel.StaffCat == staffCatId).ToList();
-                    var res = _dataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId);
+                    var res = _dataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId.ToList());
                     return Ok(res);
                 }
             }
             else
             {
                 //no group has been chosen, display all groups
-                var recordsWithDriverNames = await _qh.AddNamesToData(_dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to));
-
-                var res = _dataConversionHelper.ConvertDatRowsToBossGroup(recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null).ToList());
+                var res = _dataConversionHelper.ConvertDataRowsToBossGroup(recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null).ToList());
                 return Ok(res);
             }
         }

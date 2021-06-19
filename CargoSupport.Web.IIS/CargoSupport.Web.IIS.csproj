@@ -11,6 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="XMLDOC\**" />
+    <Content Remove="XMLDOC\**" />
+    <EmbeddedResource Remove="XMLDOC\**" />
+    <None Remove="XMLDOC\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCore.Identity.MongoDbCore" Version="2.1.1" />
     <PackageReference Include="EPPlus" Version="5.4.0" />
     <PackageReference Include="LazyCache.AspNetCore" Version="2.1.2" />
@@ -42,7 +49,6 @@
     <Folder Include="wwwroot\lib\moment\css\" />
     <Folder Include="wwwroot\lib\moment\js\" />
     <Folder Include="wwwroot\lib\popper\" />
-    <Folder Include="XMLDOC\" />
   </ItemGroup>
 
   <ItemGroup>

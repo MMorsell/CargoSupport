@@ -18,7 +18,7 @@ namespace CargoSupport.Interfaces
 
         SimplifiedRecordsViewModel[] ConvertDataToSimplifiedRecordsAsParalell(List<DataModel> routes);
 
-        AllBossesViewModel[] ConvertDatRowsToBossGroup(List<DataModel> routesOfToday);
+        AllBossesViewModel[] ConvertDataRowsToBossGroup(List<DataModel> routesOfToday);
 
         TodayGraphsViewModel[] ConvertTodaysDataToGraphModelsAsParalell(List<DataModel> routesOfToday, bool splitRouteName);
     }

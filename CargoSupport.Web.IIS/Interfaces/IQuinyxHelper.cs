@@ -3,6 +3,7 @@ using CargoSupport.Models.QuinyxModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace CargoSupport.Interfaces
 {
@@ -23,5 +24,7 @@ namespace CargoSupport.Interfaces
         Task<List<ExtendedInformationModel>> GetExtraInformationForDrivers();
 
         Task<List<BasicQuinyxModel>> GetNonSchedualedDrivers();
+
+        Task<XDocument> RetrieveAllDriversFromQuinyx();
     }
 }
