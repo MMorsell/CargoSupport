@@ -20,4 +20,4 @@ const singleDriverSimplifiedRecords = "/api/v1/Analyze/GetSimplifiedRecordsForDr
 const timeFormat = "YYYY-MM-DD";
 
 //Ports
-const availablePorts = [24, 26, 27, 29, 31];
+const availablePorts = [24, 26, 27, 29, 31, 32, 33, 34];
