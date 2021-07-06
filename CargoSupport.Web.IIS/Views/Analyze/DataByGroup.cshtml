@@ -44,6 +44,7 @@
         toDate = moment();
         let reportingToId = null;
         let staffCat = null;
+        let sectionId = null;
 
         generateFlatPickrElement("#calendar-from2", new Date(), new Date().fp_incr(-365), new Date().fp_incr(-7),
             function (selectedDates, dateStr, instance) {
@@ -63,13 +64,17 @@
             table.ajax.reload(null, false);
         }
 
-        function redrawTableById(reportingTo, staffCatId) {
+        function redrawTableById(reportingTo, staffCatId, section) {
             if (reportingTo != null) {
                 reportingToId = reportingTo;
             }
 
             if (staffCatId != null) {
                 staffCat = staffCatId;
+            }
+
+            if (section != null) {
+                sectionId = section;
             }
 
             table.ajax.reload(null, false);
@@ -127,7 +132,7 @@
                 return '<a style="color: blue;cursor: pointer;text-decoration: underline" href="DriverDiscreteData/' + full.driverId + '" class="dropdown-item">' + data + '</a>';
             }
             else {
-                return '<a style="color: blue;cursor: pointer;text-decoration: underline" onClick="redrawTableById(' + full.reportingTo + ',' + full.staffCatId + ')">' + data + '</a>';
+                return '<a style="color: blue;cursor: pointer;text-decoration: underline" onClick="redrawTableById(' + full.reportingTo + ',' + full.staffCatId + ',' + full.sectionId + ')">' + data + '</a>';
             }
         }
 
@@ -156,7 +161,8 @@
                         "fromDate": function () { return fromDate.format(timeFormat) },
                         "toDate": function () { return toDate.format(timeFormat) },
                         "reportingTo": function () { return reportingToId },
-                        "staffCatId": function () { return staffCat }
+                        "staffCatId": function () { return staffCat },
+                        "sectionId": function () { return sectionId }
                     },
                     "dataSrc": "",
                     "complete": function (responseReference, responseText) {
@@ -172,6 +178,7 @@
                     { data: 'reportingTo', title: 'ReportingTo', "visible": false, "searchable": false },
                     { data: 'staffCatId', title: 'StaffCatId', "visible": false, "searchable": false },
                     { data: 'driverId', title: 'DriverId', "visible": false, "searchable": false },
+                    { data: 'sectionId', title: 'SectionId', "visible": false, "searchable": false },
                     { data: 'labelTitle', title: 'Gruppnamn', render: boss_extendedInfo },
                     { data: 'numberOfCustomerServiceReports', title: 'Antal serviceärenden' },
                     { data: 'numberOfValidDeliveries', title: 'Genomförda leveranser' },

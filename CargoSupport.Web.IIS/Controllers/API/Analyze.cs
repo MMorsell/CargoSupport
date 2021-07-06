@@ -106,7 +106,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
 
         [HttpGet]
         [Authorize(Roles = Constants.MinRoleLevel.GruppChefAndUp)]
-        public async Task<ActionResult> GetUnderBoss(string reportingTo, int? staffCatId, string fromDate, string toDate)
+        public async Task<ActionResult> GetUnderBoss(string reportingTo, int? staffCatId, int? sectionId, string fromDate, string toDate)
         {
             if (DatesAreNotValid(fromDate, toDate, out string errorMessage, out DateTime from, out DateTime to))
             {
@@ -115,27 +115,30 @@ namespace CargoSupport.Web.IIS.Controllers.API
 
             var recordsWithDriverNames = await _qh.AddNamesToData(_dbService.GetAllRecordsBetweenDates(Constants.MongoDb.OutputScreenCollectionName, from, to));
 
-            if (reportingTo != null)
+            if (staffCatId != null)
             {
                 var matchingRecordsBySectionId = recordsWithDriverNames.Where(d => d.Driver.ExtendedInformationModel != null);
 
-                if (staffCatId == 28899)
+                if (staffCatId == 35858) //Role consultant - external groups
                 {
-                    //user has selected an Internal group
+                    /*
+                     * Since all external drivers are grouped by same section id, we need extra grouping to correctly seperate by external company
+                     */
+                    matchingRecordsBySectionId = matchingRecordsBySectionId
+                        .Where(d => d.Driver.ExtendedInformationModel.Section == sectionId && d.Driver.ExtendedInformationModel.StaffCat.Equals(staffCatId))
+                        .ToList();
+
+                    var res = _dataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId.ToList());
+                    return Ok(res);
+                }
+                else
+                {
+                    //user has selected an Internal group - get by reporting to boss
                     var res = _dataConversionHelper.ConvertDataModelsToMultipleDriverTableData(
                         matchingRecordsBySectionId
                         .Where(d => d.Driver.ExtendedInformationModel.ReportingTo.Equals(reportingTo, StringComparison.CurrentCultureIgnoreCase) &&
                         d.Driver.ExtendedInformationModel.StaffCat.Equals(staffCatId))
                         .ToList());
-                    return Ok(res);
-                }
-                else
-                {
-                    /*
-                     * Since all external drivers are grouped by same section id, we need extra grouping to correctly seperate by external company
-                     */
-                    matchingRecordsBySectionId = matchingRecordsBySectionId.Where(d => d.Driver.ExtendedInformationModel.StaffCat == staffCatId).ToList();
-                    var res = _dataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId.ToList());
                     return Ok(res);
                 }
             }

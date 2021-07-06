@@ -194,77 +194,16 @@ namespace CargoSupport.Helpers
 
                 Parallel.ForEach(dataGroupedByReportingTo, driverGroup =>
                 {
-                    var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
-                    var todayGraphsModel = new AllBossesViewModel();
-
-                    if (driverGroup.Key == 28899)
+                    if (driverGroup.Key == 35858) //Role consultant - external groups
+                    {
+                        ExtractDataByConsultants(resultModels, driverGroup);
+                    }
+                    else
                     {
                         /*
                          * Since all internal drivers are grouped by same id, we need extra grouping to seperate by correct boss
                          */
                         ExtractDataByCompanyBosses(resultModels, driverGroup);
-                    }
-                    else
-                    {
-                        var allCommentsAsList = new List<CustomerReportModel>();
-                        foreach (var route in driverGroup)
-                        {
-                            allCustomerWhereDeliveryHasBeenDone.AddRange(route.PinRouteModel.Customers.Where(customer => customer.PinCustomerDeliveryInfo.time_handled != null));
-                            allCommentsAsList.AddRange(route.PinRouteModel.Customers.Select(customer => customer.CustomerReportModel));
-                        }
-                        if (allCustomerWhereDeliveryHasBeenDone.Count > 0)
-                        {
-                            var listOfGroup = driverGroup.ToList();
-                            //Number of deliveries validated and done
-                            todayGraphsModel.NumberOfValidDeliveries = allCustomerWhereDeliveryHasBeenDone.Count;
-                            //Number left to be delivered
-                            todayGraphsModel.NumberOfValidDeliveriesLeft = driverGroup.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
-
-                            //Number of deliveries made within 5 minutes of each customer time slot
-                            todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Count(customer => CustomerIsInTimeWindowPlusMinus5(customer));
-
-                            //Number of deliveries made withing 15 minutes of each customers estimated time
-                            todayGraphsModel.CustomersWithinPrognosis = allCustomerWhereDeliveryHasBeenDone.Count(customer => CustomerIsInPhasePlusMinus15Minutes(customer));
-
-                            //Number of customer deliveries made before time slot - 5 minutes
-                            todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer));
-
-                            //Number of deliveries made before estimated time +-0 minutes
-                            todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer));
-
-                            //Number of customer service models
-                            todayGraphsModel.NumberOfCustomerServiceReports = allCustomerWhereDeliveryHasBeenDone.Count(customer => customer.CustomerServiceModel.Number != "");
-
-                            var allHoursDedicatedOnRoutes = driverGroup.Sum(route => (double)route.Driver.hours);
-                            if (allHoursDedicatedOnRoutes <= 0)
-                            {
-                                //Failsafe if no driver exist on any route
-                                todayGraphsModel.CustomersDividedByWorkHours = 0;
-                            }
-                            else
-                            {
-                                //Number of customers per work time of the drivers of all routes (does NOT include worktime for the whole force)
-                                todayGraphsModel.CustomersDividedByWorkHours = Math.Round(todayGraphsModel.NumberOfValidDeliveries / allHoursDedicatedOnRoutes);
-                            }
-
-                            if (todayGraphsModel.NumberOfValidDeliveries > 0)
-                            {
-                                //Percentages deliveries withing 5 minutes of each customer time slot
-                                var conversion = (todayGraphsModel.CustomersWithinTimeSlot / todayGraphsModel.NumberOfValidDeliveries);
-                                todayGraphsModel.percentageWithin5MinOfTimeSlot = Math.Round(conversion, 4) * 100;
-                                //Percentages deliveries withing 15 minutes of each customers estimated time
-                                conversion = (todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries);
-                                todayGraphsModel.percentageWithin15MinOfCustomerEstimatedTime = Math.Round(conversion, 4) * 100;
-                            }
-
-                            //Added this validation since [0]-data has not always been valid - use first data that is
-                            todayGraphsModel.LabelTitle = listOfGroup.FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.Driver.ExtendedInformationModel.StaffCatName)).Driver.ExtendedInformationModel.StaffCatName;
-                            todayGraphsModel.ReportingTo = listOfGroup.FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.Driver.ExtendedInformationModel.ReportingTo)).Driver.ExtendedInformationModel.ReportingTo;
-                            todayGraphsModel.StaffCatId = listOfGroup[0].Driver.ExtendedInformationModel.StaffCat;
-                            todayGraphsModel.SectionId = listOfGroup[0].Driver.ExtendedInformationModel.Section;
-                            todayGraphsModel.CustomerComments = allCommentsAsList.ToArray();
-                            resultModels.Add(todayGraphsModel);
-                        }
                     }
                 });
 
@@ -274,6 +213,86 @@ namespace CargoSupport.Helpers
             {
                 Log.Logger.Error(ex, "Exception in function ConvertDatRowsToBossGroup");
                 return new AllBossesViewModel[0];
+            }
+        }
+
+        private void ExtractDataByConsultants(ConcurrentBag<AllBossesViewModel> resultModels, IGrouping<int, DataModel> driverGroupUnGrouped)
+        {
+            //Split role consultant
+            var groupedConsultants = driverGroupUnGrouped.GroupBy(data => data.Driver.ExtendedInformationModel.Section);
+
+            foreach (var driverGroup in groupedConsultants)
+            {
+                var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
+                var todayGraphsModel = new AllBossesViewModel();
+                var allCommentsAsList = new List<CustomerReportModel>();
+                foreach (var route in driverGroup)
+                {
+                    allCustomerWhereDeliveryHasBeenDone.AddRange(route.PinRouteModel.Customers.Where(customer => customer.PinCustomerDeliveryInfo.time_handled != null));
+                    allCommentsAsList.AddRange(route.PinRouteModel.Customers.Select(customer => customer.CustomerReportModel));
+                }
+                if (allCustomerWhereDeliveryHasBeenDone.Count > 0)
+                {
+                    var listOfGroup = driverGroup.ToList();
+                    //Number of deliveries validated and done
+                    todayGraphsModel.NumberOfValidDeliveries = allCustomerWhereDeliveryHasBeenDone.Count;
+                    //Number left to be delivered
+                    todayGraphsModel.NumberOfValidDeliveriesLeft = driverGroup.Sum(route => route.PinRouteModel.NumberOfCustomers) - todayGraphsModel.NumberOfValidDeliveries;
+
+                    //Number of deliveries made within 5 minutes of each customer time slot
+                    todayGraphsModel.CustomersWithinTimeSlot = allCustomerWhereDeliveryHasBeenDone.Count(customer => CustomerIsInTimeWindowPlusMinus5(customer));
+
+                    //Number of deliveries made withing 15 minutes of each customers estimated time
+                    todayGraphsModel.CustomersWithinPrognosis = allCustomerWhereDeliveryHasBeenDone.Count(customer => CustomerIsInPhasePlusMinus15Minutes(customer));
+
+                    //Number of customer deliveries made before time slot - 5 minutes
+                    todayGraphsModel.CustomersBeforeTimeSlot = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeTimeSlotMinus5Minutes(customer));
+
+                    //Number of deliveries made before estimated time +-0 minutes
+                    todayGraphsModel.CustomersBeforeEstimatedTime = allCustomerWhereDeliveryHasBeenDone.Count(customer => DeliveryHasBeenMadeBeforeEstimatedTimeMinus15Minutes(customer));
+
+                    //Number of customer service models
+                    todayGraphsModel.NumberOfCustomerServiceReports = allCustomerWhereDeliveryHasBeenDone.Count(customer => customer.CustomerServiceModel.Number != "");
+
+                    var allHoursDedicatedOnRoutes = driverGroup.Sum(route => (double)route.Driver.hours);
+                    if (allHoursDedicatedOnRoutes <= 0)
+                    {
+                        //Failsafe if no driver exist on any route
+                        todayGraphsModel.CustomersDividedByWorkHours = 0;
+                    }
+                    else
+                    {
+                        //Number of customers per work time of the drivers of all routes (does NOT include worktime for the whole force)
+                        todayGraphsModel.CustomersDividedByWorkHours = Math.Round(todayGraphsModel.NumberOfValidDeliveries / allHoursDedicatedOnRoutes);
+                    }
+
+                    if (todayGraphsModel.NumberOfValidDeliveries > 0)
+                    {
+                        //Percentages deliveries withing 5 minutes of each customer time slot
+                        var conversion = (todayGraphsModel.CustomersWithinTimeSlot / todayGraphsModel.NumberOfValidDeliveries);
+                        todayGraphsModel.percentageWithin5MinOfTimeSlot = Math.Round(conversion, 4) * 100;
+                        //Percentages deliveries withing 15 minutes of each customers estimated time
+                        conversion = (todayGraphsModel.CustomersWithinPrognosis / todayGraphsModel.NumberOfValidDeliveries);
+                        todayGraphsModel.percentageWithin15MinOfCustomerEstimatedTime = Math.Round(conversion, 4) * 100;
+                    }
+
+                    var dataWithPossibleTitle = listOfGroup.FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.Driver.ExtendedInformationModel.SectionName));
+                    if (dataWithPossibleTitle == null)
+                    {
+                        todayGraphsModel.LabelTitle = "Konsulter som saknar sektion";
+                    }
+                    else
+                    {
+                        todayGraphsModel.LabelTitle = dataWithPossibleTitle.Driver.ExtendedInformationModel.SectionName;
+                    }
+
+                    //Added this validation since [0]-data has not always been valid - use first data that is
+                    todayGraphsModel.ReportingTo = listOfGroup.FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.Driver.ExtendedInformationModel.ReportingTo)).Driver.ExtendedInformationModel.ReportingTo;
+                    todayGraphsModel.StaffCatId = listOfGroup[0].Driver.ExtendedInformationModel.StaffCat;
+                    todayGraphsModel.SectionId = listOfGroup[0].Driver.ExtendedInformationModel.Section;
+                    todayGraphsModel.CustomerComments = allCommentsAsList.ToArray();
+                    resultModels.Add(todayGraphsModel);
+                }
             }
         }
 
@@ -354,6 +373,11 @@ namespace CargoSupport.Helpers
                             {
                                 innerTodayGraphsModel.LabelTitle = $"{matchingBossBadgeNoElement.Parent.Element("givenName").Value} {matchingBossBadgeNoElement.Parent.Element("familyName").Value}";
                                 innerTodayGraphsModel.ReportingTo = matchingBossBadgeNoElement.Value;
+                            }
+                            else
+                            {
+                                innerTodayGraphsModel.LabelTitle = "Förare med ingen matchande chef";
+                                innerTodayGraphsModel.ReportingTo = innerDriverGroup.Key;
                             }
                         }
                         innerTodayGraphsModel.StaffCatId = listOfGroup[0].Driver.ExtendedInformationModel.StaffCat;
