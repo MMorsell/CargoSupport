@@ -190,22 +190,12 @@ namespace CargoSupport.Helpers
             {
                 var resultModels = new ConcurrentBag<AllBossesViewModel>();
 
-                var dataGroupedByReportingTo = routesOfToday.GroupBy(data => data.Driver.ExtendedInformationModel.StaffCat);
+                ExtractDataByConsultants(resultModels, routesOfToday.Where(data => data.Driver.ExtendedInformationModel.StaffCat == 35858)); //Role consultant - external groups
 
-                Parallel.ForEach(dataGroupedByReportingTo, driverGroup =>
-                {
-                    if (driverGroup.Key == 35858) //Role consultant - external groups
-                    {
-                        ExtractDataByConsultants(resultModels, driverGroup);
-                    }
-                    else
-                    {
-                        /*
-                         * Since all internal drivers are grouped by same id, we need extra grouping to seperate by correct boss
-                         */
-                        ExtractDataByCompanyBosses(resultModels, driverGroup);
-                    }
-                });
+                /*
+                 * Since all internal drivers are grouped by same id, we need extra grouping to seperate by correct boss
+                 */
+                ExtractDataByCompanyBosses(resultModels, routesOfToday.Where(data => data.Driver.ExtendedInformationModel.StaffCat != 35858));
 
                 return resultModels.OrderBy(d => d.LabelTitle).ToArray();
             }
@@ -216,12 +206,12 @@ namespace CargoSupport.Helpers
             }
         }
 
-        private void ExtractDataByConsultants(ConcurrentBag<AllBossesViewModel> resultModels, IGrouping<int, DataModel> driverGroupUnGrouped)
+        private void ExtractDataByConsultants(ConcurrentBag<AllBossesViewModel> resultModels, IEnumerable<DataModel> driverGroupUnGrouped)
         {
             //Split role consultant
             var groupedConsultants = driverGroupUnGrouped.GroupBy(data => data.Driver.ExtendedInformationModel.Section);
 
-            foreach (var driverGroup in groupedConsultants)
+            Parallel.ForEach(groupedConsultants, driverGroup =>
             {
                 var allCustomerWhereDeliveryHasBeenDone = new List<PinCustomerModel>();
                 var todayGraphsModel = new AllBossesViewModel();
@@ -276,6 +266,7 @@ namespace CargoSupport.Helpers
                         todayGraphsModel.percentageWithin15MinOfCustomerEstimatedTime = Math.Round(conversion, 4) * 100;
                     }
 
+                    //Added this validation since [0]-data has not always been valid - use first data that is
                     var dataWithPossibleTitle = listOfGroup.FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.Driver.ExtendedInformationModel.SectionName));
                     if (dataWithPossibleTitle == null)
                     {
@@ -286,17 +277,26 @@ namespace CargoSupport.Helpers
                         todayGraphsModel.LabelTitle = dataWithPossibleTitle.Driver.ExtendedInformationModel.SectionName;
                     }
 
-                    //Added this validation since [0]-data has not always been valid - use first data that is
-                    todayGraphsModel.ReportingTo = listOfGroup.FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.Driver.ExtendedInformationModel.ReportingTo)).Driver.ExtendedInformationModel.ReportingTo;
+                    var dataWithPossibleReportingTo = listOfGroup.FirstOrDefault(d => !string.IsNullOrWhiteSpace(d.Driver.ExtendedInformationModel.ReportingTo));
+
+                    if (dataWithPossibleReportingTo == null)
+                    {
+                        todayGraphsModel.ReportingTo = "-1";
+                    }
+                    else
+                    {
+                        todayGraphsModel.ReportingTo = dataWithPossibleReportingTo.Driver.ExtendedInformationModel.ReportingTo;
+                    }
+
                     todayGraphsModel.StaffCatId = listOfGroup[0].Driver.ExtendedInformationModel.StaffCat;
                     todayGraphsModel.SectionId = listOfGroup[0].Driver.ExtendedInformationModel.Section;
                     todayGraphsModel.CustomerComments = allCommentsAsList.ToArray();
                     resultModels.Add(todayGraphsModel);
                 }
-            }
+            });
         }
 
-        private void ExtractDataByCompanyBosses(ConcurrentBag<AllBossesViewModel> resultModels, IGrouping<int, DataModel> driverGroup)
+        private void ExtractDataByCompanyBosses(ConcurrentBag<AllBossesViewModel> resultModels, IEnumerable<DataModel> driverGroup)
         {
             try
             {

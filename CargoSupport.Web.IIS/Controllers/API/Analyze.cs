@@ -125,7 +125,8 @@ namespace CargoSupport.Web.IIS.Controllers.API
                      * Since all external drivers are grouped by same section id, we need extra grouping to correctly seperate by external company
                      */
                     matchingRecordsBySectionId = matchingRecordsBySectionId
-                        .Where(d => d.Driver.ExtendedInformationModel.Section == sectionId && d.Driver.ExtendedInformationModel.StaffCat.Equals(staffCatId))
+                        .Where(d => d.Driver.ExtendedInformationModel.Section == sectionId &&
+                        d.Driver.ExtendedInformationModel.StaffCat.Equals(staffCatId))
                         .ToList();
 
                     var res = _dataConversionHelper.ConvertDataModelsToMultipleDriverTableData(matchingRecordsBySectionId.ToList());
@@ -136,8 +137,7 @@ namespace CargoSupport.Web.IIS.Controllers.API
                     //user has selected an Internal group - get by reporting to boss
                     var res = _dataConversionHelper.ConvertDataModelsToMultipleDriverTableData(
                         matchingRecordsBySectionId
-                        .Where(d => d.Driver.ExtendedInformationModel.ReportingTo.Equals(reportingTo, StringComparison.CurrentCultureIgnoreCase) &&
-                        d.Driver.ExtendedInformationModel.StaffCat.Equals(staffCatId))
+                        .Where(d => d.Driver.ExtendedInformationModel.ReportingTo.Equals(reportingTo, StringComparison.CurrentCultureIgnoreCase))
                         .ToList());
                     return Ok(res);
                 }
