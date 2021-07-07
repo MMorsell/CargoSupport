@@ -137,7 +137,8 @@ namespace CargoSupport.Web.IIS.Controllers.API
                     //user has selected an Internal group - get by reporting to boss
                     var res = _dataConversionHelper.ConvertDataModelsToMultipleDriverTableData(
                         matchingRecordsBySectionId
-                        .Where(d => d.Driver.ExtendedInformationModel.ReportingTo.Equals(reportingTo, StringComparison.CurrentCultureIgnoreCase))
+                        .Where(d => d.Driver.ExtendedInformationModel.ReportingTo.Equals(reportingTo, StringComparison.CurrentCultureIgnoreCase)
+                        && d.Driver.ExtendedInformationModel.StaffCat != 35858)
                         .ToList());
                     return Ok(res);
                 }
