@@ -38,12 +38,12 @@
         let currentTab;
         const mainApiEndpoint = '/api/v1/public/GetStorageExtended';
 
-        generateFlatPickrElement("#calendar-from", new Date().fp_incr(3), new Date().fp_incr(-365), new Date(), 
-        function (selectedDates, dateStr, instance) {
-            currentTab = undefined;
-            ajaxDate = new Date(dateStr);
-            reloadDatatableAjax();
-        });
+        generateFlatPickrElement("#calendar-from", new Date().fp_incr(3), new Date().fp_incr(-365), new Date(),
+            function (selectedDates, dateStr, instance) {
+                currentTab = undefined;
+                ajaxDate = new Date(dateStr);
+                reloadDatatableAjax();
+            });
 
         const listAllValues = function (data, type, full, meta) {
 
@@ -105,7 +105,7 @@
                     { data: 'listRestPicking', title: 'Restplock', render: listAllValues },
                     { data: 'listNumberOfFrozenBoxes', title: 'Frys', render: listAllValues },
                     { data: 'listNumberOfBreadBoxes', title: 'Bröd', render: listAllValues },
-                    { data: 'listControlIsDone', title: 'Kontroll', render: listAllValues },
+                    { data: 'listControlIsDone', title: 'Klar att lasta', render: listAllValues },
                 ],
                 "order": [[2, "asc"]],
 

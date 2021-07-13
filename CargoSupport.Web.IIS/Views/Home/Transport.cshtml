@@ -44,13 +44,12 @@
         let currentTab;
         const mainApiEndpoint = '/api/v1/public/GetTransport';
 
-        generateFlatPickrElement("#calendar-from", new Date().fp_incr(3), new Date().fp_incr(-365), new Date(), 
-        function (selectedDates, dateStr, instance) {
-            currentTab = undefined;
-            ajaxDate = new Date(dateStr);
-            reloadDatatableAjax();
-        });
-
+        generateFlatPickrElement("#calendar-from", new Date().fp_incr(3), new Date().fp_incr(-365), new Date(),
+            function (selectedDates, dateStr, instance) {
+                currentTab = undefined;
+                ajaxDate = new Date(dateStr);
+                reloadDatatableAjax();
+            });
 
         async function updateRow(thisRef) {
             var dataRef = table.row($(thisRef).parents('tr')).data();
@@ -299,7 +298,7 @@
                     { data: 'restPlock', title: 'Restplock', render: disabled_checkbox },
                     { data: 'numberOfFrozenBoxes', title: 'Frys', render: hidden_IntIfNull },
                     { data: 'numberOfBreadBoxes', title: 'Bröd', render: hidden_IntIfNull },
-                    { data: 'controlIsDone', title: 'Kontroll', render: disabled_checkbox },
+                    { data: 'controlIsDone', title: 'Klar att lasta', render: disabled_checkbox },
                 ],
                 "order": [[2, "asc"]],
 
